@@ -1,0 +1,148 @@
+# GraphQL Contract (illustrative)
+#
+# 一次ソースは apps/server/src/schema 配下の Pothos(code-first)定義であり、
+# このファイルは実装時の参照用に契約を示すものであって、手書きのSDLを
+# 一次ソースにするものではない(憲法原則IV)。実際のSDLは
+# `printSchema()` により `apps/server/schema.graphql` としてビルド時に生成される
+# (research.md #3)。
+
+scalar Date # YYYY-MM-DD
+
+enum TrainingIntensity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AggregationPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+type WeightRecord {
+  id: ID!
+  date: Date!
+  weightKg: Float!
+}
+
+type ExerciseCatalogItem {
+  id: ID!
+  name: String!
+  mets: Float!
+  source: String!
+}
+
+type ExerciseSet {
+  id: ID!
+  exercise: ExerciseCatalogItem!
+  sets: Int!
+  reps: Int!
+  weightKg: Float!
+  volume: Float! # weightKg * reps * sets (FR-010)
+}
+
+type CalorieEstimate {
+  calories: Float # 体重記録が無い場合 null (FR-011)
+  formula: String!
+  assumedConstants: [AssumedConstant!]!
+  source: String!
+}
+
+type AssumedConstant {
+  label: String!
+  value: Float!
+  unit: String!
+}
+
+type TrainingSession {
+  id: ID!
+  date: Date!
+  durationMinutes: Int!
+  intensity: TrainingIntensity!
+  exerciseSets: [ExerciseSet!]!
+  totalVolume: Float! # sum of exerciseSets.volume (FR-010)
+  calorieEstimate: CalorieEstimate! # FR-008, FR-009
+}
+
+type StepRecord {
+  id: ID!
+  date: Date!
+  steps: Int!
+  calorieEstimate: CalorieEstimate! # FR-013
+}
+
+type DailyCalorieSummary {
+  date: Date!
+  trainingCalories: Float!
+  stepCalories: Float!
+  totalCalories: Float!
+  isApproximate: Boolean! # FR-014, 常に true
+}
+
+type PeriodAggregatePoint {
+  periodLabel: String!
+  startDate: Date!
+  endDate: Date!
+  hasData: Boolean! # 欠測日の区別に使用
+  value: Float
+}
+
+type FoodItem {
+  id: ID!
+  name: String!
+  caloriesPer100g: Float!
+  proteinG: Float!
+  fatG: Float!
+  carbG: Float!
+}
+
+type Query {
+  weightRecords: [WeightRecord!]! # FR-001, FR-002
+  weightTrendAggregate(period: AggregationPeriod!): [PeriodAggregatePoint!]! # FR-016
+
+  trainingSessions: [TrainingSession!]! # FR-005, FR-006
+  trainingSession(id: ID!): TrainingSession
+
+  stepRecords: [StepRecord!]! # FR-012
+  dailyCalorieSummaries(period: AggregationPeriod!): [DailyCalorieSummary!]! # FR-014, FR-016
+
+  exerciseCatalog: [ExerciseCatalogItem!]! # FR-007(参照のみ)
+  foodItems: [FoodItem!]! # FR-015
+}
+
+input UpsertWeightRecordInput {
+  date: Date!
+  weightKg: Float!
+}
+
+input ExerciseSetInput {
+  exerciseId: ID!
+  sets: Int!
+  reps: Int!
+  weightKg: Float!
+}
+
+input UpsertTrainingSessionInput {
+  date: Date!
+  durationMinutes: Int!
+  intensity: TrainingIntensity!
+  exerciseSets: [ExerciseSetInput!]!
+}
+
+input UpsertStepRecordInput {
+  date: Date!
+  steps: Int!
+}
+
+type Mutation {
+  # date が既存レコードと重複する場合は上書き(FR-017)
+  upsertWeightRecord(input: UpsertWeightRecordInput!): WeightRecord! # FR-001
+  deleteWeightRecord(id: ID!): Boolean! # FR-001
+
+  upsertTrainingSession(input: UpsertTrainingSessionInput!): TrainingSession! # FR-005, FR-006, FR-017
+  deleteTrainingSession(id: ID!): Boolean! # FR-005
+
+  upsertStepRecord(input: UpsertStepRecordInput!): StepRecord! # FR-012
+  deleteStepRecord(id: ID!): Boolean!
+}
