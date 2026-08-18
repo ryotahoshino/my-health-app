@@ -32,11 +32,11 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 **Purpose**: npm workspacesリポジトリの初期化とツールチェーン導入
 
-- [ ] T001 npm workspacesルート`package.json`と`apps/client`・`apps/server`ディレクトリを作成する(research.md #1)
-- [ ] T002 `apps/server`をTypeScriptプロジェクトとして初期化し、`graphql-yoga`, `@pothos/core`, `@pothos/plugin-zod`, `graphql`, `zod`, `better-sqlite3`, `vitest`を依存に追加する(依存: T001)
-- [ ] T003 [P] `apps/client`をVite + React + TypeScriptプロジェクトとして初期化し、`@mui/material`, `@mui/x-charts`, `@emotion/react`, `@emotion/styled`, `react-hook-form`, `@hookform/resolvers`, `zod`, `@tanstack/react-query`, `graphql-request`, GraphQL Code Generatorパッケージ, `vite-plugin-pwa`を依存に追加する(依存: T001)
-- [ ] T004 ESLint/Prettierをリポジトリルートに設定し、`apps/client`・`apps/server`双方に適用する(依存: T002, T003)
-- [ ] T005 [P] `apps/client`にStorybookをInteraction Test addon・a11y addon付きで導入する(依存: T003)
+- [X] T001 npm workspacesルート`package.json`と`apps/client`・`apps/server`ディレクトリを作成する(research.md #1)
+- [X] T002 `apps/server`をTypeScriptプロジェクトとして初期化し、`graphql-yoga`, `@pothos/core`, `@pothos/plugin-zod`, `graphql`, `zod`, `better-sqlite3`, `vitest`を依存に追加する(依存: T001)
+- [X] T003 [P] `apps/client`をVite + React + TypeScriptプロジェクトとして初期化し、`@mui/material`, `@mui/x-charts`, `@emotion/react`, `@emotion/styled`, `react-hook-form`, `@hookform/resolvers`, `zod`, `@tanstack/react-query`, `graphql-request`, GraphQL Code Generatorパッケージ, `vite-plugin-pwa`を依存に追加する(依存: T001)
+- [X] T004 ESLint/Prettierをリポジトリルートに設定し、`apps/client`・`apps/server`双方に適用する(依存: T002, T003)
+- [X] T005 [P] `apps/client`にStorybookをInteraction Test addon・a11y addon付きで導入する(依存: T003)
 
 ---
 

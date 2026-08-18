@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+coverage/
+package-lock.json
+apps/server/schema.graphql
+apps/server/data/
+apps/client/src/graphql/generated/
+
+# spec-kit management files: keep their own formatting, not part of app source
+.claude/
+.specify/
+specs/
