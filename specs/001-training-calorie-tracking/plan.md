@@ -69,7 +69,7 @@ specs/001-training-calorie-tracking/
 ### Source Code (repository root)
 
 ```text
-package.json              # npm workspaces root
+package.json              # Yarn workspaces root(packageManager指定、research.md #1)
 apps/
 ├── client/                # React + TypeScript + Vite(SPA, PWA対応)
 │   ├── src/
@@ -93,7 +93,7 @@ apps/
     └── data/                      # SQLiteファイル(.gitignore対象)
 ```
 
-**Structure Decision**: フロントエンド(`apps/client`)とサーバー(`apps/server`)を npm workspaces で分離するWebアプリケーション構成(research.md #1)。GraphQLスキーマの一次ソースは `apps/server/src/schema` のPothos定義のみとし、クライアントはビルド時に生成される `apps/server/schema.graphql` を介して型・フックを生成する(research.md #3)。ドメインロジック(`apps/server/src/domain`)とリポジトリ(`apps/server/src/repositories`)を分離し、原則V・VIを満たす。
+**Structure Decision**: フロントエンド(`apps/client`)とサーバー(`apps/server`)を Yarn workspaces で分離するWebアプリケーション構成(research.md #1)。GraphQLスキーマの一次ソースは `apps/server/src/schema` のPothos定義のみとし、クライアントはビルド時に生成される `apps/server/schema.graphql` を介して型・フックを生成する(research.md #3)。ドメインロジック(`apps/server/src/domain`)とリポジトリ(`apps/server/src/repositories`)を分離し、原則V・VIを満たす。
 
 ## Complexity Tracking
 

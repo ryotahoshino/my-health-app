@@ -4,33 +4,37 @@
 
 ## 前提条件
 
-- Node.js 22 LTS、npm
-- リポジトリルートで `npm install`(npm workspaces により `apps/client`, `apps/server` の依存を一括インストール)
+- Node.js 22 LTS、Corepack有効(`corepack yarn --version` でYarn Berryが動くことを確認。グローバルシムの有効化に管理者権限が必要な環境では `corepack yarn <command>` の形で実行する)
+- リポジトリルートで `yarn install`(Yarn workspaces により `apps/client`, `apps/server` の依存を一括インストール。research.md #1)
 
 ## セットアップ
 
 ```bash
 # サーバーのGraphQLスキーマ(Pothos code-first)からSDLを生成
-npm run --workspace apps/server generate:schema
+yarn workspace @my-health-app/server generate:schema
 
 # クライアントの型・フックをSDLから生成(research.md #3)
-npm run --workspace apps/client codegen
+yarn workspace @my-health-app/client codegen
 
 # サーバー起動(SQLiteファイルは初回起動時に apps/server/data 配下へ自動作成)
-npm run --workspace apps/server dev
+yarn dev:server
 
 # 別ターミナルでクライアント起動
-npm run --workspace apps/client dev
+yarn dev:client
+
+# Storybookの起動(コンポーネント単位の確認用)
+yarn storybook
 ```
 
 ## 自動テストの実行
 
 ```bash
 # ドメインロジック・リポジトリ・リゾルバの単体/統合テスト
-npm run --workspace apps/server test
+yarn workspace @my-health-app/server test
 
 # UIコンポーネントのStorybook Interaction Test / a11yチェック
-npm run --workspace apps/client test-storybook
+# (vite.config.ts の test.projects に addon-vitest 経由で組み込まれている)
+yarn workspace @my-health-app/client test
 ```
 
 各ストーリーの `[自動]` 受け入れ条件([spec.md](./spec.md) 参照)は、上記テストが通ることで検証される。

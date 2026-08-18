@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Yarn(Corepackがpackage.jsonのpackageManagerからバイナリを解決するため、
+# .yarn配下のキャッシュ・インストール状態は再生成可能でコミット不要)
+.yarn/
+
 # Build output
 dist/
 build/

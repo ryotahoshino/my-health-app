@@ -6,11 +6,14 @@
 
 ## 1. モノレポ構成とパッケージ管理
 
-- **Decision**: npm workspaces を用いたモノレポとし、`apps/client`(React + Vite)と `apps/server`(Node + GraphQL Yoga + Pothos)の2ワークスペースに分割する。
-- **Rationale**: 追加ツール(pnpm/turborepo等)を導入せずとも npm 標準機能で完結し、YAGNI に沿う。フロントエンドとサーバーは実行環境・ビルド設定が異なるため単一パッケージに同居させない。
+- **Decision**: Yarn Berry(4系、Corepack管理)のworkspacesを用いたモノレポとし、`apps/client`(React + Vite)と `apps/server`(Node + GraphQL Yoga + Pothos)の2ワークスペースに分割する。`nodeLinker: node-modules`を明示し、`better-sqlite3`のようなネイティブモジュールやStorybook/Playwrightとの互換性を優先する(既定のPlug'n'Playは避ける)。パッケージマネージャーのバージョンは`package.json`の`packageManager`フィールドで固定し、Node 22に同梱されるCorepack経由で解決する。
+- **Rationale**: 実装着手時にnpm workspacesから開始したが、依存関係のセキュリティ(lockfileの整合性チェック、lifecycleスクリプトの扱いなど)を理由にYarnへ切り替えた。フロントエンドとサーバーは実行環境・ビルド設定が異なるため、モノレポでも単一パッケージには同居させない方針は変わらない。
+- **既知の注意点**: `better-sqlite3`は同梱のプリビルドバイナリ(`prebuilds/`配下)をそのまま使う設計だが、Yarnは`binding.gyp`の存在だけで「要ビルド」と機械的に判定し、node-gyp経由の再ビルド(Python等の追加ツールが必要)を試みてしまう。ルートの`package.json`に`dependenciesMeta.better-sqlite3.built: false`を設定してこれを無効化している。
 - **Alternatives considered**:
+  - npm workspaces: 標準機能で完結し当初採用していたが、ユーザーの意向でYarnへ移行。
   - 単一パッケージ(client/server混在): Vite と Node サーバーのビルド設定が衝突しやすく却下。
-  - pnpm workspaces: 機能的には優れるが、個人開発でここまでの規模には過剰。npm workspaces で十分。
+  - pnpm workspaces: 機能的には優れるが、個人開発でここまでの規模には過剰。
+  - Yarn Plug'n'Play(既定のnodeLinker): 依存解決は厳密・高速だが、ネイティブモジュールやPlaywright/Storybookとの相性問題が知られており、互換性を優先してnode-modulesリンカーを選択。
 
 ## 2. 永続化の初期実装
 
