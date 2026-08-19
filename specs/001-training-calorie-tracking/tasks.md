@@ -46,16 +46,16 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 **⚠️ CRITICAL**: このフェーズが完了するまでユーザーストーリーの実装に着手しない
 
-- [ ] T006 SQLite接続とスキーマブートストラップ(`CREATE TABLE IF NOT EXISTS`、全6テーブル)を`apps/server/src/db/connection.ts`, `apps/server/src/db/schema.sql`に実装する(research.md #2、依存: T002)
-- [ ] T007 種目マスタ(ExerciseCatalog)の固定データを`apps/server/src/db/seed/exerciseCatalog.ts`に実装する(data-model.md、依存: T006)
-- [ ] T008 Pothosスキーマビルダー(`@pothos/plugin-zod`設定込み)を`apps/server/src/schema/builder.ts`に実装する(依存: T002)
-- [ ] T009 GraphQL Yogaサーバーのエントリポイントと`dev`スクリプトを`apps/server/src/index.ts`に実装する(依存: T008)
-- [ ] T010 [P] スキーマSDL書き出しスクリプト(`printSchema`)を`apps/server/scripts/generate-schema.ts`と`generate:schema`npmスクリプトとして実装する(research.md #3、依存: T008)
-- [ ] T011 [P] `apps/server/schema.graphql`を入力元とするGraphQL Code Generator設定を`apps/client/codegen.ts`に実装する(research.md #3、依存: T010)
-- [ ] T012 [P] TanStack Queryプロバイダーと`graphql-request`クライアントを`apps/client/src/app/queryClient.ts`に実装する(依存: T003)
-- [ ] T013 [P] MUIテーマ(styled統一)とEmotionキャッシュ設定を`apps/client/src/app/theme.ts`に実装する(依存: T003)
-- [ ] T014 [P] アプリシェル・ルーティング・ナビゲーション(体重/トレーニング/歩数/食材への導線)を`apps/client/src/app/App.tsx`に実装する(依存: T003)
-- [ ] T015 [P] `vite-plugin-pwa`によるmanifest・最小限のservice worker登録を`apps/client/vite.config.ts`に設定する(research.md #7、依存: T003)
+- [X] T006 SQLite接続とスキーマブートストラップ(`CREATE TABLE IF NOT EXISTS`、全6テーブル)を`apps/server/src/db/connection.ts`, `apps/server/src/db/schema.sql`に実装する(research.md #2、依存: T002)
+- [X] T007 種目マスタ(ExerciseCatalog)の固定データを`apps/server/src/db/seed/exerciseCatalog.ts`に実装する(data-model.md、依存: T006)
+- [X] T008 Pothosスキーマビルダー(`@pothos/plugin-zod`設定込み)を`apps/server/src/schema/builder.ts`に実装する(依存: T002)
+- [X] T009 GraphQL Yogaサーバーのエントリポイントと`dev`スクリプトを`apps/server/src/index.ts`に実装する(依存: T008)
+- [X] T010 [P] スキーマSDL書き出しスクリプト(`printSchema`)を`apps/server/scripts/generate-schema.ts`と`generate:schema`npmスクリプトとして実装する(research.md #3、依存: T008)
+- [X] T011 [P] `apps/server/schema.graphql`を入力元とするGraphQL Code Generator設定を`apps/client/codegen.ts`に実装する(research.md #3、依存: T010)
+- [X] T012 [P] TanStack Queryプロバイダーと`graphql-request`クライアントを`apps/client/src/app/queryClient.ts`に実装する(依存: T003)
+- [X] T013 [P] MUIテーマ(styled統一)とEmotionキャッシュ設定を`apps/client/src/app/theme.ts`に実装する(依存: T003)
+- [X] T014 [P] アプリシェル・ルーティング・ナビゲーション(体重/トレーニング/歩数/食材への導線)を`apps/client/src/app/App.tsx`に実装する(依存: T003)
+- [X] T015 [P] `vite-plugin-pwa`によるmanifest・最小限のservice worker登録を`apps/client/vite.config.ts`に設定する(research.md #7、依存: T003)(Phase1のセットアップ時に対応済み)
 
 **Checkpoint**: 基盤完成。ここからユーザーストーリーの実装に着手できる
 

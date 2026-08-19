@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "codegen": "graphql-codegen",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "preview": "vite preview",
@@ -23,9 +24,11 @@
     "@tanstack/react-query": "^5.101.4",
     "graphql": "^16.14.2",
     "graphql-request": "^7.4.0",
+    "graphql-tag": "^2.12.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
+    "react-router": "^8.3.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
