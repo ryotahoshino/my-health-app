@@ -2,14 +2,24 @@ import { createServer } from "node:http";
 import { createYoga } from "graphql-yoga";
 import { builder } from "./schema/builder.js";
 import "./schema/health.js";
+import "./schema/weight.js";
+import type { GraphQLContext } from "./schema/context.js";
 import { getDb } from "./db/connection.js";
 import { seedExerciseCatalog } from "./db/seed/exerciseCatalog.js";
+import { createWeightRepository } from "./repositories/weightRepository.js";
 
 const db = getDb();
 seedExerciseCatalog(db);
 
+const weightRepository = createWeightRepository(db);
+
 const schema = builder.toSchema();
-const yoga = createYoga({ schema });
+const yoga = createYoga({
+  schema,
+  context: (): GraphQLContext => ({
+    repositories: { weight: weightRepository },
+  }),
+});
 const server = createServer(yoga);
 
 const port = Number(process.env.PORT ?? 4000);

@@ -5,11 +5,11 @@ import { queryClient } from "./queryClient";
 import { theme } from "./theme";
 
 // 各ストーリー(Phase3〜7)で実際の画面に差し替えるまでのプレースホルダー。
-function ComingSoon({ title }: { title: string }) {
+const ComingSoon = ({ title }: { title: string }) => {
   return <p>{title}(実装予定)</p>;
-}
+};
 
-export function App() {
+export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
@@ -35,4 +35,4 @@ export function App() {
       </ThemeProvider>
     </QueryClientProvider>
   );
-}
+};

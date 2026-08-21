@@ -12,10 +12,10 @@ interface TestContext {
   repositories: { weight: WeightRepository };
 }
 
-function createTestContext(): TestContext {
+const createTestContext = (): TestContext => {
   const db = createConnection(":memory:");
   return { repositories: { weight: createWeightRepository(db) } };
-}
+};
 
 describe("weight GraphQLスキーマ", () => {
   it("upsertWeightRecordで作成した記録がweightRecordsに反映される", async () => {

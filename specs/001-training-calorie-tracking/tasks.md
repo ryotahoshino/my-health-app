@@ -79,9 +79,9 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Implementation for User Story 1
 
-- [ ] T021 [US1] WeightRecordのZodスキーマ(範囲・必須)を`apps/server/src/domain/weight/weightSchema.ts`に実装する(依存: T016)
-- [ ] T022 [US1] WeightRepositoryインターフェースとSQLite実装を`apps/server/src/repositories/weightRepository.ts`に実装する(依存: T006, T017)
-- [ ] T023 [US1] Pothos型・`Query.weightRecords`・`Mutation.upsertWeightRecord`/`deleteWeightRecord`を`apps/server/src/schema/weight.ts`に実装する(依存: T021, T022, T018)
+- [X] T021 [US1] WeightRecordのZodスキーマ(範囲・必須)を`apps/server/src/domain/weight/weightSchema.ts`に実装する(依存: T016)
+- [X] T022 [US1] WeightRepositoryインターフェースとSQLite実装を`apps/server/src/repositories/weightRepository.ts`に実装する(依存: T006, T017)
+- [X] T023 [US1] Pothos型・`Query.weightRecords`・`Mutation.upsertWeightRecord`/`deleteWeightRecord`を`apps/server/src/schema/weight.ts`に実装する(依存: T021, T022, T018)
 - [ ] T024 [US1] 体重入力フォーム(react-hook-form + zodResolver + MUI、キーボード操作対応)を`apps/client/src/features/weight/WeightForm.tsx`に実装する(依存: T019, T011)
 - [ ] T025 [US1] 体重一覧 + MUI X Chartsグラフ + 表形式/テキスト要約切替を`apps/client/src/features/weight/WeightTrend.tsx`に実装する(依存: T020)
 - [ ] T026 [US1] 体重記録0件時の空状態表示(メッセージ+作成導線)を`apps/client/src/features/weight/WeightEmptyState.tsx`に実装する(依存: T025)
