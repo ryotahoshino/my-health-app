@@ -71,11 +71,11 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 > テストを先に書き、実装前に失敗することを確認する(憲法原則III)
 
-- [ ] T016 [P] [US1] 体重バリデーション(20.0〜300.0kg、小数点第1位)の単体テストを`apps/server/src/domain/weight/weightValidation.test.ts`に作成する
-- [ ] T017 [P] [US1] WeightRepositoryの統合テスト(作成・更新・削除・一覧取得、同日上書き)を`apps/server/src/repositories/weightRepository.test.ts`に作成する
-- [ ] T018 [P] [US1] GraphQLリゾルバ統合テスト(`weightRecords`/`upsertWeightRecord`/`deleteWeightRecord`)を`apps/server/src/schema/weight.test.ts`に作成する
-- [ ] T019 [P] [US1] 体重入力フォームのStorybook Interaction Test(正常系・異常系のエラー関連付け・キーボード操作)を`apps/client/src/features/weight/WeightForm.stories.tsx`に作成する
-- [ ] T020 [P] [US1] 体重一覧・グラフのStorybook Interaction Test + a11yチェック(表形式/テキスト要約の代替表示)を`apps/client/src/features/weight/WeightTrend.stories.tsx`に作成する
+- [X] T016 [P] [US1] 体重バリデーション(20.0〜300.0kg、小数点第1位)の単体テストを`apps/server/src/domain/weight/weightValidation.test.ts`に作成する
+- [X] T017 [P] [US1] WeightRepositoryの統合テスト(作成・更新・削除・一覧取得、同日上書き)を`apps/server/src/repositories/weightRepository.test.ts`に作成する
+- [X] T018 [P] [US1] GraphQLリゾルバ統合テスト(`weightRecords`/`upsertWeightRecord`/`deleteWeightRecord`)を`apps/server/src/schema/weight.test.ts`に作成する
+- [X] T019 [P] [US1] 体重入力フォームのStorybook Interaction Test(正常系・異常系のエラー関連付け・キーボード操作)を`apps/client/src/features/weight/WeightForm.stories.tsx`に作成する
+- [X] T020 [P] [US1] 体重一覧・グラフのStorybook Interaction Test + a11yチェック(表形式/テキスト要約の代替表示)を`apps/client/src/features/weight/WeightTrend.stories.tsx`に作成する
 
 ### Implementation for User Story 1
 

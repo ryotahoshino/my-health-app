@@ -14,6 +14,12 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
+  // aria-query(CJS)がVitest browserモードの依存事前バンドル対象から漏れると
+  // 名前付きexportが解決できずStorybook Interaction Testが起動できないため、
+  // 明示的に含める。
+  optimizeDeps: {
+    include: ["aria-query"],
+  },
   plugins: [
     react(),
     VitePWA({
