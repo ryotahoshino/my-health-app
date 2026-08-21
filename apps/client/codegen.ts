@@ -10,8 +10,12 @@ const config: CodegenConfig = {
   // documentsが0件になるため、この段階ではエラーにしない。
   ignoreNoDocuments: true,
   generates: {
+    // typescript-operationsは選択セットをフラットな型として自己完結で
+    // 生成するため、typescriptプラグイン(スキーマ全体の型)は現状不要。
+    // 両方を同じファイルに出力すると、typescript-operationsが変数の
+    // input型を独自に再宣言し"Duplicate identifier"になるため併用しない。
     "src/graphql/generated/sdk.ts": {
-      plugins: ["typescript", "typescript-operations", "typescript-graphql-request"],
+      plugins: ["typescript-operations", "typescript-graphql-request"],
     },
   },
 };

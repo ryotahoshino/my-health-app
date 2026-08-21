@@ -16,9 +16,17 @@ const dirname =
 export default defineConfig({
   // aria-query(CJS)がVitest browserモードの依存事前バンドル対象から漏れると
   // 名前付きexportが解決できずStorybook Interaction Testが起動できないため、
-  // 明示的に含める。
+  // 明示的に含める。react-hook-form等も初回実行時に事前バンドルが走ると
+  // テスト実行中にリロードが発生し不安定になるため、あわせて含めておく。
   optimizeDeps: {
-    include: ["aria-query"],
+    include: [
+      "aria-query",
+      "react-hook-form",
+      "@hookform/resolvers/zod",
+      "@mui/material",
+      "@mui/material/styles",
+      "zod",
+    ],
   },
   plugins: [
     react(),

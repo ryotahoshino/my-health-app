@@ -3,6 +3,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Link, Route, Routes } from "react-router";
 import { queryClient } from "./queryClient";
 import { theme } from "./theme";
+import { WeightPage } from "../features/weight/WeightPage";
 
 // 各ストーリー(Phase3〜7)で実際の画面に差し替えるまでのプレースホルダー。
 const ComingSoon = ({ title }: { title: string }) => {
@@ -25,7 +26,7 @@ export const App = () => {
             <Link to="/foods">食材</Link>
           </nav>
           <Routes>
-            <Route path="/weight" element={<ComingSoon title="体重記録" />} />
+            <Route path="/weight" element={<WeightPage />} />
             <Route path="/training" element={<ComingSoon title="トレーニング記録" />} />
             <Route path="/steps" element={<ComingSoon title="歩数記録" />} />
             <Route path="/foods" element={<ComingSoon title="食材一覧" />} />

@@ -82,10 +82,10 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T021 [US1] WeightRecordのZodスキーマ(範囲・必須)を`apps/server/src/domain/weight/weightSchema.ts`に実装する(依存: T016)
 - [X] T022 [US1] WeightRepositoryインターフェースとSQLite実装を`apps/server/src/repositories/weightRepository.ts`に実装する(依存: T006, T017)
 - [X] T023 [US1] Pothos型・`Query.weightRecords`・`Mutation.upsertWeightRecord`/`deleteWeightRecord`を`apps/server/src/schema/weight.ts`に実装する(依存: T021, T022, T018)
-- [ ] T024 [US1] 体重入力フォーム(react-hook-form + zodResolver + MUI、キーボード操作対応)を`apps/client/src/features/weight/WeightForm.tsx`に実装する(依存: T019, T011)
-- [ ] T025 [US1] 体重一覧 + MUI X Chartsグラフ + 表形式/テキスト要約切替を`apps/client/src/features/weight/WeightTrend.tsx`に実装する(依存: T020)
-- [ ] T026 [US1] 体重記録0件時の空状態表示(メッセージ+作成導線)を`apps/client/src/features/weight/WeightEmptyState.tsx`に実装する(依存: T025)
-- [ ] T027 [US1] 体重ページ(一覧+フォーム+削除操作の組み立て)を`apps/client/src/features/weight/WeightPage.tsx`に実装し、`apps/client/src/app/App.tsx`のルーティングに追加する(依存: T023, T024, T025, T026, T014)
+- [X] T024 [US1] 体重入力フォーム(react-hook-form + zodResolver + MUI、キーボード操作対応)を`apps/client/src/features/weight/WeightForm.tsx`に実装する(依存: T019, T011)
+- [X] T025 [US1] 体重一覧 + MUI X Chartsグラフ + 表形式/テキスト要約切替を`apps/client/src/features/weight/WeightTrend.tsx`に実装する(依存: T020)
+- [X] T026 [US1] 体重記録0件時の空状態表示(メッセージ+作成導線)を`apps/client/src/features/weight/WeightEmptyState.tsx`に実装する(依存: T025)
+- [X] T027 [US1] 体重ページ(一覧+フォーム+削除操作の組み立て)を`apps/client/src/features/weight/WeightPage.tsx`に実装し、`apps/client/src/app/App.tsx`のルーティングに追加する(依存: T023, T024, T025, T026, T014)
 
 **Checkpoint**: User Story 1が独立して完結・動作確認可能(MVP)
 

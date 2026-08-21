@@ -8,8 +8,13 @@ import type { GraphQLContext } from "./context.js";
 // GraphQL型の形と分離する(原則IV)。
 export const builder = new SchemaBuilder<{
   Context: GraphQLContext;
+  // Pothos v4ではランタイムの値だけでなく型パラメータでも指定する必要がある。
+  DefaultFieldNullability: false;
 }>({
   plugins: [ZodPlugin],
+  // GraphQLのベストプラクティスとして、既定を非nullにする
+  // (nullを許容したいフィールドだけ個別に { nullable: true } を指定する)。
+  defaultFieldNullability: false,
 });
 
 builder.queryType({});
