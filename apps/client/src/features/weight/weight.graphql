@@ -1,0 +1,19 @@
+query WeightRecords {
+  weightRecords {
+    id
+    date
+    weightKg
+  }
+}
+
+mutation UpsertWeightRecord($input: UpsertWeightRecordInput!) {
+  upsertWeightRecord(input: $input) {
+    id
+    date
+    weightKg
+  }
+}
+
+mutation DeleteWeightRecord($id: ID!) {
+  deleteWeightRecord(id: $id)
+}

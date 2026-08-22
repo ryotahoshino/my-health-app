@@ -26,7 +26,7 @@ export const exerciseCatalogSeed: ExerciseCatalogEntry[] = [
   { id: "dumbbell-curl", name: "ダンベルカール", mets: 3.5, source: METS_SOURCE },
 ];
 
-export function seedExerciseCatalog(db: Database.Database): void {
+export const seedExerciseCatalog = (db: Database.Database): void => {
   const insert = db.prepare(
     `INSERT INTO exercise_catalog (id, name, mets, source)
      VALUES (@id, @name, @mets, @source)
@@ -36,4 +36,4 @@ export function seedExerciseCatalog(db: Database.Database): void {
     for (const row of rows) insert.run(row);
   });
   insertAll(exerciseCatalogSeed);
-}
+};

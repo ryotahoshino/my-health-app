@@ -71,21 +71,21 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 > テストを先に書き、実装前に失敗することを確認する(憲法原則III)
 
-- [ ] T016 [P] [US1] 体重バリデーション(20.0〜300.0kg、小数点第1位)の単体テストを`apps/server/src/domain/weight/weightValidation.test.ts`に作成する
-- [ ] T017 [P] [US1] WeightRepositoryの統合テスト(作成・更新・削除・一覧取得、同日上書き)を`apps/server/src/repositories/weightRepository.test.ts`に作成する
-- [ ] T018 [P] [US1] GraphQLリゾルバ統合テスト(`weightRecords`/`upsertWeightRecord`/`deleteWeightRecord`)を`apps/server/src/schema/weight.test.ts`に作成する
-- [ ] T019 [P] [US1] 体重入力フォームのStorybook Interaction Test(正常系・異常系のエラー関連付け・キーボード操作)を`apps/client/src/features/weight/WeightForm.stories.tsx`に作成する
-- [ ] T020 [P] [US1] 体重一覧・グラフのStorybook Interaction Test + a11yチェック(表形式/テキスト要約の代替表示)を`apps/client/src/features/weight/WeightTrend.stories.tsx`に作成する
+- [X] T016 [P] [US1] 体重バリデーション(20.0〜300.0kg、小数点第1位)の単体テストを`apps/server/src/domain/weight/weightValidation.test.ts`に作成する
+- [X] T017 [P] [US1] WeightRepositoryの統合テスト(作成・更新・削除・一覧取得、同日上書き)を`apps/server/src/repositories/weightRepository.test.ts`に作成する
+- [X] T018 [P] [US1] GraphQLリゾルバ統合テスト(`weightRecords`/`upsertWeightRecord`/`deleteWeightRecord`)を`apps/server/src/schema/weight.test.ts`に作成する
+- [X] T019 [P] [US1] 体重入力フォームのStorybook Interaction Test(正常系・異常系のエラー関連付け・キーボード操作)を`apps/client/src/features/weight/WeightForm/WeightForm.stories.tsx`に作成する
+- [X] T020 [P] [US1] 体重一覧・グラフのStorybook Interaction Test + a11yチェック(表形式/テキスト要約の代替表示)を`apps/client/src/features/weight/WeightTrend/WeightTrend.stories.tsx`に作成する
 
 ### Implementation for User Story 1
 
-- [ ] T021 [US1] WeightRecordのZodスキーマ(範囲・必須)を`apps/server/src/domain/weight/weightSchema.ts`に実装する(依存: T016)
-- [ ] T022 [US1] WeightRepositoryインターフェースとSQLite実装を`apps/server/src/repositories/weightRepository.ts`に実装する(依存: T006, T017)
-- [ ] T023 [US1] Pothos型・`Query.weightRecords`・`Mutation.upsertWeightRecord`/`deleteWeightRecord`を`apps/server/src/schema/weight.ts`に実装する(依存: T021, T022, T018)
-- [ ] T024 [US1] 体重入力フォーム(react-hook-form + zodResolver + MUI、キーボード操作対応)を`apps/client/src/features/weight/WeightForm.tsx`に実装する(依存: T019, T011)
-- [ ] T025 [US1] 体重一覧 + MUI X Chartsグラフ + 表形式/テキスト要約切替を`apps/client/src/features/weight/WeightTrend.tsx`に実装する(依存: T020)
-- [ ] T026 [US1] 体重記録0件時の空状態表示(メッセージ+作成導線)を`apps/client/src/features/weight/WeightEmptyState.tsx`に実装する(依存: T025)
-- [ ] T027 [US1] 体重ページ(一覧+フォーム+削除操作の組み立て)を`apps/client/src/features/weight/WeightPage.tsx`に実装し、`apps/client/src/app/App.tsx`のルーティングに追加する(依存: T023, T024, T025, T026, T014)
+- [X] T021 [US1] WeightRecordのZodスキーマ(範囲・必須)を`apps/server/src/domain/weight/weightSchema.ts`に実装する(依存: T016)
+- [X] T022 [US1] WeightRepositoryインターフェースとSQLite実装を`apps/server/src/repositories/weightRepository.ts`に実装する(依存: T006, T017)
+- [X] T023 [US1] Pothos型・`Query.weightRecords`・`Mutation.upsertWeightRecord`/`deleteWeightRecord`を`apps/server/src/schema/weight.ts`に実装する(依存: T021, T022, T018)
+- [X] T024 [US1] 体重入力フォーム(react-hook-form + zodResolver + MUI、キーボード操作対応)を`apps/client/src/features/weight/WeightForm/WeightForm.tsx`に実装する(依存: T019, T011)
+- [X] T025 [US1] 体重一覧 + MUI X Chartsグラフ + 表形式/テキスト要約切替を`apps/client/src/features/weight/WeightTrend/WeightTrend.tsx`に実装する(依存: T020)
+- [X] T026 [US1] 体重記録0件時の空状態表示(メッセージ+作成導線)を`apps/client/src/features/weight/WeightEmptyState/WeightEmptyState.tsx`に実装する(依存: T025)
+- [X] T027 [US1] 体重ページ(一覧+フォーム+削除操作の組み立て)を`apps/client/src/features/weight/WeightPage.tsx`に実装し、`apps/client/src/app/App.tsx`のルーティングに追加する(依存: T023, T024, T025, T026, T014)
 
 **Checkpoint**: User Story 1が独立して完結・動作確認可能(MVP)
 
@@ -102,8 +102,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [ ] T028 [P] [US2] トレーニングバリデーション(実施時間1〜600分、強度区分、セット数1〜20、回数1〜100、重量0〜500kg 0.5kg刻み)の単体テストを`apps/server/src/domain/training/trainingValidation.test.ts`に作成する
 - [ ] T029 [P] [US2] TrainingSessionRepositoryの統合テスト(セッション+種目記録のupsert/delete、同日上書きFR-017)を`apps/server/src/repositories/trainingSessionRepository.test.ts`に作成する
 - [ ] T030 [P] [US2] GraphQLリゾルバ統合テスト(`trainingSessions`/`trainingSession`/`upsertTrainingSession`/`deleteTrainingSession`)を`apps/server/src/schema/training.test.ts`に作成する
-- [ ] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm.stories.tsx`に作成する
-- [ ] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList.stories.tsx`に作成する
+- [ ] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.stories.tsx`に作成する
+- [ ] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`に作成する
 
 ### Implementation for User Story 2
 
@@ -111,8 +111,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [ ] T034 [US2] TrainingSession/ExerciseSetのZodスキーマを`apps/server/src/domain/training/trainingSchema.ts`に実装する(依存: T028)
 - [ ] T035 [US2] TrainingSessionRepository(同日上書きロジック含む)とExerciseSet永続化を`apps/server/src/repositories/trainingSessionRepository.ts`に実装する(依存: T006, T029)
 - [ ] T036 [US2] Pothos型・`Query.trainingSessions`/`trainingSession`・`Mutation.upsertTrainingSession`/`deleteTrainingSession`を`apps/server/src/schema/training.ts`に実装する(依存: T034, T035, T030)
-- [ ] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
-- [ ] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList.tsx`に実装する(依存: T032, T036)
+- [ ] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
+- [ ] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`に実装する(依存: T032, T036)
 - [ ] T039 [US2] トレーニングページの組み立てを`apps/client/src/features/training/TrainingPage.tsx`に実装し、ルーティングに追加する(依存: T037, T038, T014)
 
 **Checkpoint**: User Story 1・2がそれぞれ独立して動作確認可能
@@ -130,14 +130,14 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [ ] T040 [P] [US3] セッション消費カロリー計算(METs方式、体重欠如時はnull)の単体テストを`apps/server/src/domain/calorie/sessionCalorie.test.ts`に作成する(research.md #5)
 - [ ] T041 [P] [US3] 総ボリューム計算(重量×回数×セット)の単体テストを`apps/server/src/domain/training/volume.test.ts`に作成する
 - [ ] T042 [P] [US3] `TrainingSession.calorieEstimate`/`totalVolume`のGraphQLリゾルバ統合テストを`apps/server/src/schema/trainingCalorie.test.ts`に作成する
-- [ ] T043 [P] [US3] 消費カロリー・算出根拠(計算式/定数/出典)・総ボリューム表示のStorybook Interaction Testを`apps/client/src/features/training/SessionCalorieCard.stories.tsx`に作成する
+- [ ] T043 [P] [US3] 消費カロリー・算出根拠(計算式/定数/出典)・総ボリューム表示のStorybook Interaction Testを`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.stories.tsx`に作成する
 
 ### Implementation for User Story 3
 
 - [ ] T044 [US3] セッション消費カロリー計算の純粋関数を`apps/server/src/domain/calorie/sessionCalorie.ts`に実装する(依存: T040)
 - [ ] T045 [P] [US3] 総ボリューム計算の純粋関数を`apps/server/src/domain/training/volume.ts`に実装する(依存: T041)
 - [ ] T046 [US3] `TrainingSession.calorieEstimate`/`totalVolume`フィールドリゾルバを`apps/server/src/schema/training.ts`に追加する(依存: T044, T045, T042, T036)
-- [ ] T047 [US3] 消費カロリー・算出根拠・総ボリュームの表示コンポーネント(SessionCalorieCard)を`apps/client/src/features/training/SessionCalorieCard.tsx`に実装する(依存: T043)
+- [ ] T047 [US3] 消費カロリー・算出根拠・総ボリュームの表示コンポーネント(SessionCalorieCard)を`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx`に実装する(依存: T043)
 - [ ] T048 [US3] 体重未記録時の「算出不可」表示をセッション詳細に統合する`apps/client/src/features/training/TrainingSessionDetail.tsx`(依存: T047, T038)
 
 **Checkpoint**: User Story 1〜3が独立して動作確認可能(本アプリの中核価値である消費カロリー可視化が成立)
@@ -157,8 +157,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [ ] T051 [P] [US4] 1日合算(DailyCalorieSummary、概算フラグ)の単体テストを`apps/server/src/domain/calorie/dailySummary.test.ts`に作成する
 - [ ] T052 [P] [US4] StepRecordRepositoryの統合テスト(同日上書き)を`apps/server/src/repositories/stepRecordRepository.test.ts`に作成する
 - [ ] T053 [P] [US4] GraphQLリゾルバ統合テスト(`stepRecords`/`upsertStepRecord`/`deleteStepRecord`/`dailyCalorieSummaries`)を`apps/server/src/schema/steps.test.ts`に作成する
-- [ ] T054 [P] [US4] 歩数入力フォーム+算出根拠表示のStorybook Interaction Testを`apps/client/src/features/steps/StepsForm.stories.tsx`に作成する
-- [ ] T055 [P] [US4] 1日合算表示(概算注記)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary.stories.tsx`に作成する
+- [ ] T054 [P] [US4] 歩数入力フォーム+算出根拠表示のStorybook Interaction Testを`apps/client/src/features/steps/StepsForm/StepsForm.stories.tsx`に作成する
+- [ ] T055 [P] [US4] 1日合算表示(概算注記)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`に作成する
 
 ### Implementation for User Story 4
 
@@ -167,8 +167,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [ ] T058 [US4] 1日合算計算の純粋関数(概算フラグ)を`apps/server/src/domain/calorie/dailySummary.ts`に実装する(依存: T051, T044, T057)
 - [ ] T059 [US4] StepRecordRepository(同日上書き)を`apps/server/src/repositories/stepRecordRepository.ts`に実装する(依存: T006, T052)
 - [ ] T060 [US4] Pothos型・`Query.stepRecords`/`dailyCalorieSummaries`・`Mutation.upsertStepRecord`/`deleteStepRecord`を`apps/server/src/schema/steps.ts`に実装する(依存: T056, T059, T058, T053)
-- [ ] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm.tsx`に実装する(依存: T054)
-- [ ] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
+- [ ] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm/StepsForm.tsx`に実装する(依存: T054)
+- [ ] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
 - [ ] T063 [US4] 歩数ページの組み立てを`apps/client/src/features/steps/StepsPage.tsx`に実装し、ルーティングに追加する(依存: T061, T062, T014)
 
 **Checkpoint**: User Story 1〜4が独立して動作確認可能(1日単位の消費カロリー可視化が完成)
@@ -184,13 +184,13 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 ### Tests for User Story 5 ⚠️
 
 - [ ] T064 [P] [US5] GraphQLリゾルバテスト(`foodItems`)を`apps/server/src/schema/foodItems.test.ts`に作成する
-- [ ] T065 [P] [US5] 食材一覧のStorybook Interaction Test + a11yチェック(スクリーンリーダーでの名称・カロリー・PFC対応確認)を`apps/client/src/features/foods/FoodList.stories.tsx`に作成する
+- [ ] T065 [P] [US5] 食材一覧のStorybook Interaction Test + a11yチェック(スクリーンリーダーでの名称・カロリー・PFC対応確認)を`apps/client/src/features/foods/FoodList/FoodList.stories.tsx`に作成する
 
 ### Implementation for User Story 5
 
 - [ ] T066 [P] [US5] 食材の固定データを`apps/server/src/db/seed/foodItems.ts`に実装する
 - [ ] T067 [US5] Pothos型・`Query.foodItems`を`apps/server/src/schema/foodItems.ts`に実装する(依存: T066, T064)
-- [ ] T068 [US5] 食材一覧テーブル(名称・カロリー・PFCの対応がスクリーンリーダーで伝わるマークアップ)を`apps/client/src/features/foods/FoodList.tsx`に実装する(依存: T065)
+- [ ] T068 [US5] 食材一覧テーブル(名称・カロリー・PFCの対応がスクリーンリーダーで伝わるマークアップ)を`apps/client/src/features/foods/FoodList/FoodList.tsx`に実装する(依存: T065)
 - [ ] T069 [US5] 食材ページの組み立てを`apps/client/src/features/foods/FoodsPage.tsx`に実装し、ルーティングに追加する(依存: T067, T068, T014)
 
 **Checkpoint**: 全ユーザーストーリー(P1〜P5)が独立して動作確認可能
@@ -258,8 +258,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 Task: "体重バリデーションの単体テストを apps/server/src/domain/weight/weightValidation.test.ts に作成"
 Task: "WeightRepositoryの統合テストを apps/server/src/repositories/weightRepository.test.ts に作成"
 Task: "GraphQLリゾルバ統合テストを apps/server/src/schema/weight.test.ts に作成"
-Task: "体重入力フォームのStorybook Interaction Testを apps/client/src/features/weight/WeightForm.stories.tsx に作成"
-Task: "体重一覧・グラフのStorybook Interaction Testを apps/client/src/features/weight/WeightTrend.stories.tsx に作成"
+Task: "体重入力フォームのStorybook Interaction Testを apps/client/src/features/weight/WeightForm/WeightForm.stories.tsx に作成"
+Task: "体重一覧・グラフのStorybook Interaction Testを apps/client/src/features/weight/WeightTrend/WeightTrend.stories.tsx に作成"
 ```
 
 ---

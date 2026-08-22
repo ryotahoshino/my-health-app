@@ -15,7 +15,7 @@ const defaultDbPath = join(here, "../../data/health-app.db");
  * 新しい接続を作成し、スキーマを適用して返す。
  * dbPath に ":memory:" を渡すとテスト用のインメモリDBになる(原則V: 依存を注入して検証)。
  */
-export function createConnection(dbPath: string): Database.Database {
+export const createConnection = (dbPath: string): Database.Database => {
   if (dbPath !== ":memory:") {
     mkdirSync(dirname(dbPath), { recursive: true });
   }
@@ -26,14 +26,14 @@ export function createConnection(dbPath: string): Database.Database {
   db.pragma("foreign_keys = ON");
   db.exec(schemaSql);
   return db;
-}
+};
 
 let sharedDb: Database.Database | undefined;
 
 /** アプリ実行時に使う共有接続(シングルトン)。 */
-export function getDb(): Database.Database {
+export const getDb = (): Database.Database => {
   if (!sharedDb) {
     sharedDb = createConnection(process.env.DATABASE_PATH ?? defaultDbPath);
   }
   return sharedDb;
-}
+};
