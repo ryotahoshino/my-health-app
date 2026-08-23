@@ -3090,7 +3090,6 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@graphql-codegen/cli": "npm:^7.2.0"
-    "@graphql-codegen/typescript": "npm:^6.1.0"
     "@graphql-codegen/typescript-graphql-request": "npm:^7.1.0"
     "@graphql-codegen/typescript-operations": "npm:^6.1.6"
     "@hookform/resolvers": "npm:^5.9.1"

@@ -75,9 +75,16 @@ apps/
 │   ├── src/
 │   │   ├── features/
 │   │   │   ├── weight/         # P1: 体重記録
-│   │   │   ├── training/       # P2, P3: トレーニング記録・消費カロリー
-│   │   │   ├── steps/          # P4: 歩数記録・消費カロリー
-│   │   │   └── foods/          # P5: 食材参照
+│   │   │   │   ├── WeightForm/       # Storybookを持つ要素は1つずつ専用フォルダに分ける
+│   │   │   │   │   ├── WeightForm.tsx
+│   │   │   │   │   ├── WeightForm.stories.tsx
+│   │   │   │   │   └── index.ts      # バレルエクスポート(外部からのimportパスを変えないため)
+│   │   │   │   ├── WeightTrend/
+│   │   │   │   ├── WeightEmptyState/
+│   │   │   │   └── WeightPage.tsx    # ページ自体はStorybookを持たないためフォルダ化しない
+│   │   │   ├── training/       # P2, P3: トレーニング記録・消費カロリー(同じ構成規約)
+│   │   │   ├── steps/          # P4: 歩数記録・消費カロリー(同じ構成規約)
+│   │   │   └── foods/          # P5: 食材参照(同じ構成規約)
 │   │   ├── components/         # 共通UIコンポーネント(slotProps/slot対応)
 │   │   ├── graphql/            # GraphQL Code Generator 出力(生成物)
 │   │   └── app/                # ルーティング・レイアウト
