@@ -99,11 +99,11 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T028 [P] [US2] トレーニングバリデーション(実施時間1〜600分、強度区分、セット数1〜20、回数1〜100、重量0〜500kg 0.5kg刻み)の単体テストを`apps/server/src/domain/training/trainingValidation.test.ts`に作成する
-- [ ] T029 [P] [US2] TrainingSessionRepositoryの統合テスト(セッション+種目記録のupsert/delete、同日上書きFR-017)を`apps/server/src/repositories/trainingSessionRepository.test.ts`に作成する
-- [ ] T030 [P] [US2] GraphQLリゾルバ統合テスト(`trainingSessions`/`trainingSession`/`upsertTrainingSession`/`deleteTrainingSession`)を`apps/server/src/schema/training.test.ts`に作成する
-- [ ] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.stories.tsx`に作成する
-- [ ] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`に作成する
+- [X] T028 [P] [US2] トレーニングバリデーション(実施時間1〜600分、強度区分、セット数1〜20、回数1〜100、重量0〜500kg 0.5kg刻み)の単体テストを`apps/server/src/domain/training/trainingValidation.test.ts`に作成する
+- [X] T029 [P] [US2] TrainingSessionRepositoryの統合テスト(セッション+種目記録のupsert/delete、同日上書きFR-017)を`apps/server/src/repositories/trainingSessionRepository.test.ts`に作成する
+- [X] T030 [P] [US2] GraphQLリゾルバ統合テスト(`trainingSessions`/`trainingSession`/`upsertTrainingSession`/`deleteTrainingSession`)を`apps/server/src/schema/training.test.ts`に作成する
+- [X] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.stories.tsx`に作成する
+- [X] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`に作成する
 
 ### Implementation for User Story 2
 
