@@ -1,4 +1,5 @@
 import { builder } from "./builder.js";
+import "./mutation.js";
 import { weightRecordInputSchema } from "../domain/weight/weightSchema.js";
 import type { WeightRecord } from "../repositories/weightRepository.js";
 
@@ -27,21 +28,19 @@ builder.queryField("weightRecords", (t) =>
   }),
 );
 
-builder.mutationType({
-  fields: (t) => ({
-    upsertWeightRecord: t.field({
-      type: WeightRecordType,
-      args: {
-        input: t.arg({ type: UpsertWeightRecordInput, required: true }),
-      },
-      resolve: (_parent, args, context) => context.repositories.weight.upsert(args.input),
-    }),
-    deleteWeightRecord: t.field({
-      type: "Boolean",
-      args: {
-        id: t.arg.id({ required: true }),
-      },
-      resolve: (_parent, args, context) => context.repositories.weight.delete(String(args.id)),
-    }),
+builder.mutationFields((t) => ({
+  upsertWeightRecord: t.field({
+    type: WeightRecordType,
+    args: {
+      input: t.arg({ type: UpsertWeightRecordInput, required: true }),
+    },
+    resolve: (_parent, args, context) => context.repositories.weight.upsert(args.input),
   }),
-});
+  deleteWeightRecord: t.field({
+    type: "Boolean",
+    args: {
+      id: t.arg.id({ required: true }),
+    },
+    resolve: (_parent, args, context) => context.repositories.weight.delete(String(args.id)),
+  }),
+}));
