@@ -111,9 +111,9 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T034 [US2] TrainingSession/ExerciseSetのZodスキーマを`apps/server/src/domain/training/trainingSchema.ts`に実装する(依存: T028)
 - [X] T035 [US2] TrainingSessionRepository(同日上書きロジック含む)とExerciseSet永続化を`apps/server/src/repositories/trainingSessionRepository.ts`に実装する(依存: T006, T029)
 - [X] T036 [US2] Pothos型・`Query.trainingSessions`/`trainingSession`・`Mutation.upsertTrainingSession`/`deleteTrainingSession`を`apps/server/src/schema/training.ts`に実装する(依存: T034, T035, T030)
-- [ ] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
-- [ ] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`に実装する(依存: T032, T036)
-- [ ] T039 [US2] トレーニングページの組み立てを`apps/client/src/features/training/TrainingPage.tsx`に実装し、ルーティングに追加する(依存: T037, T038, T014)
+- [X] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
+- [X] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`に実装する(依存: T032, T036)
+- [X] T039 [US2] トレーニングページの組み立てを`apps/client/src/features/training/TrainingPage.tsx`に実装し、ルーティングに追加する(依存: T037, T038, T014)
 
 **Checkpoint**: User Story 1・2がそれぞれ独立して動作確認可能
 

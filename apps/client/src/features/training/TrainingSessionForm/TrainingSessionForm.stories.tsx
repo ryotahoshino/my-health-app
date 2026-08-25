@@ -64,14 +64,14 @@ export const RemoveExercise: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "種目を追加" }));
 
     const deleteButtons = canvas.getAllByRole("button", { name: "削除" });
-    await userEvent.click(deleteButtons[0]);
+    await userEvent.click(deleteButtons[0]!);
 
     const exerciseSelects = canvas.getAllByLabelText("種目");
     expect(exerciseSelects).toHaveLength(1);
-    await userEvent.selectOptions(exerciseSelects[0], "squat");
-    await userEvent.type(canvas.getAllByLabelText("セット数")[0], "4");
-    await userEvent.type(canvas.getAllByLabelText("回数")[0], "8");
-    await userEvent.type(canvas.getAllByLabelText("重量(kg)")[0], "60");
+    await userEvent.selectOptions(exerciseSelects[0]!, "squat");
+    await userEvent.type(canvas.getAllByLabelText("セット数")[0]!, "4");
+    await userEvent.type(canvas.getAllByLabelText("回数")[0]!, "8");
+    await userEvent.type(canvas.getAllByLabelText("重量(kg)")[0]!, "60");
 
     await userEvent.click(canvas.getByRole("button", { name: "保存" }));
 
