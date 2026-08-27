@@ -127,10 +127,10 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T040 [P] [US3] セッション消費カロリー計算(METs方式、体重欠如時はnull)の単体テストを`apps/server/src/domain/calorie/sessionCalorie.test.ts`に作成する(research.md #5)
-- [ ] T041 [P] [US3] 総ボリューム計算(重量×回数×セット)の単体テストを`apps/server/src/domain/training/volume.test.ts`に作成する
-- [ ] T042 [P] [US3] `TrainingSession.calorieEstimate`/`totalVolume`のGraphQLリゾルバ統合テストを`apps/server/src/schema/trainingCalorie.test.ts`に作成する
-- [ ] T043 [P] [US3] 消費カロリー・算出根拠(計算式/定数/出典)・総ボリューム表示のStorybook Interaction Testを`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.stories.tsx`に作成する
+- [X] T040 [P] [US3] セッション消費カロリー計算(METs方式、体重欠如時はnull)の単体テストを`apps/server/src/domain/calorie/sessionCalorie.test.ts`に作成する(research.md #5)
+- [X] T041 [P] [US3] 総ボリューム計算(重量×回数×セット)の単体テストを`apps/server/src/domain/training/volume.test.ts`に作成する
+- [X] T042 [P] [US3] `TrainingSession.calorieEstimate`/`totalVolume`のGraphQLリゾルバ統合テストを`apps/server/src/schema/trainingCalorie.test.ts`に作成する
+- [X] T043 [P] [US3] 消費カロリー・算出根拠(計算式/定数/出典)・総ボリューム表示のStorybook Interaction Testを`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.stories.tsx`に作成する
 
 ### Implementation for User Story 3
 
