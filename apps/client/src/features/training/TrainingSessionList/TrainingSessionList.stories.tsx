@@ -72,6 +72,6 @@ export const ShowsCalorieEstimate: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/350\s*kcal/)).toBeInTheDocument();
-    await expect(canvas.getByText(/3420\s*kg/)).toBeInTheDocument();
+    await expect(canvas.getByText(/3420\.0\s*kg/)).toBeInTheDocument();
   },
 };

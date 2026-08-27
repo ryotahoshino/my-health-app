@@ -34,7 +34,7 @@ export const WithCalorieEstimate: Story = {
     await expect(canvas.getByText(/350\s*kcal/)).toBeInTheDocument();
     await expect(canvas.getByText(/METs × 体重/)).toBeInTheDocument();
     await expect(canvas.getByText(/国立健康・栄養研究所/)).toBeInTheDocument();
-    await expect(canvas.getByText(/3420\s*kg/)).toBeInTheDocument();
+    await expect(canvas.getByText(/3420\.0\s*kg/)).toBeInTheDocument();
   },
 };
 

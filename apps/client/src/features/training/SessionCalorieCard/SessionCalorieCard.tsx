@@ -32,9 +32,9 @@ export const SessionCalorieCard = ({ calorieEstimate, totalVolume }: SessionCalo
     <Typography variant="subtitle1">
       {calorieEstimate.calories === null
         ? "体重が未記録のため消費カロリーを算出できません"
-        : `消費カロリー: ${calorieEstimate.calories}kcal`}
+        : `消費カロリー: ${Math.round(calorieEstimate.calories)}kcal`}
     </Typography>
-    <Typography variant="body2">総ボリューム: {totalVolume}kg</Typography>
+    <Typography variant="body2">総ボリューム: {totalVolume.toFixed(1)}kg</Typography>
     <Typography variant="caption" color="text.secondary">
       計算式: {calorieEstimate.formula}
     </Typography>
