@@ -137,8 +137,8 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T044 [US3] セッション消費カロリー計算の純粋関数を`apps/server/src/domain/calorie/sessionCalorie.ts`に実装する(依存: T040)
 - [X] T045 [P] [US3] 総ボリューム計算の純粋関数を`apps/server/src/domain/training/volume.ts`に実装する(依存: T041)
 - [X] T046 [US3] `TrainingSession.calorieEstimate`/`totalVolume`フィールドリゾルバを`apps/server/src/schema/training.ts`に追加する(依存: T044, T045, T042, T036)
-- [ ] T047 [US3] 消費カロリー・算出根拠・総ボリュームの表示コンポーネント(SessionCalorieCard)を`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx`に実装する(依存: T043)
-- [ ] T048 [US3] 体重未記録時の「算出不可」表示をセッション詳細に統合する`apps/client/src/features/training/TrainingSessionDetail.tsx`(依存: T047, T038)
+- [X] T047 [US3] 消費カロリー・算出根拠・総ボリュームの表示コンポーネント(SessionCalorieCard)を`apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx`に実装する(依存: T043)
+- [X] T048 [US3] 体重未記録時の「算出不可」表示をセッション詳細に統合する`apps/client/src/features/training/TrainingSessionDetail.tsx`に実装する(依存: T047, T038)
 
 **Checkpoint**: User Story 1〜3が独立して動作確認可能(本アプリの中核価値である消費カロリー可視化が成立)
 
