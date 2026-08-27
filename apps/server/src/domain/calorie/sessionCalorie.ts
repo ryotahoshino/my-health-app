@@ -39,26 +39,18 @@ const METS_SOURCE = "国立健康・栄養研究所「改訂版 身体活動の�
 // 委ねる(原則V)。体重が無い場合はcalories=nullとし、算出不可を明示する(FR-011)。
 export const calculateSessionCalorie = (input: SessionCalorieInput): SessionCalorieEstimate => {
   const mets = INTENSITY_METS[input.intensity];
-  const assumedConstants: AssumedConstant[] = [
-    { label: `${INTENSITY_LABELS[input.intensity]}のMETs`, value: mets, unit: "METs" },
-  ];
+  const base = {
+    formula: FORMULA,
+    assumedConstants: [
+      { label: `${INTENSITY_LABELS[input.intensity]}のMETs`, value: mets, unit: "METs" },
+    ],
+    source: METS_SOURCE,
+  };
 
   if (input.weightKg === null) {
-    return {
-      calories: null,
-      formula: FORMULA,
-      assumedConstants,
-      source: METS_SOURCE,
-    };
+    return { ...base, calories: null };
   }
 
   const hours = input.durationMinutes / 60;
-  const calories = mets * input.weightKg * hours;
-
-  return {
-    calories,
-    formula: FORMULA,
-    assumedConstants,
-    source: METS_SOURCE,
-  };
+  return { ...base, calories: mets * input.weightKg * hours };
 };
