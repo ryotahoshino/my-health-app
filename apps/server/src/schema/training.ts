@@ -61,6 +61,12 @@ const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession"
     }),
     // セッション日付以前で最も新しい体重記録を使ってMETs方式で算出する(FR-008・FR-009)。
     // 体重記録が無い場合はcalories=nullとなり、算出不可を示す(FR-011)。
+    // 注: セッション一覧を返す際、このフィールドはセッションごとに
+    // findAsOf()を呼ぶため形式的にはN+1になる。ただしSQLiteのインデックス
+    // 済みクエリは数千件規模でもマイクロ秒オーダーであり、単一ユーザー・
+    // ローカル環境という本アプリのスケール(spec.md Assumptions参照)では
+    // 実害が無いため、リクエスト単位のキャッシュ/バッチ化はあえて導入しない
+    // (YAGNI)。将来マルチユーザー化や大量データを扱う場合は再検討する。
     calorieEstimate: t.field({
       type: CalorieEstimateType,
       resolve: (session, _args, context) => {
