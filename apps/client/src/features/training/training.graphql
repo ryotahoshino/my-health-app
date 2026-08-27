@@ -1,0 +1,44 @@
+query TrainingSessions {
+  trainingSessions {
+    id
+    date
+    durationMinutes
+    intensity
+    exerciseSets {
+      id
+      exerciseId
+      sets
+      reps
+      weightKg
+    }
+  }
+}
+
+query ExerciseCatalog {
+  exerciseCatalog {
+    id
+    name
+    mets
+    source
+  }
+}
+
+mutation UpsertTrainingSession($input: UpsertTrainingSessionInput!) {
+  upsertTrainingSession(input: $input) {
+    id
+    date
+    durationMinutes
+    intensity
+    exerciseSets {
+      id
+      exerciseId
+      sets
+      reps
+      weightKg
+    }
+  }
+}
+
+mutation DeleteTrainingSession($id: ID!) {
+  deleteTrainingSession(id: $id)
+}

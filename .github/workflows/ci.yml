@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      # Storybook Interaction Test(client の test スクリプト)は Playwright(chromium)を
+      # 使って実行するため、CI環境にブラウザ本体を事前インストールしておく。
+      - name: Install Playwright browsers
+        run: yarn workspace @my-health-app/client playwright install --with-deps chromium
+
+      # GraphQLスキーマの一次ソースはPothos(code-first)定義のみ(憲法 原則IV)。
+      # クライアントのcodegen・typecheck・build・testはいずれも、サーバーが
+      # 生成するschema.graphql(.gitignore対象)に依存するため、先に生成する。
+      - name: Generate GraphQL schema (server)
+        run: yarn workspace @my-health-app/server generate:schema
+
+      - name: Generate GraphQL types (client)
+        run: yarn workspace @my-health-app/client codegen
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format check
+        run: yarn format:check
+
+      - name: Typecheck server
+        run: yarn workspace @my-health-app/server typecheck
+
+      - name: Typecheck client
+        run: yarn workspace @my-health-app/client typecheck
+
+      - name: Test server
+        run: yarn workspace @my-health-app/server test
+
+      - name: Test client
+        run: yarn workspace @my-health-app/client test
+
+      - name: Build client
+        run: yarn workspace @my-health-app/client build

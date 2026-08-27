@@ -99,21 +99,21 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T028 [P] [US2] トレーニングバリデーション(実施時間1〜600分、強度区分、セット数1〜20、回数1〜100、重量0〜500kg 0.5kg刻み)の単体テストを`apps/server/src/domain/training/trainingValidation.test.ts`に作成する
-- [ ] T029 [P] [US2] TrainingSessionRepositoryの統合テスト(セッション+種目記録のupsert/delete、同日上書きFR-017)を`apps/server/src/repositories/trainingSessionRepository.test.ts`に作成する
-- [ ] T030 [P] [US2] GraphQLリゾルバ統合テスト(`trainingSessions`/`trainingSession`/`upsertTrainingSession`/`deleteTrainingSession`)を`apps/server/src/schema/training.test.ts`に作成する
-- [ ] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.stories.tsx`に作成する
-- [ ] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`に作成する
+- [X] T028 [P] [US2] トレーニングバリデーション(実施時間1〜600分、強度区分、セット数1〜20、回数1〜100、重量0〜500kg 0.5kg刻み)の単体テストを`apps/server/src/domain/training/trainingValidation.test.ts`に作成する
+- [X] T029 [P] [US2] TrainingSessionRepositoryの統合テスト(セッション+種目記録のupsert/delete、同日上書きFR-017)を`apps/server/src/repositories/trainingSessionRepository.test.ts`に作成する
+- [X] T030 [P] [US2] GraphQLリゾルバ統合テスト(`trainingSessions`/`trainingSession`/`upsertTrainingSession`/`deleteTrainingSession`)を`apps/server/src/schema/training.test.ts`に作成する
+- [X] T031 [P] [US2] セッションフォーム(種目の追加・削除、キーボード操作、エラー関連付け)のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.stories.tsx`に作成する
+- [X] T032 [P] [US2] セッション一覧・詳細表示のStorybook Interaction Testを`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`に作成する
 
 ### Implementation for User Story 2
 
-- [ ] T033 [P] [US2] 種目マスタ参照クエリ`Query.exerciseCatalog`を`apps/server/src/schema/exerciseCatalog.ts`に実装する(依存: T007)
-- [ ] T034 [US2] TrainingSession/ExerciseSetのZodスキーマを`apps/server/src/domain/training/trainingSchema.ts`に実装する(依存: T028)
-- [ ] T035 [US2] TrainingSessionRepository(同日上書きロジック含む)とExerciseSet永続化を`apps/server/src/repositories/trainingSessionRepository.ts`に実装する(依存: T006, T029)
-- [ ] T036 [US2] Pothos型・`Query.trainingSessions`/`trainingSession`・`Mutation.upsertTrainingSession`/`deleteTrainingSession`を`apps/server/src/schema/training.ts`に実装する(依存: T034, T035, T030)
-- [ ] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
-- [ ] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`に実装する(依存: T032, T036)
-- [ ] T039 [US2] トレーニングページの組み立てを`apps/client/src/features/training/TrainingPage.tsx`に実装し、ルーティングに追加する(依存: T037, T038, T014)
+- [X] T033 [P] [US2] 種目マスタ参照クエリ`Query.exerciseCatalog`を`apps/server/src/schema/exerciseCatalog.ts`に実装する(依存: T007)
+- [X] T034 [US2] TrainingSession/ExerciseSetのZodスキーマを`apps/server/src/domain/training/trainingSchema.ts`に実装する(依存: T028)
+- [X] T035 [US2] TrainingSessionRepository(同日上書きロジック含む)とExerciseSet永続化を`apps/server/src/repositories/trainingSessionRepository.ts`に実装する(依存: T006, T029)
+- [X] T036 [US2] Pothos型・`Query.trainingSessions`/`trainingSession`・`Mutation.upsertTrainingSession`/`deleteTrainingSession`を`apps/server/src/schema/training.ts`に実装する(依存: T034, T035, T030)
+- [X] T037 [US2] 種目選択+セット/回数/重量入力を含むセッションフォームを`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`に実装する(依存: T031, T033)
+- [X] T038 [US2] セッション一覧・詳細(種目内訳表示)を`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`に実装する(依存: T032, T036)
+- [X] T039 [US2] トレーニングページの組み立てを`apps/client/src/features/training/TrainingPage.tsx`に実装し、ルーティングに追加する(依存: T037, T038, T014)
 
 **Checkpoint**: User Story 1・2がそれぞれ独立して動作確認可能
 

@@ -18,5 +18,7 @@ export const builder = new SchemaBuilder<{
 });
 
 builder.queryType({});
-// Mutation型はPhase3で実際のmutation(upsertWeightRecord等)を追加する際に宣言する。
-// フィールドが0件のまま宣言するとスキーマがinvalidになるため、今は宣言しない。
+// Mutation型の宣言自体は ./mutation.ts に分離している。フィールドが0件のまま
+// 宣言するとスキーマがinvalidになるため、mutationを持つ機能のスキーマファイルが
+// ./mutation.ts をside-effect importしてから builder.mutationFields() で
+// フィールドを追加する(単一のファイルにmutationTypeの宣言を暗黙的に依存させない)。
