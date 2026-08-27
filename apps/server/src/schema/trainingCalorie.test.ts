@@ -4,8 +4,7 @@ import { builder } from "./builder.js";
 // T046で実装する(このテストは実装が無い間は失敗する)。TrainingSession型に
 // calorieEstimate/totalVolumeフィールドが追加される想定。
 import "./training.js";
-import { createConnection } from "../db/connection.js";
-import { seedExerciseCatalog } from "../db/seed/exerciseCatalog.js";
+import { createSeededTestDb } from "../test-support/seededTestDb.js";
 import {
   createTrainingSessionRepository,
   type TrainingSessionRepository,
@@ -16,12 +15,6 @@ import type Database from "better-sqlite3";
 interface TestContext {
   repositories: { training: TrainingSessionRepository; weight: WeightRepository };
 }
-
-const createTestDb = (): Database.Database => {
-  const db = createConnection(":memory:");
-  seedExerciseCatalog(db);
-  return db;
-};
 
 const createTestContext = (db: Database.Database): TestContext => ({
   repositories: {
@@ -50,7 +43,7 @@ const calorieQuery = `
 
 describe("TrainingSession.calorieEstimate / totalVolume", () => {
   it("直近の体重が記録されていれば消費カロリーを算出する", async () => {
-    const db = createTestDb();
+    const db = createSeededTestDb();
     const contextValue = createTestContext(db);
 
     contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
@@ -78,7 +71,7 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("体重記録が1件も無い場合はcaloriesがnullになる(算出不可、FR-011)", async () => {
-    const db = createTestDb();
+    const db = createSeededTestDb();
     const contextValue = createTestContext(db);
 
     const session = contextValue.repositories.training.upsert({
@@ -103,7 +96,7 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("セッション日付以前で最も新しい体重記録を使う(未来の体重は使わない)", async () => {
-    const db = createTestDb();
+    const db = createSeededTestDb();
     const contextValue = createTestContext(db);
 
     contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 65 });
@@ -131,7 +124,7 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("算出根拠(計算式・定数・出典)が画面表示用に含まれる(原則VII)", async () => {
-    const db = createTestDb();
+    const db = createSeededTestDb();
     const contextValue = createTestContext(db);
 
     contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
@@ -161,7 +154,7 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("種目記録から総ボリューム(重量×回数×セット)を算出する", async () => {
-    const db = createTestDb();
+    const db = createSeededTestDb();
     const contextValue = createTestContext(db);
 
     const session = contextValue.repositories.training.upsert({
