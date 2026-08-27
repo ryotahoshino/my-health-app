@@ -2,6 +2,13 @@ import { builder } from "./builder.js";
 import "./mutation.js";
 import { trainingSessionInputSchema } from "../domain/training/trainingSchema.js";
 import type { TrainingSession, ExerciseSet } from "../repositories/trainingSessionRepository.js";
+import {
+  calculateSessionCalorie,
+  findWeightAsOf,
+  type AssumedConstant,
+  type SessionCalorieEstimate,
+} from "../domain/calorie/sessionCalorie.js";
+import { calculateTotalVolume } from "../domain/training/volume.js";
 
 const TrainingIntensityEnum = builder.enumType("TrainingIntensity", {
   values: ["LOW", "MEDIUM", "HIGH"] as const,
@@ -17,6 +24,27 @@ const ExerciseSetType = builder.objectRef<ExerciseSet>("ExerciseSet").implement(
   }),
 });
 
+const AssumedConstantType = builder.objectRef<AssumedConstant>("AssumedConstant").implement({
+  fields: (t) => ({
+    label: t.exposeString("label"),
+    value: t.exposeFloat("value"),
+    unit: t.exposeString("unit"),
+  }),
+});
+
+// 算出値は計算式と仮定した定数を画面上で確認できるようにする(憲法 原則VII)。
+const CalorieEstimateType = builder.objectRef<SessionCalorieEstimate>("CalorieEstimate").implement({
+  fields: (t) => ({
+    calories: t.exposeFloat("calories", { nullable: true }),
+    formula: t.exposeString("formula"),
+    assumedConstants: t.field({
+      type: [AssumedConstantType],
+      resolve: (estimate) => estimate.assumedConstants,
+    }),
+    source: t.exposeString("source"),
+  }),
+});
+
 const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession").implement({
   fields: (t) => ({
     id: t.exposeID("id"),
@@ -26,6 +54,25 @@ const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession"
     exerciseSets: t.field({
       type: [ExerciseSetType],
       resolve: (session) => session.exerciseSets,
+    }),
+    // 消費カロリー算出には使わず、トレーニング内容の可視化用の別指標として扱う(FR-010)。
+    totalVolume: t.field({
+      type: "Float",
+      resolve: (session) => calculateTotalVolume(session.exerciseSets),
+    }),
+    // セッション日付以前で最も新しい体重記録を使ってMETs方式で算出する(FR-008・FR-009)。
+    // 体重記録が無い場合はcalories=nullとなり、算出不可を示す(FR-011)。
+    calorieEstimate: t.field({
+      type: CalorieEstimateType,
+      resolve: (session, _args, context) => {
+        const weightRecords = context.repositories.weight.list();
+        const weightKg = findWeightAsOf(weightRecords, session.date);
+        return calculateSessionCalorie({
+          intensity: session.intensity,
+          durationMinutes: session.durationMinutes,
+          weightKg,
+        });
+      },
     }),
   }),
 });
