@@ -4,7 +4,6 @@ import { trainingSessionInputSchema } from "../domain/training/trainingSchema.js
 import type { TrainingSession, ExerciseSet } from "../repositories/trainingSessionRepository.js";
 import {
   calculateSessionCalorie,
-  findWeightAsOf,
   type AssumedConstant,
   type SessionCalorieEstimate,
 } from "../domain/calorie/sessionCalorie.js";
@@ -65,8 +64,7 @@ const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession"
     calorieEstimate: t.field({
       type: CalorieEstimateType,
       resolve: (session, _args, context) => {
-        const weightRecords = context.repositories.weight.list();
-        const weightKg = findWeightAsOf(weightRecords, session.date);
+        const weightKg = context.repositories.weight.findAsOf(session.date);
         return calculateSessionCalorie({
           intensity: session.intensity,
           durationMinutes: session.durationMinutes,
