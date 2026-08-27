@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 import { graphqlClient } from "../../app/queryClient";
 import { getSdk } from "../../graphql/generated/sdk";
 import { TrainingSessionForm } from "./TrainingSessionForm";
-import { TrainingSessionDetail } from "./TrainingSessionDetail";
+import { TrainingSessionList } from "./TrainingSessionList";
 
 const sdk = getSdk(graphqlClient);
 const trainingSessionsQueryKey = ["trainingSessions"];
@@ -59,14 +59,11 @@ export const TrainingPage = () => {
       ) : sessions.length === 0 ? (
         <Typography>トレーニング記録はまだありません</Typography>
       ) : (
-        sessions.map((session) => (
-          <TrainingSessionDetail
-            key={session.id}
-            session={session}
-            exercises={exercises}
-            onDelete={() => deleteMutation.mutate(session.id)}
-          />
-        ))
+        <TrainingSessionList
+          sessions={sessions}
+          exercises={exercises}
+          onDelete={(session) => deleteMutation.mutate(session.id)}
+        />
       )}
     </Root>
   );

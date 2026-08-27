@@ -1,5 +1,6 @@
 import { Button, Card, CardContent, List, ListItem, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { SessionCalorieCard, type CalorieEstimate } from "../SessionCalorieCard";
 
 export interface TrainingSessionListExerciseSet {
   id: string;
@@ -15,6 +16,8 @@ export interface TrainingSessionListItem {
   durationMinutes: number;
   intensity: "LOW" | "MEDIUM" | "HIGH";
   exerciseSets: TrainingSessionListExerciseSet[];
+  totalVolume: number;
+  calorieEstimate: CalorieEstimate;
 }
 
 export interface TrainingSessionListProps {
@@ -33,8 +36,9 @@ const Root = styled(Stack)({
   gap: 16,
 });
 
-// セッション一覧・詳細(種目内訳表示)。種目名はexerciseIdをキーに
-// exercises(種目マスタ参照データ)から解決する(FR-007)。
+// セッション一覧・詳細(種目内訳 + 消費カロリー/総ボリューム表示)。種目名は
+// exerciseIdをキーにexercises(種目マスタ参照データ)から解決する(FR-007)。
+// 体重未記録の場合はSessionCalorieCard側が「算出できません」の表示になる(FR-011)。
 export const TrainingSessionList = ({
   sessions,
   exercises,
@@ -59,6 +63,10 @@ export const TrainingSessionList = ({
                 </ListItem>
               ))}
             </List>
+            <SessionCalorieCard
+              calorieEstimate={session.calorieEstimate}
+              totalVolume={session.totalVolume}
+            />
             {onDelete && (
               <Button size="small" onClick={() => onDelete(session)}>
                 削除
