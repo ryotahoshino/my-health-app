@@ -152,13 +152,13 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T049 [P] [US4] 歩数バリデーション(0〜100,000歩)の単体テストを`apps/server/src/domain/steps/stepsValidation.test.ts`に作成する
-- [ ] T050 [P] [US4] 歩数消費カロリー計算(METs・ケイデンス)の単体テストを`apps/server/src/domain/calorie/stepCalorie.test.ts`に作成する(research.md #5)
-- [ ] T051 [P] [US4] 1日合算(DailyCalorieSummary、概算フラグ)の単体テストを`apps/server/src/domain/calorie/dailySummary.test.ts`に作成する
-- [ ] T052 [P] [US4] StepRecordRepositoryの統合テスト(同日上書き)を`apps/server/src/repositories/stepRecordRepository.test.ts`に作成する
-- [ ] T053 [P] [US4] GraphQLリゾルバ統合テスト(`stepRecords`/`upsertStepRecord`/`deleteStepRecord`/`dailyCalorieSummaries`)を`apps/server/src/schema/steps.test.ts`に作成する
-- [ ] T054 [P] [US4] 歩数入力フォーム+算出根拠表示のStorybook Interaction Testを`apps/client/src/features/steps/StepsForm/StepsForm.stories.tsx`に作成する
-- [ ] T055 [P] [US4] 1日合算表示(概算注記)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`に作成する
+- [X] T049 [P] [US4] 歩数バリデーション(0〜100,000歩)の単体テストを`apps/server/src/domain/steps/stepsValidation.test.ts`に作成する
+- [X] T050 [P] [US4] 歩数消費カロリー計算(METs・ケイデンス)の単体テストを`apps/server/src/domain/calorie/stepCalorie.test.ts`に作成する(research.md #5)
+- [X] T051 [P] [US4] 1日合算(DailyCalorieSummary、概算フラグ)の単体テストを`apps/server/src/domain/calorie/dailySummary.test.ts`に作成する
+- [X] T052 [P] [US4] StepRecordRepositoryの統合テスト(同日上書き)を`apps/server/src/repositories/stepRecordRepository.test.ts`に作成する
+- [X] T053 [P] [US4] GraphQLリゾルバ統合テスト(`stepRecords`/`upsertStepRecord`/`deleteStepRecord`/`dailyCalorieSummaries`)を`apps/server/src/schema/steps.test.ts`に作成する
+- [X] T054 [P] [US4] 歩数入力フォームのStorybook Interaction Testを`apps/client/src/features/steps/StepsForm/StepsForm.stories.tsx`に作成する。算出根拠表示はDailyCalorieSummary側で担う設計にした(WeightForm/SessionCalorieCardの分担パターンに合わせた)
+- [X] T055 [P] [US4] 1日合算表示(概算注記・歩数の算出根拠)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`に作成する
 
 ### Implementation for User Story 4
 
