@@ -1,5 +1,6 @@
 import type { WeightRepository } from "../repositories/weightRepository.js";
 import type { TrainingSessionRepository } from "../repositories/trainingSessionRepository.js";
+import type { StepRecordRepository } from "../repositories/stepRecordRepository.js";
 
 // GraphQL Yogaのcontextファクトリ(index.ts)が返す形と一致させる。
 // リポジトリをcontext経由で受け渡すことで、リゾルバはテスト時に
@@ -8,5 +9,6 @@ export interface GraphQLContext {
   repositories: {
     weight: WeightRepository;
     training: TrainingSessionRepository;
+    steps: StepRecordRepository;
   };
 }
