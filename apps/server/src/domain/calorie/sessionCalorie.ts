@@ -47,8 +47,12 @@ export const calculateSessionCalorie = (input: SessionCalorieInput): SessionCalo
     source: METS_SOURCE,
   };
 
-  const calories =
-    input.weightKg === null ? null : mets * input.weightKg * (input.durationMinutes / 60);
+  let calories: number | null;
+  if (input.weightKg === null) {
+    calories = null;
+  } else {
+    calories = mets * input.weightKg * (input.durationMinutes / 60);
+  }
 
   return { ...base, calories };
 };

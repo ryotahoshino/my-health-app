@@ -41,7 +41,10 @@ export const createWeightRepository = (db: Database.Database): WeightRepository 
     },
     findAsOf(date) {
       const row = findAsOfStatement.get(date) as { weightKg: number } | undefined;
-      return row ? row.weightKg : null;
+      if (row) {
+        return row.weightKg;
+      }
+      return null;
     },
     upsert(input) {
       // 同一日付への保存は既存レコードの上書きとする(FR-017)。
