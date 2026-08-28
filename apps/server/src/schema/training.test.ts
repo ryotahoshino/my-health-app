@@ -5,8 +5,7 @@ import { builder } from "./builder.js";
 // builderにQuery.trainingSessions/trainingSession・
 // Mutation.upsertTrainingSession/deleteTrainingSessionを登録する想定。
 import "./training.js";
-import { createConnection } from "../db/connection.js";
-import { seedExerciseCatalog } from "../db/seed/exerciseCatalog.js";
+import { createSeededTestDb } from "../test-support/seededTestDb.js";
 import {
   createTrainingSessionRepository,
   type TrainingSessionRepository,
@@ -18,8 +17,7 @@ interface TestContext {
 }
 
 const createTestContext = (): TestContext => {
-  const db = createConnection(":memory:");
-  seedExerciseCatalog(db);
+  const db = createSeededTestDb();
   return { repositories: { training: createTrainingSessionRepository(db) } };
 };
 

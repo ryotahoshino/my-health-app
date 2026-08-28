@@ -9,6 +9,8 @@ export interface WeightRecord {
 
 export interface WeightRepository {
   list(): WeightRecord[];
+  /** 指定日以前で最も新しい体重記録を返す(未来の体重は対象外)。無ければnull。 */
+  findAsOf(date: string): number | null;
   upsert(input: { date: string; weightKg: number }): WeightRecord;
   delete(id: string): boolean;
 }
@@ -22,6 +24,9 @@ export const createWeightRepository = (db: Database.Database): WeightRepository 
   const findByDateStatement = db.prepare(
     "SELECT id, date, weight_kg AS weightKg FROM weight_records WHERE date = ?",
   );
+  const findAsOfStatement = db.prepare(
+    "SELECT weight_kg AS weightKg FROM weight_records WHERE date <= ? ORDER BY date DESC LIMIT 1",
+  );
   const insertStatement = db.prepare(
     "INSERT INTO weight_records (id, date, weight_kg) VALUES (@id, @date, @weightKg)",
   );
@@ -33,6 +38,13 @@ export const createWeightRepository = (db: Database.Database): WeightRepository 
   return {
     list() {
       return listStatement.all() as WeightRecord[];
+    },
+    findAsOf(date) {
+      const row = findAsOfStatement.get(date) as { weightKg: number } | undefined;
+      if (row) {
+        return row.weightKg;
+      }
+      return null;
     },
     upsert(input) {
       // 同一日付への保存は既存レコードの上書きとする(FR-017)。

@@ -114,7 +114,10 @@ export const createTrainingSessionRepository = (
     },
     get(id) {
       const session = findSessionByIdStatement.get(id) as SessionRow | undefined;
-      return session ? attachExerciseSets(session) : undefined;
+      if (session) {
+        return attachExerciseSets(session);
+      }
+      return undefined;
     },
     upsert(input) {
       return upsertTransaction(input);

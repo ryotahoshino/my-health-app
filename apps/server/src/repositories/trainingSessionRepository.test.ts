@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type Database from "better-sqlite3";
-import { createConnection } from "../db/connection.js";
-import { seedExerciseCatalog } from "../db/seed/exerciseCatalog.js";
+import { createSeededTestDb } from "../test-support/seededTestDb.js";
 // T035で実装する(このテストは実装が無い間は失敗する)
 import {
   createTrainingSessionRepository,
@@ -20,8 +19,7 @@ describe("TrainingSessionRepository (SQLite)", () => {
   let repository: TrainingSessionRepository;
 
   beforeEach(() => {
-    db = createConnection(":memory:");
-    seedExerciseCatalog(db); // exercise_sets.exercise_id の外部キー先として必要
+    db = createSeededTestDb(); // exercise_sets.exercise_id の外部キー先として種目マスタが必要
     repository = createTrainingSessionRepository(db);
   });
 

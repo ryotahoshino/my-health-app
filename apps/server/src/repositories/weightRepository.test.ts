@@ -54,4 +54,15 @@ describe("WeightRepository (SQLite)", () => {
   it("存在しないIDの削除はfalseを返す", () => {
     expect(repository.delete("does-not-exist")).toBe(false);
   });
+
+  it("findAsOfは指定日以前で最も新しい体重記録を返す(未来の体重は対象外)", () => {
+    repository.upsert({ date: "2026-01-01", weightKg: 65 });
+    repository.upsert({ date: "2026-01-10", weightKg: 80 }); // 対象日より後
+
+    expect(repository.findAsOf("2026-01-05")).toBe(65);
+  });
+
+  it("findAsOfは記録が1件も無い場合はnullを返す", () => {
+    expect(repository.findAsOf("2026-01-05")).toBeNull();
+  });
 });

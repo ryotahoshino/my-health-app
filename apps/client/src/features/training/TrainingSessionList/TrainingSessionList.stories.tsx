@@ -23,6 +23,13 @@ const sessions = [
       { id: "set-1", exerciseId: "bench-press", sets: 3, reps: 10, weightKg: 50 },
       { id: "set-2", exerciseId: "squat", sets: 4, reps: 8, weightKg: 60 },
     ],
+    totalVolume: 3420,
+    calorieEstimate: {
+      calories: 350,
+      formula: "消費カロリー(kcal) = METs × 体重(kg) × 実施時間(h)",
+      assumedConstants: [{ label: "中強度のMETs", value: 5, unit: "METs" }],
+      source: "国立健康・栄養研究所「改訂版 身体活動のメッツ(METs)表」",
+    },
   },
 ];
 
@@ -57,5 +64,14 @@ export const ShowsExerciseBreakdown: Story = {
     await expect(canvas.getByText(/3セット/)).toBeInTheDocument();
     await expect(canvas.getByText(/10回/)).toBeInTheDocument();
     await expect(canvas.getByText(/50kg/)).toBeInTheDocument();
+  },
+};
+
+export const ShowsCalorieEstimate: Story = {
+  name: "消費カロリー・総ボリューム(SessionCalorieCard)が表示される",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText(/350\s*kcal/)).toBeInTheDocument();
+    await expect(canvas.getByText(/3420\.0\s*kg/)).toBeInTheDocument();
   },
 };

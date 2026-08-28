@@ -11,6 +11,17 @@ query TrainingSessions {
       reps
       weightKg
     }
+    totalVolume
+    calorieEstimate {
+      calories
+      formula
+      source
+      assumedConstants {
+        label
+        value
+        unit
+      }
+    }
   }
 }
 

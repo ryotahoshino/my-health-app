@@ -45,6 +45,21 @@ export const TrainingPage = () => {
   const exercises = exerciseCatalogData?.exerciseCatalog ?? [];
   const sessions = sessionsData?.trainingSessions ?? [];
 
+  let content;
+  if (isLoading) {
+    content = <Typography>読み込み中...</Typography>;
+  } else if (sessions.length === 0) {
+    content = <Typography>トレーニング記録はまだありません</Typography>;
+  } else {
+    content = (
+      <TrainingSessionList
+        sessions={sessions}
+        exercises={exercises}
+        onDelete={(session) => deleteMutation.mutate(session.id)}
+      />
+    );
+  }
+
   return (
     <Root spacing={4}>
       <Typography variant="h5" component="h1">
@@ -54,17 +69,7 @@ export const TrainingPage = () => {
         exercises={exercises}
         onSubmit={(values) => upsertMutation.mutate(values)}
       />
-      {isLoading ? (
-        <Typography>読み込み中...</Typography>
-      ) : sessions.length === 0 ? (
-        <Typography>トレーニング記録はまだありません</Typography>
-      ) : (
-        <TrainingSessionList
-          sessions={sessions}
-          exercises={exercises}
-          onDelete={(session) => deleteMutation.mutate(session.id)}
-        />
-      )}
+      {content}
     </Root>
   );
 };
