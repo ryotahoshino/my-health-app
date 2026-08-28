@@ -167,9 +167,9 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T058 [US4] 1日合算計算の純粋関数(概算フラグ)を`apps/server/src/domain/calorie/dailySummary.ts`に実装する(依存: T051, T044, T057)
 - [X] T059 [US4] StepRecordRepository(同日上書き)を`apps/server/src/repositories/stepRecordRepository.ts`に実装する(依存: T006, T052)
 - [X] T060 [US4] Pothos型・`Query.stepRecords`/`dailyCalorieSummaries`・`Mutation.upsertStepRecord`/`deleteStepRecord`を`apps/server/src/schema/steps.ts`に実装する(依存: T056, T059, T058, T053)
-- [ ] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm/StepsForm.tsx`に実装する(依存: T054)
-- [ ] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
-- [ ] T063 [US4] 歩数ページの組み立てを`apps/client/src/features/steps/StepsPage.tsx`に実装し、ルーティングに追加する(依存: T061, T062, T014)
+- [X] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm/StepsForm.tsx`に実装する(依存: T054)
+- [X] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
+- [X] T063 [US4] 歩数ページの組み立てを`apps/client/src/features/steps/StepsPage.tsx`に実装し、ルーティングに追加する(依存: T061, T062, T014)
 
 **Checkpoint**: User Story 1〜4が独立して動作確認可能(1日単位の消費カロリー可視化が完成)
 

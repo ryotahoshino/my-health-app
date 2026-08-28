@@ -5,6 +5,7 @@ import { stepRecordInputSchema } from "../domain/steps/stepsSchema.js";
 import { calculateStepCalorie } from "../domain/calorie/stepCalorie.js";
 import { calculateSessionCalorie } from "../domain/calorie/sessionCalorie.js";
 import { calculateDailyCalorieSummary } from "../domain/calorie/dailySummary.js";
+import type { SessionCalorieEstimate } from "../domain/calorie/sessionCalorie.js";
 import type { StepRecord } from "../repositories/stepRecordRepository.js";
 
 const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
@@ -28,6 +29,7 @@ interface DailyCalorieSummaryRow {
   date: string;
   trainingCalories: number | null;
   stepCalories: number | null;
+  stepCalorieEstimate: SessionCalorieEstimate;
   totalCalories: number | null;
   isApproximate: boolean;
 }
@@ -41,6 +43,12 @@ const DailyCalorieSummaryType = builder
       date: t.exposeString("date"),
       trainingCalories: t.exposeFloat("trainingCalories", { nullable: true }),
       stepCalories: t.exposeFloat("stepCalories", { nullable: true }),
+      // stepCaloriesは数値のみだが、画面上に算出根拠(計算式・定数・出典)も
+      // あわせて表示するため、CalorieEstimate型としても公開する(憲法 原則VII)。
+      stepCalorieEstimate: t.field({
+        type: CalorieEstimateType,
+        resolve: (summary) => summary.stepCalorieEstimate,
+      }),
       totalCalories: t.exposeFloat("totalCalories", { nullable: true }),
       isApproximate: t.exposeBoolean("isApproximate"),
     }),
@@ -97,14 +105,32 @@ builder.queryField("dailyCalorieSummaries", (t) =>
             trainingCalories = 0;
           }
 
-          let stepCalories: number | null;
+          let steps: number;
           if (stepRecord) {
-            stepCalories = calculateStepCalorie({ steps: stepRecord.steps, weightKg }).calories;
+            steps = stepRecord.steps;
           } else {
-            stepCalories = 0;
+            steps = 0;
+          }
+          const rawStepEstimate = calculateStepCalorie({ steps, weightKg });
+
+          // trainingCaloriesと同様、その日の記録が無ければ体重の有無に関わらず
+          // 0kcalとして扱う(未記録=活動量ゼロが確定しているため算出不可では
+          // ない)。記録がある場合のみ、体重未記録により算出不可(null)になりうる。
+          let stepCalorieEstimate: SessionCalorieEstimate;
+          if (stepRecord) {
+            stepCalorieEstimate = rawStepEstimate;
+          } else {
+            stepCalorieEstimate = { ...rawStepEstimate, calories: 0 };
           }
 
-          return { date, ...calculateDailyCalorieSummary({ trainingCalories, stepCalories }) };
+          return {
+            date,
+            stepCalorieEstimate,
+            ...calculateDailyCalorieSummary({
+              trainingCalories,
+              stepCalories: stepCalorieEstimate.calories,
+            }),
+          };
         });
     },
   }),
