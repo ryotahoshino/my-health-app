@@ -152,24 +152,24 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T049 [P] [US4] 歩数バリデーション(0〜100,000歩)の単体テストを`apps/server/src/domain/steps/stepsValidation.test.ts`に作成する
-- [ ] T050 [P] [US4] 歩数消費カロリー計算(METs・ケイデンス)の単体テストを`apps/server/src/domain/calorie/stepCalorie.test.ts`に作成する(research.md #5)
-- [ ] T051 [P] [US4] 1日合算(DailyCalorieSummary、概算フラグ)の単体テストを`apps/server/src/domain/calorie/dailySummary.test.ts`に作成する
-- [ ] T052 [P] [US4] StepRecordRepositoryの統合テスト(同日上書き)を`apps/server/src/repositories/stepRecordRepository.test.ts`に作成する
-- [ ] T053 [P] [US4] GraphQLリゾルバ統合テスト(`stepRecords`/`upsertStepRecord`/`deleteStepRecord`/`dailyCalorieSummaries`)を`apps/server/src/schema/steps.test.ts`に作成する
-- [ ] T054 [P] [US4] 歩数入力フォーム+算出根拠表示のStorybook Interaction Testを`apps/client/src/features/steps/StepsForm/StepsForm.stories.tsx`に作成する
-- [ ] T055 [P] [US4] 1日合算表示(概算注記)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`に作成する
+- [X] T049 [P] [US4] 歩数バリデーション(0〜100,000歩)の単体テストを`apps/server/src/domain/steps/stepsValidation.test.ts`に作成する
+- [X] T050 [P] [US4] 歩数消費カロリー計算(METs・ケイデンス)の単体テストを`apps/server/src/domain/calorie/stepCalorie.test.ts`に作成する(research.md #5)
+- [X] T051 [P] [US4] 1日合算(DailyCalorieSummary、概算フラグ)の単体テストを`apps/server/src/domain/calorie/dailySummary.test.ts`に作成する
+- [X] T052 [P] [US4] StepRecordRepositoryの統合テスト(同日上書き)を`apps/server/src/repositories/stepRecordRepository.test.ts`に作成する
+- [X] T053 [P] [US4] GraphQLリゾルバ統合テスト(`stepRecords`/`upsertStepRecord`/`deleteStepRecord`/`dailyCalorieSummaries`)を`apps/server/src/schema/steps.test.ts`に作成する
+- [X] T054 [P] [US4] 歩数入力フォームのStorybook Interaction Testを`apps/client/src/features/steps/StepsForm/StepsForm.stories.tsx`に作成する。算出根拠表示はDailyCalorieSummary側で担う設計にした(WeightForm/SessionCalorieCardの分担パターンに合わせた)
+- [X] T055 [P] [US4] 1日合算表示(概算注記・歩数の算出根拠)のStorybook Interaction Testを`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`に作成する
 
 ### Implementation for User Story 4
 
-- [ ] T056 [US4] StepRecordのZodスキーマを`apps/server/src/domain/steps/stepsSchema.ts`に実装する(依存: T049)
-- [ ] T057 [US4] 歩数消費カロリー計算の純粋関数を`apps/server/src/domain/calorie/stepCalorie.ts`に実装する(依存: T050)
-- [ ] T058 [US4] 1日合算計算の純粋関数(概算フラグ)を`apps/server/src/domain/calorie/dailySummary.ts`に実装する(依存: T051, T044, T057)
-- [ ] T059 [US4] StepRecordRepository(同日上書き)を`apps/server/src/repositories/stepRecordRepository.ts`に実装する(依存: T006, T052)
-- [ ] T060 [US4] Pothos型・`Query.stepRecords`/`dailyCalorieSummaries`・`Mutation.upsertStepRecord`/`deleteStepRecord`を`apps/server/src/schema/steps.ts`に実装する(依存: T056, T059, T058, T053)
-- [ ] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm/StepsForm.tsx`に実装する(依存: T054)
-- [ ] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
-- [ ] T063 [US4] 歩数ページの組み立てを`apps/client/src/features/steps/StepsPage.tsx`に実装し、ルーティングに追加する(依存: T061, T062, T014)
+- [X] T056 [US4] StepRecordのZodスキーマを`apps/server/src/domain/steps/stepsSchema.ts`に実装する(依存: T049)
+- [X] T057 [US4] 歩数消費カロリー計算の純粋関数を`apps/server/src/domain/calorie/stepCalorie.ts`に実装する(依存: T050)
+- [X] T058 [US4] 1日合算計算の純粋関数(概算フラグ)を`apps/server/src/domain/calorie/dailySummary.ts`に実装する(依存: T051, T044, T057)
+- [X] T059 [US4] StepRecordRepository(同日上書き)を`apps/server/src/repositories/stepRecordRepository.ts`に実装する(依存: T006, T052)
+- [X] T060 [US4] Pothos型・`Query.stepRecords`/`dailyCalorieSummaries`・`Mutation.upsertStepRecord`/`deleteStepRecord`を`apps/server/src/schema/steps.ts`に実装する(依存: T056, T059, T058, T053)
+- [X] T061 [US4] 歩数入力フォームを`apps/client/src/features/steps/StepsForm/StepsForm.tsx`に実装する(依存: T054)
+- [X] T062 [US4] 1日合算表示(トレーニング分+歩数分、概算注記)を`apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx`に実装する(依存: T055, T060)
+- [X] T063 [US4] 歩数ページの組み立てを`apps/client/src/features/steps/StepsPage.tsx`に実装し、ルーティングに追加する(依存: T061, T062, T014)
 
 **Checkpoint**: User Story 1〜4が独立して動作確認可能(1日単位の消費カロリー可視化が完成)
 

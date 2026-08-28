@@ -32,17 +32,21 @@ const AssumedConstantType = builder.objectRef<AssumedConstant>("AssumedConstant"
 });
 
 // 算出値は計算式と仮定した定数を画面上で確認できるようにする(憲法 原則VII)。
-const CalorieEstimateType = builder.objectRef<SessionCalorieEstimate>("CalorieEstimate").implement({
-  fields: (t) => ({
-    calories: t.exposeFloat("calories", { nullable: true }),
-    formula: t.exposeString("formula"),
-    assumedConstants: t.field({
-      type: [AssumedConstantType],
-      resolve: (estimate) => estimate.assumedConstants,
+// steps.ts(歩数の消費カロリー)も同じ形の見積もりを返すため、GraphQL型
+// 「CalorieEstimate」を二重定義しないようここでexportして再利用する。
+export const CalorieEstimateType = builder
+  .objectRef<SessionCalorieEstimate>("CalorieEstimate")
+  .implement({
+    fields: (t) => ({
+      calories: t.exposeFloat("calories", { nullable: true }),
+      formula: t.exposeString("formula"),
+      assumedConstants: t.field({
+        type: [AssumedConstantType],
+        resolve: (estimate) => estimate.assumedConstants,
+      }),
+      source: t.exposeString("source"),
     }),
-    source: t.exposeString("source"),
-  }),
-});
+  });
 
 const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession").implement({
   fields: (t) => ({

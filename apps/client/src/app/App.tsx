@@ -5,6 +5,7 @@ import { queryClient } from "./queryClient";
 import { theme } from "./theme";
 import { WeightPage } from "../features/weight/WeightPage";
 import { TrainingPage } from "../features/training/TrainingPage";
+import { StepsPage } from "../features/steps/StepsPage";
 
 // 各ストーリー(Phase3〜7)で実際の画面に差し替えるまでのプレースホルダー。
 const ComingSoon = ({ title }: { title: string }) => {
@@ -29,7 +30,7 @@ export const App = () => {
           <Routes>
             <Route path="/weight" element={<WeightPage />} />
             <Route path="/training" element={<TrainingPage />} />
-            <Route path="/steps" element={<ComingSoon title="歩数記録" />} />
+            <Route path="/steps" element={<StepsPage />} />
             <Route path="/foods" element={<ComingSoon title="食材一覧" />} />
             <Route path="*" element={<ComingSoon title="ホーム" />} />
           </Routes>

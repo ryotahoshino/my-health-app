@@ -1,0 +1,39 @@
+query StepRecords {
+  stepRecords {
+    id
+    date
+    steps
+  }
+}
+
+query DailyCalorieSummaries {
+  dailyCalorieSummaries {
+    date
+    trainingCalories
+    stepCalories
+    stepCalorieEstimate {
+      calories
+      formula
+      assumedConstants {
+        label
+        value
+        unit
+      }
+      source
+    }
+    totalCalories
+    isApproximate
+  }
+}
+
+mutation UpsertStepRecord($input: UpsertStepRecordInput!) {
+  upsertStepRecord(input: $input) {
+    id
+    date
+    steps
+  }
+}
+
+mutation DeleteStepRecord($id: ID!) {
+  deleteStepRecord(id: $id)
+}
