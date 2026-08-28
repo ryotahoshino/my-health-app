@@ -24,14 +24,21 @@ const config: StorybookConfig = {
   // 引っかかって失敗するため、Storybookのビルドからは除外する。
   async viteFinal(viteConfig) {
     // VitePWA()は複数プラグインの配列を返すため、フィルタ前に1段階フラット化する
-    const flatPlugins = (viteConfig.plugins ?? []).flatMap((plugin) =>
-      Array.isArray(plugin) ? plugin : [plugin],
-    );
+    const flatPlugins = (viteConfig.plugins ?? []).flatMap((plugin) => {
+      if (Array.isArray(plugin)) {
+        return plugin;
+      }
+      return [plugin];
+    });
     return {
       ...viteConfig,
       plugins: flatPlugins.filter((plugin) => {
-        const name =
-          plugin && typeof plugin === "object" && "name" in plugin ? plugin.name : undefined;
+        let name: unknown;
+        if (plugin && typeof plugin === "object" && "name" in plugin) {
+          name = plugin.name;
+        } else {
+          name = undefined;
+        }
         return typeof name !== "string" || !name.startsWith("vite-plugin-pwa");
       }),
     };

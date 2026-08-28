@@ -34,22 +34,27 @@ export const WeightPage = () => {
 
   const records = data?.weightRecords ?? [];
 
+  let content;
+  if (isLoading) {
+    content = <Typography>読み込み中...</Typography>;
+  } else if (records.length === 0) {
+    content = <WeightEmptyState />;
+  } else {
+    content = (
+      <WeightTrend
+        records={records}
+        onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
+      />
+    );
+  }
+
   return (
     <Root spacing={4}>
       <Typography variant="h5" component="h1">
         体重記録
       </Typography>
       <WeightForm onSubmit={(values) => upsertMutation.mutate(values)} />
-      {isLoading ? (
-        <Typography>読み込み中...</Typography>
-      ) : records.length === 0 ? (
-        <WeightEmptyState />
-      ) : (
-        <WeightTrend
-          records={records}
-          onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
-        />
-      )}
+      {content}
     </Root>
   );
 };
