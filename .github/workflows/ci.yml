@@ -55,7 +55,11 @@ jobs:
       - name: Test server
         run: yarn workspace @my-health-app/server test
 
-      - name: Test client
+      # apps/client/.storybook/preview.tsx で a11y.test: "error" を設定しているため、
+      # 全ストーリーの実行(このtestスクリプト)にStorybook a11yアドオン(axe)による
+      # アクセシビリティチェックが含まれ、違反があればこのステップ自体が失敗する
+      # (憲法 原則I: 「後で対応する」を認めない、FR-016のアクセシビリティ最終確認)。
+      - name: Test client (includes Storybook a11y checks)
         run: yarn workspace @my-health-app/client test
 
       - name: Build client
