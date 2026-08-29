@@ -6,6 +6,7 @@ import { getSdk } from "../../graphql/generated/sdk";
 import { TrainingSessionForm } from "./TrainingSessionForm";
 import { TrainingSessionList } from "./TrainingSessionList";
 import { EmptyState } from "../../components/EmptyState";
+import { QueryState } from "../../components/QueryState";
 
 const sdk = getSdk(graphqlClient);
 const trainingSessionsQueryKey = ["trainingSessions"];
@@ -46,26 +47,6 @@ export const TrainingPage = () => {
   const exercises = exerciseCatalogData?.exerciseCatalog ?? [];
   const sessions = sessionsData?.trainingSessions ?? [];
 
-  let content;
-  if (isLoading) {
-    content = <Typography>読み込み中...</Typography>;
-  } else if (sessions.length === 0) {
-    content = (
-      <EmptyState
-        message="トレーニング記録はまだありません"
-        description="上のフォームから最初のセッションを記録しましょう"
-      />
-    );
-  } else {
-    content = (
-      <TrainingSessionList
-        sessions={sessions}
-        exercises={exercises}
-        onDelete={(session) => deleteMutation.mutate(session.id)}
-      />
-    );
-  }
-
   return (
     <Root spacing={4}>
       <Typography variant="h5" component="h1">
@@ -75,7 +56,22 @@ export const TrainingPage = () => {
         exercises={exercises}
         onSubmit={(values) => upsertMutation.mutate(values)}
       />
-      {content}
+      <QueryState
+        isLoading={isLoading}
+        isEmpty={sessions.length === 0}
+        emptyState={
+          <EmptyState
+            message="トレーニング記録はまだありません"
+            description="上のフォームから最初のセッションを記録しましょう"
+          />
+        }
+      >
+        <TrainingSessionList
+          sessions={sessions}
+          exercises={exercises}
+          onDelete={(session) => deleteMutation.mutate(session.id)}
+        />
+      </QueryState>
     </Root>
   );
 };
