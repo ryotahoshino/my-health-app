@@ -16,9 +16,11 @@ const Root = styled(Stack)({
 export const StepsPage = () => {
   const queryClient = useQueryClient();
 
+  // 集計プリセット切替UI(PeriodSelector)はT074で導入する。それまでは
+  // 従来どおり日次(1日1件の内訳)を既定表示とする。
   const { data, isLoading } = useQuery({
     queryKey: dailyCalorieSummariesQueryKey,
-    queryFn: () => sdk.DailyCalorieSummaries(),
+    queryFn: () => sdk.DailyCalorieSummaries({ period: "DAILY" }),
   });
 
   const upsertMutation = useMutation({

@@ -201,10 +201,10 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 **Purpose**: 複数ストーリーにまたがる期間集計(FR-016)と、横断的な仕上げ
 
-- [ ] T070 [P] 期間集計(日次/週次/月次、月曜始まり、経過分のみ、欠測日の区別)の単体テストを`apps/server/src/domain/period/periodAggregate.test.ts`に作成する
-- [ ] T071 期間集計の純粋関数(PeriodAggregate)を`apps/server/src/domain/period/periodAggregate.ts`に実装する(依存: T070)
-- [ ] T072 [P] `Query.weightTrendAggregate(period)`を`apps/server/src/schema/weight.ts`に追加する(依存: T071, T023)
-- [ ] T073 [P] `Query.dailyCalorieSummaries(period)`の期間集計対応を`apps/server/src/schema/steps.ts`に追加する(依存: T071, T060)
+- [X] T070 [P] 期間集計(日次/週次/月次、月曜始まり、経過分のみ、欠測日の区別)の単体テストを`apps/server/src/domain/period/periodAggregate.test.ts`に作成する
+- [X] T071 期間集計の純粋関数(PeriodAggregate)を`apps/server/src/domain/period/periodAggregate.ts`に実装する(依存: T070)
+- [X] T072 [P] `Query.weightTrendAggregate(period)`を`apps/server/src/schema/weight.ts`に追加する(依存: T071, T023)
+- [X] T073 [P] `Query.dailyCalorieSummaries(period)`の期間集計対応を`apps/server/src/schema/steps.ts`に追加する(依存: T071, T060)
 - [ ] T074 [P] 日次・週次・月次の集計プリセット切替UI(slotProps対応の共通コンポーネント)を`apps/client/src/components/PeriodSelector.tsx`に実装する(依存: T072, T073)
 - [ ] T075 [P] 記録0件時の共通空状態コンポーネントを`apps/client/src/components/EmptyState.tsx`に抽出し、各ストーリーの個別実装を置き換える(依存: T026, T063, T069)
 - [ ] T076 [P] アクセシビリティ最終確認としてStorybook a11yアドオンのチェックをCI相当のスクリプトに統合する

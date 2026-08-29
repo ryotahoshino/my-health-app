@@ -8,6 +8,7 @@ import "./schema/training.js";
 import "./schema/steps.js";
 import "./schema/foodItems.js";
 import type { GraphQLContext } from "./schema/context.js";
+import { getTodayDateString } from "./schema/today.js";
 import { getDb } from "./db/connection.js";
 import { seedExerciseCatalog } from "./db/seed/exerciseCatalog.js";
 import { seedFoodItems } from "./db/seed/foodItems.js";
@@ -28,6 +29,7 @@ const yoga = createYoga({
   schema,
   context: (): GraphQLContext => ({
     repositories: { weight: weightRepository, training: trainingRepository, steps: stepRepository },
+    today: getTodayDateString(),
   }),
 });
 const server = createServer(yoga);

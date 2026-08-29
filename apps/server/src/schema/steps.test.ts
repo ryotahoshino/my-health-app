@@ -23,6 +23,7 @@ interface TestContext {
     weight: WeightRepository;
     steps: StepRecordRepository;
   };
+  today: string;
 }
 
 const createTestContext = (): TestContext => {
@@ -33,6 +34,7 @@ const createTestContext = (): TestContext => {
       weight: createWeightRepository(db),
       steps: createStepRecordRepository(db),
     },
+    today: "2026-01-02",
   };
 };
 
@@ -116,7 +118,7 @@ describe("steps GraphQLスキーマ", () => {
 
   const dailySummariesQuery = `
     {
-      dailyCalorieSummaries {
+      dailyCalorieSummaries(period: DAILY) {
         date
         trainingCalories
         stepCalories
@@ -184,5 +186,69 @@ describe("steps GraphQLスキーマ", () => {
         isApproximate: true,
       },
     ]);
+  });
+
+  describe("dailyCalorieSummariesの期間集計(WEEKLY/MONTHLY、FR-016)", () => {
+    it("WEEKLY指定で同一週内の消費カロリーを合算して返す", async () => {
+      const schema = builder.toSchema();
+      // 2026-01-05(月)始まりの週。today=2026-01-06(火、同じ週)に設定。
+      const contextValue = createTestContext();
+      contextValue.today = "2026-01-06";
+      contextValue.repositories.weight.upsert({ date: "2026-01-05", weightKg: 70 });
+      contextValue.repositories.training.upsert({
+        date: "2026-01-05",
+        durationMinutes: 60,
+        intensity: "MEDIUM",
+        exerciseSets: [],
+      });
+      contextValue.repositories.steps.upsert({ date: "2026-01-06", steps: 6000 });
+
+      const result = await graphql({
+        schema,
+        contextValue,
+        source: `
+          {
+            dailyCalorieSummaries(period: WEEKLY) {
+              date
+              trainingCalories
+              stepCalories
+              totalCalories
+              isApproximate
+              stepCalorieEstimate { calories formula }
+            }
+          }
+        `,
+      });
+
+      expect(result.errors).toBeUndefined();
+      // トレーニング: 5.0 METs * 70kg * 1h = 350kcal、歩数: 3.0 METs * 70kg * 1h = 210kcal
+      expect(result.data?.dailyCalorieSummaries).toEqual([
+        {
+          date: "2026-01-05",
+          trainingCalories: 350,
+          stepCalories: 210,
+          totalCalories: 560,
+          isApproximate: true,
+          stepCalorieEstimate: {
+            calories: 210,
+            formula: "消費カロリー(kcal) = METs × 体重(kg) × 実施時間(h)",
+          },
+        },
+      ]);
+    });
+
+    it("記録が0件の場合は空配列を返す", async () => {
+      const schema = builder.toSchema();
+      const contextValue = createTestContext();
+
+      const result = await graphql({
+        schema,
+        contextValue,
+        source: `{ dailyCalorieSummaries(period: MONTHLY) { date } }`,
+      });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.dailyCalorieSummaries).toEqual([]);
+    });
   });
 });
