@@ -183,15 +183,15 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T064 [P] [US5] GraphQLリゾルバテスト(`foodItems`)を`apps/server/src/schema/foodItems.test.ts`に作成する
-- [ ] T065 [P] [US5] 食材一覧のStorybook Interaction Test + a11yチェック(スクリーンリーダーでの名称・カロリー・PFC対応確認)を`apps/client/src/features/foods/FoodList/FoodList.stories.tsx`に作成する
+- [X] T064 [P] [US5] GraphQLリゾルバテスト(`foodItems`)を`apps/server/src/schema/foodItems.test.ts`に作成する
+- [X] T065 [P] [US5] 食材一覧のStorybook Interaction Test + a11yチェック(スクリーンリーダーでの名称・カロリー・PFC対応確認)を`apps/client/src/features/foods/FoodList/FoodList.stories.tsx`に作成する
 
 ### Implementation for User Story 5
 
-- [ ] T066 [P] [US5] 食材の固定データを`apps/server/src/db/seed/foodItems.ts`に実装する
-- [ ] T067 [US5] Pothos型・`Query.foodItems`を`apps/server/src/schema/foodItems.ts`に実装する(依存: T066, T064)
-- [ ] T068 [US5] 食材一覧テーブル(名称・カロリー・PFCの対応がスクリーンリーダーで伝わるマークアップ)を`apps/client/src/features/foods/FoodList/FoodList.tsx`に実装する(依存: T065)
-- [ ] T069 [US5] 食材ページの組み立てを`apps/client/src/features/foods/FoodsPage.tsx`に実装し、ルーティングに追加する(依存: T067, T068, T014)
+- [X] T066 [P] [US5] 食材の固定データを`apps/server/src/db/seed/foodItems.ts`に実装する
+- [X] T067 [US5] Pothos型・`Query.foodItems`を`apps/server/src/schema/foodItems.ts`に実装する(依存: T066, T064)
+- [X] T068 [US5] 食材一覧テーブル(名称・カロリー・PFCの対応がスクリーンリーダーで伝わるマークアップ)を`apps/client/src/features/foods/FoodList/FoodList.tsx`に実装する(依存: T065)
+- [X] T069 [US5] 食材ページの組み立てを`apps/client/src/features/foods/FoodsPage.tsx`に実装し、ルーティングに追加する(依存: T067, T068, T014)
 
 **Checkpoint**: 全ユーザーストーリー(P1〜P5)が独立して動作確認可能
 

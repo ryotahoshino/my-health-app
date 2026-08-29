@@ -6,15 +6,18 @@ import "./schema/weight.js";
 import "./schema/exerciseCatalog.js";
 import "./schema/training.js";
 import "./schema/steps.js";
+import "./schema/foodItems.js";
 import type { GraphQLContext } from "./schema/context.js";
 import { getDb } from "./db/connection.js";
 import { seedExerciseCatalog } from "./db/seed/exerciseCatalog.js";
+import { seedFoodItems } from "./db/seed/foodItems.js";
 import { createWeightRepository } from "./repositories/weightRepository.js";
 import { createTrainingSessionRepository } from "./repositories/trainingSessionRepository.js";
 import { createStepRecordRepository } from "./repositories/stepRecordRepository.js";
 
 const db = getDb();
 seedExerciseCatalog(db);
+seedFoodItems(db);
 
 const weightRepository = createWeightRepository(db);
 const trainingRepository = createTrainingSessionRepository(db);
