@@ -34,6 +34,7 @@ const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
 
 interface DailyCalorieSummaryRow {
   date: string;
+  periodLabel: string;
   trainingCalories: number | null;
   stepCalories: number | null;
   stepCalorieEstimate: SessionCalorieEstimate;
@@ -48,6 +49,10 @@ const DailyCalorieSummaryType = builder
   .implement({
     fields: (t) => ({
       date: t.exposeString("date"),
+      // 週次・月次の場合、dateはバケットの開始日(YYYY-MM-DD)を返すが、
+      // 画面表示にはweightTrendAggregateのPeriodAggregatePoint.periodLabelと
+      // 同じ書式の期間ラベル(例: 「2026-08-03週」「2026年8月」)を使う。
+      periodLabel: t.exposeString("periodLabel"),
       trainingCalories: t.exposeFloat("trainingCalories", { nullable: true }),
       stepCalories: t.exposeFloat("stepCalories", { nullable: true }),
       // stepCaloriesは数値のみだが、画面上に算出根拠(計算式・定数・出典)も
@@ -152,6 +157,7 @@ builder.queryField("dailyCalorieSummaries", (t) =>
 
         return {
           date: trainingBucket.startDate,
+          periodLabel: trainingBucket.periodLabel,
           stepCalorieEstimate: buildStepCalorieEstimate(stepBucket.value),
           ...calculateDailyCalorieSummary({
             trainingCalories: trainingBucket.value,

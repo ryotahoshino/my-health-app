@@ -9,6 +9,7 @@ query StepRecords {
 query DailyCalorieSummaries($period: AggregationPeriod!) {
   dailyCalorieSummaries(period: $period) {
     date
+    periodLabel
     trainingCalories
     stepCalories
     stepCalorieEstimate {

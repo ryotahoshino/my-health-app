@@ -15,24 +15,6 @@ const Root = styled(Stack)({
   maxWidth: 480,
 });
 
-// dailyCalorieSummariesのdateは、週次・月次でもバケットの開始日
-// (YYYY-MM-DD)をそのまま返す(サーバー側は単一のdateフィールドしか
-// 持たないため)。表示上「3月1日の記録」のように誤読されないよう、
-// 選択中のperiodに応じてweightTrendAggregateのperiodLabelと同じ書式に
-// 整形する(apps/server/src/domain/period/periodAggregate.tsのラベル
-// 生成ロジックと表示上の書式を合わせているだけで、集計そのものは
-// サーバー側の結果をそのまま使う)。
-const formatPeriodLabel = (date: string, period: AggregationPeriod): string => {
-  if (period === "WEEKLY") {
-    return `${date}週`;
-  }
-  if (period === "MONTHLY") {
-    const [year, month] = date.split("-");
-    return `${year}年${Number(month)}月`;
-  }
-  return date;
-};
-
 export const StepsPage = () => {
   const queryClient = useQueryClient();
   const [period, setPeriod] = useState<AggregationPeriod>("DAILY");
@@ -68,7 +50,7 @@ export const StepsPage = () => {
         {summaries.map((summary) => (
           <DailyCalorieSummary
             key={summary.date}
-            date={formatPeriodLabel(summary.date, period)}
+            date={summary.periodLabel}
             trainingCalories={summary.trainingCalories}
             stepCalorieEstimate={summary.stepCalorieEstimate}
             totalCalories={summary.totalCalories}

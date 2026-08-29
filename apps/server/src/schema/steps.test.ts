@@ -210,6 +210,7 @@ describe("steps GraphQLスキーマ", () => {
           {
             dailyCalorieSummaries(period: WEEKLY) {
               date
+              periodLabel
               trainingCalories
               stepCalories
               totalCalories
@@ -225,6 +226,7 @@ describe("steps GraphQLスキーマ", () => {
       expect(result.data?.dailyCalorieSummaries).toEqual([
         {
           date: "2026-01-05",
+          periodLabel: "2026-01-05週",
           trainingCalories: 350,
           stepCalories: 210,
           totalCalories: 560,
