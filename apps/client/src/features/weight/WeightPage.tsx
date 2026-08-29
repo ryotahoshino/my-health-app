@@ -5,7 +5,7 @@ import { graphqlClient } from "../../app/queryClient";
 import { getSdk } from "../../graphql/generated/sdk";
 import { WeightForm } from "./WeightForm";
 import { WeightTrend } from "./WeightTrend";
-import { WeightEmptyState } from "./WeightEmptyState";
+import { EmptyState } from "../../components/EmptyState";
 
 const sdk = getSdk(graphqlClient);
 const weightRecordsQueryKey = ["weightRecords"];
@@ -38,7 +38,12 @@ export const WeightPage = () => {
   if (isLoading) {
     content = <Typography>読み込み中...</Typography>;
   } else if (records.length === 0) {
-    content = <WeightEmptyState />;
+    content = (
+      <EmptyState
+        message="体重の記録はまだありません"
+        description="上のフォームから最初の記録を追加しましょう"
+      />
+    );
   } else {
     content = (
       <WeightTrend

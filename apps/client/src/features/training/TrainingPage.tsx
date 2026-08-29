@@ -5,6 +5,7 @@ import { graphqlClient } from "../../app/queryClient";
 import { getSdk } from "../../graphql/generated/sdk";
 import { TrainingSessionForm } from "./TrainingSessionForm";
 import { TrainingSessionList } from "./TrainingSessionList";
+import { EmptyState } from "../../components/EmptyState";
 
 const sdk = getSdk(graphqlClient);
 const trainingSessionsQueryKey = ["trainingSessions"];
@@ -49,7 +50,12 @@ export const TrainingPage = () => {
   if (isLoading) {
     content = <Typography>読み込み中...</Typography>;
   } else if (sessions.length === 0) {
-    content = <Typography>トレーニング記録はまだありません</Typography>;
+    content = (
+      <EmptyState
+        message="トレーニング記録はまだありません"
+        description="上のフォームから最初のセッションを記録しましょう"
+      />
+    );
   } else {
     content = (
       <TrainingSessionList

@@ -206,7 +206,7 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T072 [P] `Query.weightTrendAggregate(period)`を`apps/server/src/schema/weight.ts`に追加する(依存: T071, T023)
 - [X] T073 [P] `Query.dailyCalorieSummaries(period)`の期間集計対応を`apps/server/src/schema/steps.ts`に追加する(依存: T071, T060)
 - [X] T074 [P] 日次・週次・月次の集計プリセット切替UI(slotProps対応の共通コンポーネント)を`apps/client/src/components/PeriodSelector.tsx`に実装する(依存: T072, T073)
-- [ ] T075 [P] 記録0件時の共通空状態コンポーネントを`apps/client/src/components/EmptyState.tsx`に抽出し、各ストーリーの個別実装を置き換える(依存: T026, T063, T069)
+- [X] T075 [P] 記録0件時の共通空状態コンポーネントを`apps/client/src/components/EmptyState.tsx`に抽出し、各ストーリーの個別実装を置き換える(依存: T026, T063, T069)
 - [ ] T076 [P] アクセシビリティ最終確認としてStorybook a11yアドオンのチェックをCI相当のスクリプトに統合する
 - [ ] T077 [quickstart.md](./quickstart.md)のシナリオ(P1→P4の依存順、手動確認シナリオ含む)を通しで実施する
 - [ ] T078 [P] `README.md`にセットアップ手順と`quickstart.md`へのリンクを記載する

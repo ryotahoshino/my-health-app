@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import { graphqlClient } from "../../app/queryClient";
 import { getSdk } from "../../graphql/generated/sdk";
 import { FoodList } from "./FoodList";
+import { EmptyState } from "../../components/EmptyState";
 
 const sdk = getSdk(graphqlClient);
 const foodItemsQueryKey = ["foodItems"];
@@ -25,7 +26,8 @@ export const FoodsPage = () => {
   if (isLoading) {
     content = <Typography>読み込み中...</Typography>;
   } else if (foods.length === 0) {
-    content = <Typography>食材データがありません</Typography>;
+    // 参照専用データのため作成導線は無く、メッセージのみ表示する。
+    content = <EmptyState message="食材データがありません" />;
   } else {
     content = <FoodList foods={foods} />;
   }
