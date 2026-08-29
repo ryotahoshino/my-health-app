@@ -75,16 +75,15 @@ const getMonthStartMs = (ms: number): number => {
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
 };
 
-const getMonthEndMs = (ms: number): number => {
-  const d = new Date(ms);
-  // 翌月の0日目 = 当月の末日(月ごとの日数差を自前で計算しなくて済む)。
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0);
-};
-
 const getNextMonthStartMs = (monthStartMs: number): number => {
   const d = new Date(monthStartMs);
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
 };
+
+// 当月の末日 = 翌月初日の前日。getNextMonthStartMsと同じ「翌月へ繰り上げる」
+// 計算を重複させない。
+const getMonthEndMs = (monthStartMs: number): number =>
+  addDays(getNextMonthStartMs(monthStartMs), -1);
 
 interface BucketRange {
   start: string;
