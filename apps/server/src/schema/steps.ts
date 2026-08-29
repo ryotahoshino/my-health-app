@@ -1,10 +1,17 @@
 import { builder } from "./builder.js";
 import "./mutation.js";
 import { CalorieEstimateType } from "./training.js";
+import { AggregationPeriodEnum } from "./period.js";
 import { stepRecordInputSchema } from "../domain/steps/stepsSchema.js";
-import { calculateStepCalorie } from "../domain/calorie/stepCalorie.js";
+import { buildStepCalorieEstimate, calculateStepCalorie } from "../domain/calorie/stepCalorie.js";
 import { calculateSessionCalorie } from "../domain/calorie/sessionCalorie.js";
 import { calculateDailyCalorieSummary } from "../domain/calorie/dailySummary.js";
+import {
+  aggregatePointsOverRanges,
+  buildBucketRanges,
+  sum,
+  type PeriodDataPoint,
+} from "../domain/period/periodAggregate.js";
 import type { SessionCalorieEstimate } from "../domain/calorie/sessionCalorie.js";
 import type { StepRecord } from "../repositories/stepRecordRepository.js";
 
@@ -25,14 +32,15 @@ const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
   }),
 });
 
-interface DailyCalorieSummaryRow {
+type DailyCalorieSummaryRow = {
   date: string;
+  periodLabel: string;
   trainingCalories: number | null;
   stepCalories: number | null;
   stepCalorieEstimate: SessionCalorieEstimate;
   totalCalories: number | null;
   isApproximate: boolean;
-}
+};
 
 // トレーニング中の歩数と歩数記録由来の消費カロリーは重複しうるため、
 // 合算値は概算である旨を示す(FR-014)。
@@ -41,6 +49,10 @@ const DailyCalorieSummaryType = builder
   .implement({
     fields: (t) => ({
       date: t.exposeString("date"),
+      // 週次・月次の場合、dateはバケットの開始日(YYYY-MM-DD)を返すが、
+      // 画面表示にはweightTrendAggregateのPeriodAggregatePoint.periodLabelと
+      // 同じ書式の期間ラベル(例: 「2026-08-03週」「2026年8月」)を使う。
+      periodLabel: t.exposeString("periodLabel"),
       trainingCalories: t.exposeFloat("trainingCalories", { nullable: true }),
       stepCalories: t.exposeFloat("stepCalories", { nullable: true }),
       // stepCaloriesは数値のみだが、画面上に算出根拠(計算式・定数・出典)も
@@ -70,12 +82,17 @@ builder.queryField("stepRecords", (t) =>
   }),
 );
 
-// 現時点では全期間を返す。日次・週次・月次のプリセット集計はPolishフェーズ
-// (T073)でperiod引数を追加して対応する(FR-016)。
+// 記録がある最古の日から当日までの履歴全体を日次・週次・月次でバケット化する
+// (FR-016)。DAILYは1日1バケットなので従来どおり日ごとの内訳になり、
+// WEEKLY/MONTHLYは同じ経路でトレーニング分・歩数分をそれぞれ合算する
+// (特別扱いを増やさず一つの仕組みに寄せる)。
 builder.queryField("dailyCalorieSummaries", (t) =>
   t.field({
     type: [DailyCalorieSummaryType],
-    resolve: (_parent, _args, context) => {
+    args: {
+      period: t.arg({ type: AggregationPeriodEnum, required: true }),
+    },
+    resolve: (_parent, args, context) => {
       const sessions = context.repositories.training.list();
       const stepRecords = context.repositories.steps.list();
 
@@ -87,51 +104,67 @@ builder.queryField("dailyCalorieSummaries", (t) =>
         dates.add(stepRecord.date);
       }
 
-      return Array.from(dates)
-        .sort()
-        .map((date): DailyCalorieSummaryRow => {
-          const weightKg = context.repositories.weight.findAsOf(date);
-          const session = sessions.find((candidate) => candidate.date === date);
-          const stepRecord = stepRecords.find((candidate) => candidate.date === date);
+      if (dates.size === 0) {
+        return [];
+      }
+      const sortedDates = Array.from(dates).sort();
 
-          let trainingCalories: number | null;
-          if (session) {
-            trainingCalories = calculateSessionCalorie({
-              intensity: session.intensity,
-              durationMinutes: session.durationMinutes,
-              weightKg,
-            }).calories;
-          } else {
-            trainingCalories = 0;
-          }
+      const trainingPoints: PeriodDataPoint[] = [];
+      const stepPoints: PeriodDataPoint[] = [];
 
-          let steps: number;
-          if (stepRecord) {
-            steps = stepRecord.steps;
-          } else {
-            steps = 0;
-          }
-          const rawStepEstimate = calculateStepCalorie({ steps, weightKg });
+      for (const date of sortedDates) {
+        const weightKg = context.repositories.weight.findAsOf(date);
+        const session = sessions.find((candidate) => candidate.date === date);
+        const stepRecord = stepRecords.find((candidate) => candidate.date === date);
 
-          // trainingCaloriesと同様、その日の記録が無ければ体重の有無に関わらず
-          // 0kcalとして扱う(未記録=活動量ゼロが確定しているため算出不可では
-          // ない)。記録がある場合のみ、体重未記録により算出不可(null)になりうる。
-          let stepCalorieEstimate: SessionCalorieEstimate;
-          if (stepRecord) {
-            stepCalorieEstimate = rawStepEstimate;
-          } else {
-            stepCalorieEstimate = { ...rawStepEstimate, calories: 0 };
-          }
+        // その日の記録が無ければ体重の有無に関わらず0kcalとして扱う(未記録=
+        // 活動量ゼロが確定しているため算出不可ではない)。記録がある場合のみ、
+        // 体重未記録により算出不可(null)になりうる。
+        let trainingCalories: number | null;
+        if (session) {
+          trainingCalories = calculateSessionCalorie({
+            intensity: session.intensity,
+            durationMinutes: session.durationMinutes,
+            weightKg,
+          }).calories;
+        } else {
+          trainingCalories = 0;
+        }
 
-          return {
-            date,
-            stepCalorieEstimate,
-            ...calculateDailyCalorieSummary({
-              trainingCalories,
-              stepCalories: stepCalorieEstimate.calories,
-            }),
-          };
-        });
+        let stepCalories: number | null;
+        if (stepRecord) {
+          stepCalories = calculateStepCalorie({ steps: stepRecord.steps, weightKg }).calories;
+        } else {
+          stepCalories = 0;
+        }
+
+        trainingPoints.push({ date, value: trainingCalories });
+        stepPoints.push({ date, value: stepCalories });
+      }
+
+      // バケット区切り(日次/週次/月次)はトレーニング分・歩数分で共通なので
+      // 1回だけ計算し、集計(combine: 合計)だけをそれぞれの系列に対して行う
+      // (buildBucketRanges/aggregatePointsOverRangesの分離はperiodAggregate.ts参照)。
+      const earliestDate = sortedDates[0]!;
+      const ranges = buildBucketRanges(args.period, earliestDate, context.today);
+      const trainingBuckets = aggregatePointsOverRanges(trainingPoints, ranges, sum);
+      const stepBuckets = aggregatePointsOverRanges(stepPoints, ranges, sum);
+
+      return trainingBuckets.map((trainingBucket, index): DailyCalorieSummaryRow => {
+        // 同じrangesから作っているため、trainingBuckets/stepBucketsのバケット
+        // 区切りは常に一致する。
+        const stepBucket = stepBuckets[index]!;
+
+        return {
+          date: trainingBucket.startDate,
+          periodLabel: trainingBucket.periodLabel,
+          stepCalorieEstimate: buildStepCalorieEstimate(stepBucket.value),
+          ...calculateDailyCalorieSummary({
+            trainingCalories: trainingBucket.value,
+            stepCalories: stepBucket.value,
+          }),
+        };
+      });
     },
   }),
 );

@@ -12,16 +12,16 @@ import {
 import { styled } from "@mui/material/styles";
 import { LineChart } from "@mui/x-charts/LineChart";
 
-export interface WeightTrendRecord {
+export type WeightTrendRecord = {
   id?: string;
   date: string;
   weightKg: number;
-}
+};
 
-export interface WeightTrendProps {
+export type WeightTrendProps = {
   records: WeightTrendRecord[];
   onDelete?: (record: WeightTrendRecord) => void;
-}
+};
 
 const Root = styled(Stack)({
   gap: 16,

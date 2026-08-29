@@ -29,9 +29,9 @@ const stepsFormSchema = z.object({
 
 type StepsFormValues = z.infer<typeof stepsFormSchema>;
 
-export interface StepsFormProps {
+export type StepsFormProps = {
   onSubmit: (values: { date: string; steps: number }) => void;
-}
+};
 
 const FormRoot = styled("form")(({ theme }) => ({
   display: "flex",

@@ -1,18 +1,18 @@
 import type Database from "better-sqlite3";
 import { randomUUID } from "node:crypto";
 
-export interface StepRecord {
+export type StepRecord = {
   id: string;
   date: string;
   steps: number;
-}
+};
 
-export interface StepRecordRepository {
+export type StepRecordRepository = {
   list(): StepRecord[];
   findByDate(date: string): StepRecord | undefined;
   upsert(input: { date: string; steps: number }): StepRecord;
   delete(id: string): boolean;
-}
+};
 
 // 外部I/O(DBアクセス)をこのファイルの端に閉じ込め、呼び出し側は
 // StepRecordRepositoryインターフェースにのみ依存する(原則V・VI)。

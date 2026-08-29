@@ -75,7 +75,7 @@ const trainingSessionFormSchema = z.object({
 
 type TrainingSessionFormValues = z.infer<typeof trainingSessionFormSchema>;
 
-export interface TrainingSessionFormProps {
+export type TrainingSessionFormProps = {
   exercises: { id: string; name: string }[];
   onSubmit: (values: {
     date: string;
@@ -83,7 +83,7 @@ export interface TrainingSessionFormProps {
     intensity: "LOW" | "MEDIUM" | "HIGH";
     exerciseSets: { exerciseId: string; sets: number; reps: number; weightKg: number }[];
   }) => void;
-}
+};
 
 const FormRoot = styled("form")(({ theme }) => ({
   display: "flex",

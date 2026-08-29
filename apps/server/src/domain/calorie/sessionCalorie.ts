@@ -1,23 +1,23 @@
 export type TrainingIntensity = "LOW" | "MEDIUM" | "HIGH";
 
-export interface SessionCalorieInput {
+export type SessionCalorieInput = {
   intensity: TrainingIntensity;
   durationMinutes: number;
   weightKg: number | null;
-}
+};
 
-export interface AssumedConstant {
+export type AssumedConstant = {
   label: string;
   value: number;
   unit: string;
-}
+};
 
-export interface SessionCalorieEstimate {
+export type SessionCalorieEstimate = {
   calories: number | null;
   formula: string;
   assumedConstants: AssumedConstant[];
   source: string;
-}
+};
 
 // research.md #5: セッション全体の強度区分ごとのMETs(種目マスタの種目別METsとは独立)。
 const INTENSITY_METS: Record<TrainingIntensity, number> = {

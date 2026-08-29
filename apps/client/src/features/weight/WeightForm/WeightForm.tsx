@@ -38,9 +38,9 @@ const weightFormSchema = z.object({
 
 type WeightFormValues = z.infer<typeof weightFormSchema>;
 
-export interface WeightFormProps {
+export type WeightFormProps = {
   onSubmit: (values: { date: string; weightKg: number }) => void;
-}
+};
 
 const FormRoot = styled("form")(({ theme }) => ({
   display: "flex",

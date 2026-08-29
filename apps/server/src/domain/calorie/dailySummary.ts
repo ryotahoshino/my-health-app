@@ -1,14 +1,14 @@
-export interface DailyCalorieSummaryInput {
+export type DailyCalorieSummaryInput = {
   trainingCalories: number | null;
   stepCalories: number | null;
-}
+};
 
-export interface DailyCalorieSummary {
+export type DailyCalorieSummary = {
   trainingCalories: number | null;
   stepCalories: number | null;
   totalCalories: number | null;
   isApproximate: true;
-}
+};
 
 // トレーニング中の歩数と歩数記録由来の消費カロリーは重複しうるため、
 // 合算値は常に概算である旨を示す(FR-014)。どちらかが体重未記録等でnullの

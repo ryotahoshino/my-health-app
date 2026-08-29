@@ -1,42 +1,42 @@
 import type Database from "better-sqlite3";
 import { randomUUID } from "node:crypto";
 
-export interface ExerciseSet {
+export type ExerciseSet = {
   id: string;
   exerciseId: string;
   sets: number;
   reps: number;
   weightKg: number;
-}
+};
 
-export interface TrainingSession {
+export type TrainingSession = {
   id: string;
   date: string;
   durationMinutes: number;
   intensity: "LOW" | "MEDIUM" | "HIGH";
   exerciseSets: ExerciseSet[];
-}
+};
 
-export interface TrainingSessionInput {
+export type TrainingSessionInput = {
   date: string;
   durationMinutes: number;
   intensity: "LOW" | "MEDIUM" | "HIGH";
   exerciseSets: { exerciseId: string; sets: number; reps: number; weightKg: number }[];
-}
+};
 
-export interface TrainingSessionRepository {
+export type TrainingSessionRepository = {
   list(): TrainingSession[];
   get(id: string): TrainingSession | undefined;
   upsert(input: TrainingSessionInput): TrainingSession;
   delete(id: string): boolean;
-}
+};
 
-interface SessionRow {
+type SessionRow = {
   id: string;
   date: string;
   durationMinutes: number;
   intensity: "LOW" | "MEDIUM" | "HIGH";
-}
+};
 
 // 外部I/O(DBアクセス)をこのファイルの端に閉じ込め、呼び出し側は
 // TrainingSessionRepositoryインターフェースにのみ依存する(原則V・VI)。

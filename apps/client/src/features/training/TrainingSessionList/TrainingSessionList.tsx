@@ -2,15 +2,15 @@ import { Button, Card, CardContent, List, ListItem, Stack, Typography } from "@m
 import { styled } from "@mui/material/styles";
 import { SessionCalorieCard, type CalorieEstimate } from "../SessionCalorieCard";
 
-export interface TrainingSessionListExerciseSet {
+export type TrainingSessionListExerciseSet = {
   id: string;
   exerciseId: string;
   sets: number;
   reps: number;
   weightKg: number;
-}
+};
 
-export interface TrainingSessionListItem {
+export type TrainingSessionListItem = {
   id: string;
   date: string;
   durationMinutes: number;
@@ -18,13 +18,13 @@ export interface TrainingSessionListItem {
   exerciseSets: TrainingSessionListExerciseSet[];
   totalVolume: number;
   calorieEstimate: CalorieEstimate;
-}
+};
 
-export interface TrainingSessionListProps {
+export type TrainingSessionListProps = {
   sessions: TrainingSessionListItem[];
   exercises: { id: string; name: string }[];
   onDelete?: (session: TrainingSessionListItem) => void;
-}
+};
 
 const intensityLabels: Record<TrainingSessionListItem["intensity"], string> = {
   LOW: "低強度",

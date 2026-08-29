@@ -1,19 +1,19 @@
 import type Database from "better-sqlite3";
 import { randomUUID } from "node:crypto";
 
-export interface WeightRecord {
+export type WeightRecord = {
   id: string;
   date: string;
   weightKg: number;
-}
+};
 
-export interface WeightRepository {
+export type WeightRepository = {
   list(): WeightRecord[];
   /** 指定日以前で最も新しい体重記録を返す(未来の体重は対象外)。無ければnull。 */
   findAsOf(date: string): number | null;
   upsert(input: { date: string; weightKg: number }): WeightRecord;
   delete(id: string): boolean;
-}
+};
 
 // 外部I/O(DBアクセス)をこのファイルの端に閉じ込め、呼び出し側は
 // WeightRepositoryインターフェースにのみ依存する(原則V・VI)。
