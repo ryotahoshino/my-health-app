@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -6,9 +7,9 @@ import { getSdk } from "../../graphql/generated/sdk";
 import { StepsForm } from "./StepsForm";
 import { DailyCalorieSummary } from "./DailyCalorieSummary";
 import { EmptyState } from "../../components/EmptyState";
+import { PeriodSelector, type AggregationPeriod } from "../../components/PeriodSelector";
 
 const sdk = getSdk(graphqlClient);
-const dailyCalorieSummariesQueryKey = ["dailyCalorieSummaries"];
 
 const Root = styled(Stack)({
   maxWidth: 480,
@@ -16,17 +17,19 @@ const Root = styled(Stack)({
 
 export const StepsPage = () => {
   const queryClient = useQueryClient();
+  const [period, setPeriod] = useState<AggregationPeriod>("DAILY");
+  const dailyCalorieSummariesQueryKey = ["dailyCalorieSummaries", period];
 
-  // 集計プリセット切替UI(PeriodSelector)はT074で導入する。それまでは
-  // 従来どおり日次(1日1件の内訳)を既定表示とする。
   const { data, isLoading } = useQuery({
     queryKey: dailyCalorieSummariesQueryKey,
-    queryFn: () => sdk.DailyCalorieSummaries({ period: "DAILY" }),
+    queryFn: () => sdk.DailyCalorieSummaries({ period }),
   });
 
   const upsertMutation = useMutation({
     mutationFn: (input: { date: string; steps: number }) => sdk.UpsertStepRecord({ input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: dailyCalorieSummariesQueryKey }),
+    // キーの先頭("dailyCalorieSummaries")が一致する全periodのキャッシュを
+    // まとめて無効化する(表示中のperiod以外もいずれ見る可能性があるため)。
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dailyCalorieSummaries"] }),
   });
 
   const summaries = data?.dailyCalorieSummaries ?? [];
@@ -63,6 +66,7 @@ export const StepsPage = () => {
         歩数記録
       </Typography>
       <StepsForm onSubmit={(values) => upsertMutation.mutate(values)} />
+      <PeriodSelector value={period} onChange={setPeriod} />
       {content}
     </Root>
   );

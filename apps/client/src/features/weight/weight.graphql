@@ -6,6 +6,16 @@ query WeightRecords {
   }
 }
 
+query WeightTrendAggregate($period: AggregationPeriod!) {
+  weightTrendAggregate(period: $period) {
+    periodLabel
+    startDate
+    endDate
+    hasData
+    value
+  }
+}
+
 mutation UpsertWeightRecord($input: UpsertWeightRecordInput!) {
   upsertWeightRecord(input: $input) {
     id
