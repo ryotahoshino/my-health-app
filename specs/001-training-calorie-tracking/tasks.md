@@ -209,7 +209,7 @@ plan.md の Project Structure に基づく npm workspaces 構成:
 - [X] T075 [P] 記録0件時の共通空状態コンポーネントを`apps/client/src/components/EmptyState.tsx`に抽出し、各ストーリーの個別実装を置き換える(依存: T026, T063, T069)
 - [X] T076 [P] アクセシビリティ最終確認としてStorybook a11yアドオンのチェックをCI相当のスクリプトに統合する
 - [X] T077 [quickstart.md](./quickstart.md)のシナリオ(P1→P4の依存順、手動確認シナリオ含む)を通しで実施する
-- [ ] T078 [P] `README.md`にセットアップ手順と`quickstart.md`へのリンクを記載する
+- [X] T078 [P] `README.md`にセットアップ手順と`quickstart.md`へのリンクを記載する
 
 ---
 
