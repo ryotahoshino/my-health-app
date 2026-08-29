@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -59,23 +59,25 @@ export const WeightPage = () => {
 
   // 日次(生の記録一覧)と週次・月次(期間集計)はデータソースが異なるだけで、
   // 読み込み中・0件・表示の3分岐はQueryStateに共通化しているため、
-  // どちらを見るかだけをここで決める。
-  let isCurrentLoading: boolean;
-  let isEmpty: boolean;
-  let loadedContent;
+  // どちらを見るかを1つの選択としてここで決める。
+  let current: { isLoading: boolean; isEmpty: boolean; content: ReactNode };
   if (period === "DAILY") {
-    isCurrentLoading = isLoading;
-    isEmpty = records.length === 0;
-    loadedContent = (
-      <WeightTrend
-        records={records}
-        onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
-      />
-    );
+    current = {
+      isLoading,
+      isEmpty: records.length === 0,
+      content: (
+        <WeightTrend
+          records={records}
+          onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
+        />
+      ),
+    };
   } else {
-    isCurrentLoading = isAggregateLoading;
-    isEmpty = aggregatePoints.length === 0;
-    loadedContent = <WeightTrendAggregate points={aggregatePoints} />;
+    current = {
+      isLoading: isAggregateLoading,
+      isEmpty: aggregatePoints.length === 0,
+      content: <WeightTrendAggregate points={aggregatePoints} />,
+    };
   }
 
   return (
@@ -86,8 +88,8 @@ export const WeightPage = () => {
       <WeightForm onSubmit={(values) => upsertMutation.mutate(values)} />
       <PeriodSelector value={period} onChange={setPeriod} />
       <QueryState
-        isLoading={isCurrentLoading}
-        isEmpty={isEmpty}
+        isLoading={current.isLoading}
+        isEmpty={current.isEmpty}
         emptyState={
           <EmptyState
             message="体重の記録はまだありません"
@@ -95,7 +97,7 @@ export const WeightPage = () => {
           />
         }
       >
-        {loadedContent}
+        {current.content}
       </QueryState>
     </Root>
   );
