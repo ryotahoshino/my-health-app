@@ -1,14 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
-export interface WeightTrendAggregatePoint {
+export type WeightTrendAggregatePoint = {
   periodLabel: string;
   hasData: boolean;
   value: number | null;
-}
+};
 
-export interface WeightTrendAggregateProps {
+export type WeightTrendAggregateProps = {
   points: WeightTrendAggregatePoint[];
-}
+};
 
 // 週次・月次などの期間集計結果を表で表示する。記録が無い期間は0ではなく
 // 「欠測」として区別し、誤解を招く表現を避ける(Edge Cases、FR-016)。

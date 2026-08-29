@@ -32,7 +32,7 @@ const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
   }),
 });
 
-interface DailyCalorieSummaryRow {
+type DailyCalorieSummaryRow = {
   date: string;
   periodLabel: string;
   trainingCalories: number | null;
@@ -40,7 +40,7 @@ interface DailyCalorieSummaryRow {
   stepCalorieEstimate: SessionCalorieEstimate;
   totalCalories: number | null;
   isApproximate: boolean;
-}
+};
 
 // トレーニング中の歩数と歩数記録由来の消費カロリーは重複しうるため、
 // 合算値は概算である旨を示す(FR-014)。

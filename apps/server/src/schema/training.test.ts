@@ -12,9 +12,9 @@ import {
 } from "../repositories/trainingSessionRepository.js";
 
 // GraphQL Yogaのcontextに渡す形と合わせる想定の契約(T036でindex.ts側も更新する)。
-interface TestContext {
+type TestContext = {
   repositories: { training: TrainingSessionRepository };
-}
+};
 
 const createTestContext = (): TestContext => {
   const db = createSeededTestDb();

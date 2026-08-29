@@ -7,7 +7,7 @@ import type { AggregationPeriod } from "../../graphql/generated/sdk";
 
 export type { AggregationPeriod };
 
-export interface PeriodSelectorProps {
+export type PeriodSelectorProps = {
   value: AggregationPeriod;
   onChange: (value: AggregationPeriod) => void;
   // 利用箇所ごとの見た目調整のため、内部要素へpropsを渡せるようにする
@@ -15,7 +15,7 @@ export interface PeriodSelectorProps {
   slotProps?: {
     toggleButtonGroup?: Partial<ToggleButtonGroupProps>;
   };
-}
+};
 
 const PERIOD_OPTIONS: { value: AggregationPeriod; label: string }[] = [
   { value: "DAILY", label: "日次" },

@@ -1,23 +1,23 @@
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export interface AssumedConstant {
+export type AssumedConstant = {
   label: string;
   value: number;
   unit: string;
-}
+};
 
-export interface CalorieEstimate {
+export type CalorieEstimate = {
   calories: number | null;
   formula: string;
   assumedConstants: AssumedConstant[];
   source: string;
-}
+};
 
-export interface SessionCalorieCardProps {
+export type SessionCalorieCardProps = {
   calorieEstimate: CalorieEstimate;
   totalVolume: number;
-}
+};
 
 const Root = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(0.5),

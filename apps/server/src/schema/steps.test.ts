@@ -17,14 +17,14 @@ import {
   type StepRecordRepository,
 } from "../repositories/stepRecordRepository.js";
 
-interface TestContext {
+type TestContext = {
   repositories: {
     training: TrainingSessionRepository;
     weight: WeightRepository;
     steps: StepRecordRepository;
   };
   today: string;
-}
+};
 
 const createTestContext = (): TestContext => {
   const db = createSeededTestDb();

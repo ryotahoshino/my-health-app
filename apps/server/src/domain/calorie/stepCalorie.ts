@@ -1,9 +1,9 @@
 import type { SessionCalorieEstimate } from "./sessionCalorie.js";
 
-export interface StepCalorieInput {
+export type StepCalorieInput = {
   steps: number;
   weightKg: number | null;
-}
+};
 
 // research.md #5: 歩行のMETsとケイデンス(歩/分)。
 const WALKING_METS = 3.0;

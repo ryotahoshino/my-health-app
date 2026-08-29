@@ -1,12 +1,12 @@
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export interface EmptyStateProps {
+export type EmptyStateProps = {
   message: string;
   // 記録の作成へ導く説明文(FR-023)。参照専用画面(食材一覧など)のように
   // 作成導線が存在しない場合は省略できる。
   description?: string;
-}
+};
 
 const Root = styled(Stack)(({ theme }) => ({
   alignItems: "center",

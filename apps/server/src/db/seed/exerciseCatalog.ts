@@ -1,11 +1,11 @@
 import type Database from "better-sqlite3";
 
-export interface ExerciseCatalogEntry {
+export type ExerciseCatalogEntry = {
   id: string;
   name: string;
   mets: number;
   source: string;
-}
+};
 
 const METS_SOURCE =
   "国立健康・栄養研究所「改訂版 身体活動のメッツ(METs)表」のレジスタンストレーニング区分に基づく代表値";

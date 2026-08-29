@@ -1,22 +1,22 @@
 export type AggregationPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
 
-export interface PeriodDataPoint {
+export type PeriodDataPoint = {
   date: string; // YYYY-MM-DD
   // 記録は存在するが値を算出できない場合(例: 体重未記録で消費カロリーが
   // 算出不可)はnullを渡す。dateがpointsに含まれること自体が「その日に
   // 記録がある」ことを表す(hasDataの判定に使う)。
   value: number | null;
-}
+};
 
-export interface PeriodAggregatePoint {
+export type PeriodAggregatePoint = {
   periodLabel: string;
   startDate: string;
   endDate: string;
   hasData: boolean;
   value: number | null;
-}
+};
 
-export interface PeriodAggregateInput {
+export type PeriodAggregateInput = {
   period: AggregationPeriod;
   points: PeriodDataPoint[];
   // 現在時刻の取得はI/O相当のためこの純粋関数の外(呼び出し元のスキーマ層)
@@ -25,7 +25,7 @@ export interface PeriodAggregateInput {
   // バケット内の複数値をどう1つにまとめるか(平均・合計など)を呼び出し側が
   // 指定する。体重は平均、消費カロリーは合計、のように用途ごとに異なるため。
   combine: (values: number[]) => number;
-}
+};
 
 // combineの代表例。呼び出し側での重複定義を避けるためここからexportする。
 export const sum = (values: number[]): number => values.reduce((total, value) => total + value, 0);
@@ -85,11 +85,11 @@ const getNextMonthStartMs = (monthStartMs: number): number => {
 const getMonthEndMs = (monthStartMs: number): number =>
   addDays(getNextMonthStartMs(monthStartMs), -1);
 
-interface BucketRange {
+type BucketRange = {
   start: string;
   end: string;
   label: string;
-}
+};
 
 const buildDailyRanges = (earliestDate: string, today: string): BucketRange[] => {
   return enumerateDates(earliestDate, today).map((date) => ({
@@ -103,12 +103,12 @@ const buildDailyRanges = (earliestDate: string, today: string): BucketRange[] =>
 // させながら、未完了(今週・今月)の区切りだけ終了日を当日に差し替える」
 // という同じ形をしている(FR-016)ため、区切りの単位ごとの差分だけを
 // パラメータ化して1つの実装にまとめる。
-interface PeriodStepper {
+type PeriodStepper = {
   getPeriodStartMs: (ms: number) => number;
   getPeriodEndMs: (periodStartMs: number) => number;
   nextPeriodStartMs: (periodStartMs: number) => number;
   formatLabel: (periodStartMs: number) => string;
-}
+};
 
 const buildSteppedRanges = (
   earliestDate: string,

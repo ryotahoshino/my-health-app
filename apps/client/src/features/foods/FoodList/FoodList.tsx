@@ -1,17 +1,17 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
-export interface FoodItem {
+export type FoodItem = {
   id: string;
   name: string;
   caloriesPer100g: number;
   proteinG: number;
   fatG: number;
   carbG: number;
-}
+};
 
-export interface FoodListProps {
+export type FoodListProps = {
   foods: FoodItem[];
-}
+};
 
 // 食材名を行見出し(th scope="row")、カロリー・PFCを列見出し(th scope="col")
 // として表構造で対応付け、スクリーンリーダーでも名称と値の対応が正しく

@@ -1,13 +1,13 @@
 import type Database from "better-sqlite3";
 
-export interface FoodItem {
+export type FoodItem = {
   id: string;
   name: string;
   caloriesPer100g: number;
   proteinG: number;
   fatG: number;
   carbG: number;
-}
+};
 
 // 食材は固定データ(参照専用、CRUD対象外。FR-015)。数値は文部科学省
 // 「日本食品標準成分表」の代表値に基づく。

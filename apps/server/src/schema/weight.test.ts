@@ -8,10 +8,10 @@ import { createConnection } from "../db/connection.js";
 import { createWeightRepository, type WeightRepository } from "../repositories/weightRepository.js";
 
 // GraphQL Yogaのcontextに渡す形と合わせる想定の契約(T023で index.ts 側も更新する)。
-interface TestContext {
+type TestContext = {
   repositories: { weight: WeightRepository };
   today: string;
-}
+};
 
 // 期間集計(weightTrendAggregate)のテストで「当日」を固定するための値。
 // 2026-08-17は月曜日、2026-08-19は同じ週の水曜日。

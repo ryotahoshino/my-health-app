@@ -11,9 +11,9 @@ import {
 } from "../repositories/trainingSessionRepository.js";
 import { createWeightRepository, type WeightRepository } from "../repositories/weightRepository.js";
 
-interface TestContext {
+type TestContext = {
   repositories: { training: TrainingSessionRepository; weight: WeightRepository };
-}
+};
 
 const createTestContext = (): TestContext => {
   const db = createSeededTestDb();
@@ -43,7 +43,7 @@ const calorieQuery = `
   }
 `;
 
-interface CalorieQueryResult {
+type CalorieQueryResult = {
   totalVolume: number;
   calorieEstimate: {
     calories: number | null;
@@ -51,7 +51,7 @@ interface CalorieQueryResult {
     source: string;
     assumedConstants: { label: string; value: number; unit: string }[];
   };
-}
+};
 
 // 各テストで繰り返されていた「スキーマ構築 → クエリ実行 → 結果のキャスト」を
 // まとめ、各テストは固有のセットアップと検証だけを書けばよいようにする。
