@@ -1,7 +1,11 @@
 import type { MouseEvent } from "react";
 import { ToggleButton, ToggleButtonGroup, type ToggleButtonGroupProps } from "@mui/material";
+// GraphQLスキーマ(AggregationPeriod enum)を型の一次ソースとする(憲法 原則IV)。
+// ここで独自にリテラル型を再宣言すると、スキーマ変更(例: プリセット追加)を
+// 型チェックで検知できなくなる。
+import type { AggregationPeriod } from "../../graphql/generated/sdk";
 
-export type AggregationPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
+export type { AggregationPeriod };
 
 export interface PeriodSelectorProps {
   value: AggregationPeriod;
