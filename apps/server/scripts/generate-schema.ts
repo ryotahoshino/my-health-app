@@ -7,6 +7,7 @@ import "../src/schema/weight.js";
 import "../src/schema/exerciseCatalog.js";
 import "../src/schema/training.js";
 import "../src/schema/steps.js";
+import "../src/schema/foodItems.js";
 
 // Pothos(code-first)定義から SDL を導出するビルド時スクリプト(research.md #3)。
 // この apps/server/schema.graphql はクライアントのGraphQL Code Generatorの
