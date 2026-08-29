@@ -27,6 +27,11 @@ export interface PeriodAggregateInput {
   combine: (values: number[]) => number;
 }
 
+// combineの代表例。呼び出し側での重複定義を避けるためここからexportする。
+export const sum = (values: number[]): number => values.reduce((total, value) => total + value, 0);
+
+export const mean = (values: number[]): number => sum(values) / values.length;
+
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const parseDateToUtcMs = (date: string): number => {
@@ -76,6 +81,11 @@ const getMonthEndMs = (ms: number): number => {
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0);
 };
 
+const getNextMonthStartMs = (monthStartMs: number): number => {
+  const d = new Date(monthStartMs);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+};
+
 interface BucketRange {
   start: string;
   end: string;
@@ -90,90 +100,97 @@ const buildDailyRanges = (earliestDate: string, today: string): BucketRange[] =>
   }));
 };
 
-const buildWeeklyRanges = (earliestDate: string, today: string): BucketRange[] => {
+// 週次・月次はどちらも「区切りの開始日を求め、区切りの単位で当日まで前進
+// させながら、未完了(今週・今月)の区切りだけ終了日を当日に差し替える」
+// という同じ形をしている(FR-016)ため、区切りの単位ごとの差分だけを
+// パラメータ化して1つの実装にまとめる。
+interface PeriodStepper {
+  getPeriodStartMs: (ms: number) => number;
+  getPeriodEndMs: (periodStartMs: number) => number;
+  nextPeriodStartMs: (periodStartMs: number) => number;
+  formatLabel: (periodStartMs: number) => string;
+}
+
+const buildSteppedRanges = (
+  earliestDate: string,
+  today: string,
+  stepper: PeriodStepper,
+): BucketRange[] => {
   const todayMs = parseDateToUtcMs(today);
-  const currentWeekStartMs = getWeekStartMs(todayMs);
-  const firstWeekStartMs = getWeekStartMs(parseDateToUtcMs(earliestDate));
+  const currentPeriodStartMs = stepper.getPeriodStartMs(todayMs);
+  const firstPeriodStartMs = stepper.getPeriodStartMs(parseDateToUtcMs(earliestDate));
 
   const ranges: BucketRange[] = [];
   for (
-    let weekStartMs = firstWeekStartMs;
-    weekStartMs <= currentWeekStartMs;
-    weekStartMs = addDays(weekStartMs, 7)
+    let periodStartMs = firstPeriodStartMs;
+    periodStartMs <= currentPeriodStartMs;
+    periodStartMs = stepper.nextPeriodStartMs(periodStartMs)
   ) {
-    let weekEndMs: number;
-    // 今週(まだ終わっていない週)は当日までの経過分のみを対象とする(FR-016)。
-    if (weekStartMs === currentWeekStartMs) {
-      weekEndMs = todayMs;
+    let periodEndMs: number;
+    // 今週・今月(まだ終わっていない区切り)は当日までの経過分のみを対象とする(FR-016)。
+    if (periodStartMs === currentPeriodStartMs) {
+      periodEndMs = todayMs;
     } else {
-      weekEndMs = addDays(weekStartMs, 6);
+      periodEndMs = stepper.getPeriodEndMs(periodStartMs);
     }
 
-    const startDate = formatUtcMsToDate(weekStartMs);
-    ranges.push({ start: startDate, end: formatUtcMsToDate(weekEndMs), label: `${startDate}週` });
-  }
-  return ranges;
-};
-
-const buildMonthlyRanges = (earliestDate: string, today: string): BucketRange[] => {
-  const todayMs = parseDateToUtcMs(today);
-  const currentMonthStartMs = getMonthStartMs(todayMs);
-  const firstMonthStartMs = getMonthStartMs(parseDateToUtcMs(earliestDate));
-
-  const ranges: BucketRange[] = [];
-  let monthStartMs = firstMonthStartMs;
-  while (monthStartMs <= currentMonthStartMs) {
-    let monthEndMs: number;
-    // 今月(まだ終わっていない月)は当日までの経過分のみを対象とする(FR-016)。
-    if (monthStartMs === currentMonthStartMs) {
-      monthEndMs = todayMs;
-    } else {
-      monthEndMs = getMonthEndMs(monthStartMs);
-    }
-
-    const monthStartDate = new Date(monthStartMs);
-    const label = `${monthStartDate.getUTCFullYear()}年${monthStartDate.getUTCMonth() + 1}月`;
     ranges.push({
-      start: formatUtcMsToDate(monthStartMs),
-      end: formatUtcMsToDate(monthEndMs),
-      label,
+      start: formatUtcMsToDate(periodStartMs),
+      end: formatUtcMsToDate(periodEndMs),
+      label: stepper.formatLabel(periodStartMs),
     });
-
-    monthStartMs = Date.UTC(monthStartDate.getUTCFullYear(), monthStartDate.getUTCMonth() + 1, 1);
   }
   return ranges;
 };
 
-// 記録データを日次・週次・月次のプリセットで集計する(FR-016)。記録がある
-// 最古の日から当日までの履歴全体をバケット化して返す(任意の期間範囲指定は
-// 対象外)。記録がない日は0ではなく欠測(hasData: false)として区別する
-// (Edge Cases)。
-export const calculatePeriodAggregate = (input: PeriodAggregateInput): PeriodAggregatePoint[] => {
-  const { period, points, today, combine } = input;
+const buildWeeklyRanges = (earliestDate: string, today: string): BucketRange[] =>
+  buildSteppedRanges(earliestDate, today, {
+    getPeriodStartMs: getWeekStartMs,
+    getPeriodEndMs: (weekStartMs) => addDays(weekStartMs, 6),
+    nextPeriodStartMs: (weekStartMs) => addDays(weekStartMs, 7),
+    formatLabel: (weekStartMs) => `${formatUtcMsToDate(weekStartMs)}週`,
+  });
 
-  if (points.length === 0) {
-    return [];
+const buildMonthlyRanges = (earliestDate: string, today: string): BucketRange[] =>
+  buildSteppedRanges(earliestDate, today, {
+    getPeriodStartMs: getMonthStartMs,
+    getPeriodEndMs: getMonthEndMs,
+    nextPeriodStartMs: getNextMonthStartMs,
+    formatLabel: (monthStartMs) => {
+      const d = new Date(monthStartMs);
+      return `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月`;
+    },
+  });
+
+// 記録がある最古の日から当日までの履歴全体を、指定されたpresetの区切りに
+// 分割する(任意の期間範囲指定は対象外、FR-016)。
+export const buildBucketRanges = (
+  period: AggregationPeriod,
+  earliestDate: string,
+  today: string,
+): BucketRange[] => {
+  if (period === "DAILY") {
+    return buildDailyRanges(earliestDate, today);
   }
+  if (period === "WEEKLY") {
+    return buildWeeklyRanges(earliestDate, today);
+  }
+  return buildMonthlyRanges(earliestDate, today);
+};
 
+// 指定済みのバケット区切りに沿ってpointsを集計する。複数の系列(例:
+// トレーニング分・歩数分)を同じ区切りで集計したい場合、buildBucketRangesを
+// 1回だけ呼び出し、その結果をこの関数に複数回渡すことで区切り計算の
+// 重複を避けられる(呼び出し元: apps/server/src/schema/steps.ts)。
+// 記録がない日は0ではなく欠測(hasData: false)として区別する(Edge Cases)。
+export const aggregatePointsOverRanges = (
+  points: PeriodDataPoint[],
+  ranges: BucketRange[],
+  combine: (values: number[]) => number,
+): PeriodAggregatePoint[] => {
   const pointsByDate = new Map(points.map((point) => [point.date, point]));
 
-  let earliestDate = points[0]!.date;
-  for (const point of points) {
-    if (point.date < earliestDate) {
-      earliestDate = point.date;
-    }
-  }
-
-  let bucketRanges: BucketRange[];
-  if (period === "DAILY") {
-    bucketRanges = buildDailyRanges(earliestDate, today);
-  } else if (period === "WEEKLY") {
-    bucketRanges = buildWeeklyRanges(earliestDate, today);
-  } else {
-    bucketRanges = buildMonthlyRanges(earliestDate, today);
-  }
-
-  return bucketRanges.map(({ start, end, label }) => {
+  return ranges.map(({ start, end, label }) => {
     const recordedValues: number[] = [];
     let hasData = false;
 
@@ -196,4 +213,23 @@ export const calculatePeriodAggregate = (input: PeriodAggregateInput): PeriodAgg
 
     return { periodLabel: label, startDate: start, endDate: end, hasData, value };
   });
+};
+
+// 記録データを日次・週次・月次のプリセットで集計する(FR-016)。
+export const calculatePeriodAggregate = (input: PeriodAggregateInput): PeriodAggregatePoint[] => {
+  const { period, points, today, combine } = input;
+
+  if (points.length === 0) {
+    return [];
+  }
+
+  let earliestDate = points[0]!.date;
+  for (const point of points) {
+    if (point.date < earliestDate) {
+      earliestDate = point.date;
+    }
+  }
+
+  const ranges = buildBucketRanges(period, earliestDate, today);
+  return aggregatePointsOverRanges(points, ranges, combine);
 };

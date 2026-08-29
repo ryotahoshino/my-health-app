@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculatePeriodAggregate } from "./periodAggregate.js";
-
-const mean = (values: number[]): number => values.reduce((sum, v) => sum + v, 0) / values.length;
-const sum = (values: number[]): number => values.reduce((total, v) => total + v, 0);
+import { calculatePeriodAggregate, mean, sum } from "./periodAggregate.js";
 
 describe("calculatePeriodAggregate", () => {
   it("記録が0件の場合は空配列を返す", () => {

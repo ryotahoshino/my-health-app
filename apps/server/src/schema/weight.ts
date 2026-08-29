@@ -2,11 +2,8 @@ import { builder } from "./builder.js";
 import "./mutation.js";
 import { AggregationPeriodEnum, PeriodAggregatePointType } from "./period.js";
 import { weightRecordInputSchema } from "../domain/weight/weightSchema.js";
-import { calculatePeriodAggregate } from "../domain/period/periodAggregate.js";
+import { calculatePeriodAggregate, mean } from "../domain/period/periodAggregate.js";
 import type { WeightRecord } from "../repositories/weightRepository.js";
-
-const mean = (values: number[]): number =>
-  values.reduce((total, value) => total + value, 0) / values.length;
 
 const WeightRecordType = builder.objectRef<WeightRecord>("WeightRecord").implement({
   fields: (t) => ({

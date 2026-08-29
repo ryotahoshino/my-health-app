@@ -7,13 +7,13 @@ import { buildStepCalorieEstimate, calculateStepCalorie } from "../domain/calori
 import { calculateSessionCalorie } from "../domain/calorie/sessionCalorie.js";
 import { calculateDailyCalorieSummary } from "../domain/calorie/dailySummary.js";
 import {
-  calculatePeriodAggregate,
+  aggregatePointsOverRanges,
+  buildBucketRanges,
+  sum,
   type PeriodDataPoint,
 } from "../domain/period/periodAggregate.js";
 import type { SessionCalorieEstimate } from "../domain/calorie/sessionCalorie.js";
 import type { StepRecord } from "../repositories/stepRecordRepository.js";
-
-const sum = (values: number[]): number => values.reduce((total, value) => total + value, 0);
 
 const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
   fields: (t) => ({
@@ -78,9 +78,9 @@ builder.queryField("stepRecords", (t) =>
 );
 
 // 記録がある最古の日から当日までの履歴全体を日次・週次・月次でバケット化する
-// (FR-016)。DAILYは1日1バケットなのでcalculatePeriodAggregateを通しても
-// 従来どおり日ごとの内訳になり、WEEKLY/MONTHLYは同じ経路でトレーニング分・
-// 歩数分をそれぞれ合算する(特別扱いを増やさず一つの仕組みに寄せる)。
+// (FR-016)。DAILYは1日1バケットなので従来どおり日ごとの内訳になり、
+// WEEKLY/MONTHLYは同じ経路でトレーニング分・歩数分をそれぞれ合算する
+// (特別扱いを増やさず一つの仕組みに寄せる)。
 builder.queryField("dailyCalorieSummaries", (t) =>
   t.field({
     type: [DailyCalorieSummaryType],
@@ -99,10 +99,15 @@ builder.queryField("dailyCalorieSummaries", (t) =>
         dates.add(stepRecord.date);
       }
 
+      if (dates.size === 0) {
+        return [];
+      }
+      const sortedDates = Array.from(dates).sort();
+
       const trainingPoints: PeriodDataPoint[] = [];
       const stepPoints: PeriodDataPoint[] = [];
 
-      for (const date of Array.from(dates).sort()) {
+      for (const date of sortedDates) {
         const weightKg = context.repositories.weight.findAsOf(date);
         const session = sessions.find((candidate) => candidate.date === date);
         const stepRecord = stepRecords.find((candidate) => candidate.date === date);
@@ -132,22 +137,17 @@ builder.queryField("dailyCalorieSummaries", (t) =>
         stepPoints.push({ date, value: stepCalories });
       }
 
-      const trainingBuckets = calculatePeriodAggregate({
-        period: args.period,
-        points: trainingPoints,
-        today: context.today,
-        combine: sum,
-      });
-      const stepBuckets = calculatePeriodAggregate({
-        period: args.period,
-        points: stepPoints,
-        today: context.today,
-        combine: sum,
-      });
+      // バケット区切り(日次/週次/月次)はトレーニング分・歩数分で共通なので
+      // 1回だけ計算し、集計(combine: 合計)だけをそれぞれの系列に対して行う
+      // (buildBucketRanges/aggregatePointsOverRangesの分離はperiodAggregate.ts参照)。
+      const earliestDate = sortedDates[0]!;
+      const ranges = buildBucketRanges(args.period, earliestDate, context.today);
+      const trainingBuckets = aggregatePointsOverRanges(trainingPoints, ranges, sum);
+      const stepBuckets = aggregatePointsOverRanges(stepPoints, ranges, sum);
 
       return trainingBuckets.map((trainingBucket, index): DailyCalorieSummaryRow => {
-        // trainingPoints/stepPointsは同じ日付集合から作っているため、
-        // calculatePeriodAggregateが導出するバケット区切りは常に一致する。
+        // 同じrangesから作っているため、trainingBuckets/stepBucketsのバケット
+        // 区切りは常に一致する。
         const stepBucket = stepBuckets[index]!;
 
         return {
