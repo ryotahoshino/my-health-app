@@ -1,0 +1,10 @@
+query FoodItems {
+  foodItems {
+    id
+    name
+    caloriesPer100g
+    proteinG
+    fatG
+    carbG
+  }
+}
