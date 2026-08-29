@@ -53,38 +53,39 @@ export const WeightPage = () => {
   const records = data?.weightRecords ?? [];
   const aggregatePoints = aggregateData?.weightTrendAggregate ?? [];
 
-  let content;
+  // 日次(生の記録一覧)と週次・月次(期間集計)はデータソースが異なるだけで、
+  // 読み込み中・0件・表示の3分岐は共通なので、どちらを見るかだけをここで
+  // 決めてから分岐を1回にまとめる。
+  let isCurrentLoading: boolean;
+  let isEmpty: boolean;
+  let loadedContent;
   if (period === "DAILY") {
-    if (isLoading) {
-      content = <Typography>読み込み中...</Typography>;
-    } else if (records.length === 0) {
-      content = (
-        <EmptyState
-          message="体重の記録はまだありません"
-          description="上のフォームから最初の記録を追加しましょう"
-        />
-      );
-    } else {
-      content = (
-        <WeightTrend
-          records={records}
-          onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
-        />
-      );
-    }
+    isCurrentLoading = isLoading;
+    isEmpty = records.length === 0;
+    loadedContent = (
+      <WeightTrend
+        records={records}
+        onDelete={(record) => record.id && deleteMutation.mutate(record.id)}
+      />
+    );
   } else {
-    if (isAggregateLoading) {
-      content = <Typography>読み込み中...</Typography>;
-    } else if (aggregatePoints.length === 0) {
-      content = (
-        <EmptyState
-          message="体重の記録はまだありません"
-          description="上のフォームから最初の記録を追加しましょう"
-        />
-      );
-    } else {
-      content = <WeightTrendAggregate points={aggregatePoints} />;
-    }
+    isCurrentLoading = isAggregateLoading;
+    isEmpty = aggregatePoints.length === 0;
+    loadedContent = <WeightTrendAggregate points={aggregatePoints} />;
+  }
+
+  let content;
+  if (isCurrentLoading) {
+    content = <Typography>読み込み中...</Typography>;
+  } else if (isEmpty) {
+    content = (
+      <EmptyState
+        message="体重の記録はまだありません"
+        description="上のフォームから最初の記録を追加しましょう"
+      />
+    );
+  } else {
+    content = loadedContent;
   }
 
   return (
