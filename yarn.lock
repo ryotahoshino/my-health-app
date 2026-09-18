@@ -1176,6 +1176,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@digital-go-jp/design-tokens@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@digital-go-jp/design-tokens@npm:2.0.1"
+  checksum: 10c0/3a961024d5e06fce735328fc3411c0fbcf7cc0b11462128f2d7fbfc6fecf2e133935da23e088931530ca7d2367b9b24ba8c727b7e37e364ff0965d713bb5272a
+  languageName: node
+  linkType: hard
+
 "@emnapi/core@npm:1.11.2":
   version: 1.11.2
   resolution: "@emnapi/core@npm:1.11.2"
@@ -1672,6 +1679,13 @@ __metadata:
   version: 3.2.1
   resolution: "@fastify/busboy@npm:3.2.1"
   checksum: 10c0/db597d6e405e12b745549d4b9a9b7e092eb9596680c02470099f64b1560db1742d2220ebf2bdb9c803ae8cd2486416bb3759cb82c642ddd516a37b97aa2c5477
+  languageName: node
+  linkType: hard
+
+"@fontsource/noto-sans-jp@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@fontsource/noto-sans-jp@npm:5.3.0"
+  checksum: 10c0/6d330f3e48674edf003ef7d3b11babdea2b66ce50ea0c21b837d696ad6f142fcf20cf3ecf0f61df9c8a2fdbe17df13e91fac99a5415a2bc8840874fd543ebfe1
   languageName: node
   linkType: hard
 
@@ -3087,8 +3101,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@my-health-app/client@workspace:apps/client"
   dependencies:
+    "@digital-go-jp/design-tokens": "npm:2.0.1"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
+    "@fontsource/noto-sans-jp": "npm:5.3.0"
     "@graphql-codegen/cli": "npm:^7.2.0"
     "@graphql-codegen/typescript-graphql-request": "npm:^7.1.0"
     "@graphql-codegen/typescript-operations": "npm:^6.1.6"

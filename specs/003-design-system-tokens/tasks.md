@@ -39,11 +39,11 @@ plan.md の Project Structure に基づく。
 
 **Purpose**: 公式トークンと書体を利用可能にし、単体テストを実行できる状態にする
 
-- [ ] T001 `@digital-go-jp/design-tokens@2.0.1` を `apps/client/package.json` の dependencies に追加し(`corepack yarn workspace @my-health-app/client add @digital-go-jp/design-tokens@2.0.1`)、default export `tokens` の各トークンの `$value` の実際の型(単位付き文字列か数値か)を確認して `specs/003-design-system-tokens/research.md` の #1 に追記する
-- [ ] T002 [P] Noto Sans JP(ウェイト400・700、日本語・ラテンのサブセット)のフォントファイルと SIL Open Font License 1.1 の全文を `apps/client/public/fonts/` に配置する(research.md #3・#7)
-- [ ] T003 T002 で配置したファイルを参照する `@font-face` 宣言(`font-display: swap`)を `apps/client/src/app/theme/fonts.css` に作成する(FR-014 / SC-012、依存: T002)
-- [ ] T004 [P] `apps/client/vite.config.ts` の VitePWA 設定で、`public/fonts/**` を事前キャッシュの対象から除外し(`workbox.globIgnores`)、書体を実行時キャッシュ(CacheFirst)で扱う設定を追加する(research.md #3 のリスク対処)
-- [ ] T005 `apps/client/vite.config.ts` の `test.projects` に、Storybook 用とは別の単体テスト用プロジェクト(名前 `unit`、環境 node、対象 `src/**/*.test.{ts,tsx}`)を追加する。現状は Storybook のストーリーしか実行されず、`*.test.ts` を置いても実行されないため必須。`corepack yarn workspace @my-health-app/client test` で両プロジェクトが実行されることを確認する(依存: T004 と同一ファイルのため T004 の後)
+- [X] T001 `@digital-go-jp/design-tokens@2.0.1` を `apps/client/package.json` の dependencies に追加し(`corepack yarn workspace @my-health-app/client add @digital-go-jp/design-tokens@2.0.1`)、default export `tokens` の各トークンの `$value` の実際の型(単位付き文字列か数値か)を確認して `specs/003-design-system-tokens/research.md` の #1 に追記する
+- [X] T002 [P] Noto Sans JP(ウェイト400・700)を `@fontsource/noto-sans-jp@5.3.0` として `apps/client/package.json` に追加し、SIL Open Font License 1.1 の全文を `apps/client/public/licenses/noto-sans-jp-OFL.txt` に同梱する(research.md #3「実装時の変更」・#7。当初計画の `public/fonts/` への手動配置から変更)
+- [X] T003 `@fontsource/noto-sans-jp` の `400.css` / `700.css`(日本語を unicode-range で約120分割、`font-display: swap`)を読み込む `apps/client/src/app/theme/fonts.css` を作成する。単一ファイルで約1MBになるサブセット別の `japanese-*.css` は使わない。読み込み(`main.tsx` / Storybook)は Phase 2 の T014・T015 で行う(FR-014 / SC-012、依存: T002)
+- [X] T004 [P] `apps/client/vite.config.ts` の VitePWA 設定で、書体(`**/*.woff`・`**/*.woff2`)を事前キャッシュの対象から除外し(`workbox.globIgnores`)、書体を実行時キャッシュ(CacheFirst、`fonts`)で扱う設定を追加する。一時的に書体を読み込んだビルドで、事前キャッシュ内の書体が0件であることを確認する(research.md #3 のリスク対処)
+- [X] T005 `apps/client/vite.config.ts` の `test.projects` に、Storybook 用とは別の単体テスト用プロジェクト(名前 `unit`、環境 node、対象 `src/**/*.test.{ts,tsx}`)を追加する。現状は Storybook のストーリーしか実行されず、`*.test.ts` を置いても実行されないため必須。`corepack yarn workspace @my-health-app/client test` で両プロジェクトが実行されることを確認する(依存: T004 と同一ファイルのため T004 の後)
 
 ---
 

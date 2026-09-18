@@ -141,7 +141,7 @@ apps/client/
 │       ├── training/{hooks,TrainingPage,TrainingSessionForm,TrainingSessionList,SessionCalorieCard}/
 │       ├── steps/{hooks,StepsPage,StepsForm,DailyCalorieSummary}/
 │       └── foods/{hooks,FoodsPage,FoodList}/
-├── public/fonts/                     # 新規: Noto Sans JP(自ホスト)+ ライセンス全文
+├── public/licenses/                  # 新規: Noto Sans JP の OFL 全文(書体本体は @fontsource/noto-sans-jp から同梱。research #3「実装時の変更」)
 ├── index.html                        # 変更: 書体の読み込み指定
 ├── vite.config.ts                    # 変更: 事前キャッシュから書体を除外(research #3)
 └── package.json                      # 変更: @digital-go-jp/design-tokens 等の追加

@@ -17,6 +17,29 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
   - `dist/tokens.css`(CSS変数)を読み込む: 参照は容易だがテーマ定義側で値を計算・加工できず、
     型チェックも効かないため補助的手段に留める。
 
+### 実測結果(T001、2026-09-19、v2.0.1)
+
+- モジュール形式は **CommonJS**(`dist/tokens.js` は `module.exports = {...}`)。型定義は
+  `export default tokens` のため、利用側は default import で参照する(Vite・vitest とも相互運用で解決できる)。
+- 型定義上 `$value` は **`any`**(`DesignToken.$value?: any`)であり、型による保護が効かない。
+  そのため tokens.ts で「期待する型への変換と検証」を行い、以降の層には型付きの値だけを渡す。
+- 最上位のカテゴリは `Color` / `FontWeight` / `FontFamily` / `FontSize` / `LineHeight` / `BorderRadius` / `Elevation`。
+  `Color` は `Primitive` / `Neutral`(`White` / `Black` / `SolidGray` / `OpacityGray`)/ `Semantic`(`Success` / `Error` / `Warning`)/ `Key`。
+
+| カテゴリ | `$value` の実際の型 | 例 |
+|---|---|---|
+| Color(Primitive / Neutral / Key) | 16進の色コード文字列 | `Color.Primitive.Blue["500"]` → `"#4979f5"` |
+| Color(Semantic) | 解決済みの色コード文字列(参照元は `original.$value` に残る) | `Color.Semantic.Success["1"]` → `"#259d63"`(元は `{Color.Primitive.Green.600}`) |
+| FontSize | rem 付き文字列 | `FontSize["16"]` → `"1rem"`(14〜64 の15段階) |
+| FontWeight | **数値ではなく文字列** | `FontWeight["400"]` → `"400"`(400 / 700 のみ) |
+| LineHeight | 数値 | `LineHeight["150"]` → `1.5`(1〜1.75 の8段階) |
+| BorderRadius | rem 付き文字列 | `BorderRadius["16"]` → `"1rem"`、`Full` → `"624.9375rem"` |
+| Elevation | box-shadow の文字列 | `Elevation["1"]` → `"0 2px 8px 1px rgba(0,0,0,0.1), 0 1px 5px 0 rgba(0,0,0,0.3)"` |
+| FontFamily | CSS のフォント指定文字列 | `FontFamily.Sans` → `"'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif"` |
+
+- `FontFamily.Sans` は先頭が Noto Sans JP で、端末搭載書体への代替指定を含む。書体の読み込み中に
+  代替書体で本文を表示する方針(FR-014 / research #3)と整合するため、そのまま利用する。
+
 ## 2. トークンのカテゴリと不足分の扱い
 
 公式トークンに含まれるカテゴリ(実測):
@@ -62,6 +85,22 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
   - 等幅書体(Noto Sans Mono)の導入: 本アプリにコード表示は無いため今回は導入しない。
 - **Risk / 対処**: service worker の事前キャッシュ対象に書体を全量含めると容量上限に触れる可能性がある。
   書体は事前キャッシュから除外し、実行時キャッシュに委ねる方針とする(タスク化して検証する)。
+
+### 実装時の変更(T002〜T004、2026-09-19)
+
+- **配信手段を変更**: 当初は「フォントファイルを `public/fonts/` に手で配置し、`@font-face` を自作する」計画だったが、
+  日本語書体を自前でサブセット化するにはツール(pyftsubset 等)が必要になるため、
+  **`@fontsource/noto-sans-jp`(v5.3.0、OFL-1.1)を依存に追加**し、その CSS を `src/app/theme/fonts.css` から読み込む方式にした。
+  書体ファイルはビルド時にアプリと一緒に出力されるため、外部CDNへのリクエストは発生せず「自ホスト」の決定は維持される。
+- **サブセットの選び方を変更**: 当初は「日本語・ラテンのサブセットのみ」としていたが、fontsource のサブセット別 CSS
+  (`japanese-400.css`)は**約1MBの単一ファイルで unicode-range による分割が無い**ことを確認した。
+  最初に日本語を1文字描画した時点で全体をダウンロードしてしまうため採らない。代わりに `400.css` / `700.css` を使う。
+  こちらは日本語が unicode-range で約120個(1個あたり約10〜45KB)に分割されており、ブラウザは画面で実際に使う文字を
+  含む断片だけを取得する。キリル文字等の `@font-face` 宣言も含まれるが、該当文字を使わない限り取得されないため実行時のコストはない。
+- **ライセンス**: OFL の全文を `apps/client/public/licenses/noto-sans-jp-OFL.txt` に同梱し、配布物に含める(#7)。
+- **検証結果(T004)**: 一時的に書体を読み込んだ状態でビルドし、書体ファイル496個が出力される一方、
+  service worker の事前キャッシュ一覧に含まれる woff/woff2 は0件、実行時キャッシュ `fonts`(CacheFirst)が
+  組み込まれていることを確認した。`globIgnores` は既定の対象パターンが将来広げられても書体を事前キャッシュしないための明示的な歯止めである。
 
 ## 4. トークン以外の生値を禁止する仕組み(FR-003 / SC-005)
 

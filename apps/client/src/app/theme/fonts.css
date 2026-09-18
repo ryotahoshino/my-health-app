@@ -1,0 +1,14 @@
+/*
+ * 本文・見出しの書体(research.md #3 / FR-014)。
+ * デジタル庁デザインシステムが推奨する Noto Sans JP(SIL OFL 1.1)を、
+ * @fontsource 経由でアプリと一緒に配信する(外部CDNへのリクエストは発生しない)。
+ *
+ * - ウェイトはデザインシステムが用いる Normal(400) と Bold(700) のみ。
+ * - サブセット別の japanese-*.css は約1MBの単一ファイルで分割されていないため使わない。
+ *   400.css / 700.css は日本語が unicode-range で約120個に分割されており、
+ *   ブラウザは画面で実際に使う文字を含む断片だけを取得する。
+ * - font-display: swap により、読み込み完了前は代替書体で本文を表示する(SC-012)。
+ * - ライセンス全文は public/licenses/noto-sans-jp-OFL.txt に同梱している。
+ */
+@import "@fontsource/noto-sans-jp/400.css";
+@import "@fontsource/noto-sans-jp/700.css";
