@@ -4,7 +4,8 @@
 
 実装後に本フィーチャーが成立していることを確認する手順。トークンの詳細は
 [data-model.md](./data-model.md)、参照規則は [contracts/theme-tokens.md](./contracts/theme-tokens.md)、
-アプリシェルの要件は [contracts/app-shell.md](./contracts/app-shell.md) を参照。
+アプリシェルの要件は [contracts/app-shell.md](./contracts/app-shell.md)、
+API依存の注入は [contracts/api-injection.md](./contracts/api-injection.md) を参照。
 
 ## 前提条件
 
@@ -28,8 +29,11 @@ corepack yarn storybook
 ## 自動テストの実行(`[自動]` の受け入れ条件)
 
 ```bash
-# テーマの単体テスト(トークンの波及・本文の下限・余白スケール)
+# テーマ・コントラストの単体テスト、画面単位のテスト(フェイクAPI注入)、全ストーリーのa11y検査
 corepack yarn workspace @my-health-app/client test
+
+# サーバー: 既存のリゾルバ/リポジトリのテスト + 起動処理ごとの統合テスト(一時DB注入)
+corepack yarn workspace @my-health-app/server test
 
 # トークンを迂回した生値(色コード・px)の検出
 corepack yarn lint
@@ -50,6 +54,11 @@ corepack yarn workspace @my-health-app/client build
 | SC-007 コントラスト比 | クライアント `test`(検査ルールに含まれる) |
 | SC-009 既存機能の非破壊 | サーバー `test` + クライアント `test` + ビルド |
 | SC-011 現在地・キーボード移動 | AppShell のストーリー |
+| SC-013 コントラストが適用前の基準値を下回らない | コントラストの単体テスト(`contrast.test.ts`) |
+| SC-014 画面・表示部品からの API 実体の直接参照が0件 | `corepack yarn lint`(`no-restricted-imports`) |
+| SC-015 4画面の画面単位テスト | 各画面のストーリー(フェイクの ApiClient を注入) |
+| SC-016 サーバーの起動処理ごとの統合テスト | サーバー `test`(`app.test.ts`) |
+| SC-017 Lint の警告・エラー0件 | `corepack yarn lint` |
 | INV-2 本文16px以上・行高1.5以上 | テーマ単体テスト |
 | INV-3 余白が6段階に一致 | テーマ単体テスト |
 
@@ -79,3 +88,5 @@ corepack yarn workspace @my-health-app/client build
 - 印刷用スタイル、アニメーション・モーションの体系的な設計
 - デジタル庁デザインシステムのコンポーネント一式の移植(憲法の非目標)
 - 機能・データモデル・APIスキーマの変更(FR-013)
+- API 呼び出し失敗時の専用の表示(現状は0件と区別されない)。本フィーチャーでは現状の振る舞いを
+  画面テストで固定するに留め、改善は別フィーチャーで扱う

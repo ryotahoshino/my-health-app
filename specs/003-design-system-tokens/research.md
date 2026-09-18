@@ -66,9 +66,14 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
 ## 4. トークン以外の生値を禁止する仕組み(FR-003 / SC-005)
 
 - **Decision**: Lint ルールで、クライアントのコンポーネント内における色コード(`#rgb`/`#rrggbb` 形式)と
-  `px` 付き寸法リテラルの直接記述を禁止する。既存のルート ESLint 設定に規則を追加し、
+  `px` 付き寸法リテラル、およびスタイル定義の寸法系プロパティへの数値リテラル(`maxWidth: 640` など。
+  実コードの生値はこの形だった)の直接記述を禁止する。既存のルート ESLint 設定に規則を追加し、
   CI の lint ステップで検出する。テーマ定義ファイル自身と、テスト・ストーリー内の
   検証用の値は対象から除外する。
+- **運用(2026-09-19 改訂)**: ルールは最初から **error** で導入し、違反が解消されるまで
+  同じフェーズ内でリファクタする(warn で導入して後から引き上げる2段階方式は採らない)。
+  既存の warn レベルのルール(`react-refresh/only-export-components`)も error に引き上げる。
+  憲法 v1.2.0 の技術スタック「静的解析」に従う。
 - **Rationale**: SC-005 を `[自動]` として検証できる手段が必要。既存CIに lint が組み込まれているため、
   新しい仕組みを追加せずに済む。
 - **Alternatives considered**:
@@ -102,6 +107,64 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
 - **未確認事項**: デジタル庁デザインシステムのドキュメント本体およびデザインデータ(Figma)の
   利用条件は、実装前に一次情報で最終確認する。トークン(MIT)とフォント(OFL)の条件とは別に
   定められている可能性があるため、確認結果に応じて README の表記を調整する。
+
+## 8. クライアントのAPI依存の注入(US5 / FR-019〜FR-021)
+
+**現状(調査結果)**: 4画面(`WeightPage` / `TrainingPage` / `StepsPage` / `FoodsPage`)すべてが
+`apps/client/src/app/queryClient.ts` のモジュールレベルのシングルトン `graphqlClient` を直接 import し、
+モジュール読み込み時に `getSdk(graphqlClient)` を生成している。画面の中にクエリ・ミューテーション・
+キャッシュ無効化と表示が混在しており、フェイクを差し込めないため画面のテストは0本。
+
+- **Decision**:
+  - 依存の型は、GraphQL Code Generator が生成する `getSdk` の戻り値の型(`ApiClient`)とする。
+    新たなインターフェースを手書きせず、スキーマ由来の型を一次ソースに保つ(原則IV)。
+  - 実体(GraphQLClient・SDK・QueryClient)はアプリの最上位(composition root)で生成し、
+    React の Provider(`ApiProvider`)と `QueryClientProvider` で注入する。利用側は `useApi()` で受け取る。
+  - データの取得・更新はfeatureごとのフック(例: `useWeightRecords`)に集約し、クエリキーと
+    キャッシュ無効化もフック側に置く。画面はフックと表示部品を組み合わせるだけにする。
+  - テスト用に、未指定のメソッドは呼ばれた時点で失敗する `createFakeApiClient(上書き)` を用意する
+    (意図しないAPI呼び出しをテストで検出するため)。
+  - 画面のテストは既存の方針どおり Storybook Interaction Test で書く(001 research #6 で
+    React Testing Library を追加しない判断をしているため)。ストーリーごとに新しい QueryClient
+    (再試行なし)とフェイクの ApiClient を注入するデコレーターを用意する。
+  - 画面・表示部品からの `graphql-request` および API クライアント生成関数の直接 import は
+    Lint(`no-restricted-imports`、error)で禁止し、SC-014 を自動で検出する。
+- **Rationale**: 原則V(v1.2.0)の「依存の注入」「役割の分離」「フェイク注入による検証」を満たす。
+  Provider による注入は TanStack Query 自体と同じ流儀で、画面ごとに依存を配線する必要がない。
+- **Alternatives considered**:
+  - モジュールのモック(`vi.mock`)で差し替える: テストが import パスに結合し、役割の分離も進まないため却下。
+  - 画面の props で SDK を受け渡す: App が各画面の依存を知る必要があり、深い受け渡しになるため却下。
+  - Mock Service Worker でネットワーク層をモックする: 依存が増え、テストの粒度も重くなるため今回は見送り。
+
+## 9. サーバーの起動処理の分離(FR-022)
+
+**現状(調査結果)**: リポジトリと当日の日付は GraphQL の context 経由で注入済みで、リゾルバの
+テストはフェイク(インメモリDB)を注入して行えている。ただし DB 接続の生成・シード・context の組み立て・
+待ち受けが `apps/server/src/index.ts` に直書きされ、当日の日付もシステムクロックを直接呼んでいるため、
+HTTP 層(GraphQL Yoga の context 組み立てを含む)を通したテストが書けない。
+
+- **Decision**: `apps/server/src/app.ts` に `createApp({ db, today })` を切り出し、
+  リポジトリの生成と context の組み立てを行って GraphQL Yoga のインスタンスを返す。
+  `index.ts` は実DBの接続・シード・`createApp` の呼び出し・待ち受けだけを行う薄い起点にする。
+  テストでは `createConnection(":memory:")` と固定の日付を注入し、Yoga の `fetch` で
+  HTTP 経由の記録の作成・取得を検証する。
+- **Rationale**: 原則V の composition root を明示し、context の組み立て(配線の誤り)まで
+  テストで検出できるようにする。スキーマ・リゾルバ・リポジトリの実装は変更しない(FR-013)。
+- **Alternatives considered**: 実際にポートを開いて HTTP クライアントから叩く方式は、
+  ポート競合と起動待ちが発生するため却下(Yoga の `fetch` で同等の経路を通せる)。
+
+## 10. アクセシビリティ(カラーコントラスト)の基準値(FR-018 / SC-013)
+
+- **Decision**: テーマを差し替える前に、現行テーマ(MUI 既定)における主要な文字色・背景色の
+  組み合わせ(本文/背景、補足/背景、主ボタンの文字/主色、リンク/背景、エラー文字/背景、
+  表の見出し/背景)のコントラスト比を WCAG の相対輝度の式で算出し、基準値として記録する。
+  新テーマの同じ組み合わせが基準値以上かつ WCAG AA 以上であることを、テーマの単体テストで
+  自動検証する。公式トークンで満たせない場合は別の公式トークンを選び、それでも満たせない場合は
+  従来の値を維持して逸脱をここに追記する(憲法 原則X「アクセシビリティの優先」)。
+- **Rationale**: axe の検査は「AA を満たすか」の合否しか見ないため、「現状より劣化していないか」は
+  別途計測しないと保証できない。数式での算出は描画を伴わず決定的に検証できる。
+- **Alternatives considered**: 画面描画後にブラウザで計測する方式は、描画環境で値がぶれうるうえ
+  重いため却下。
 
 ## 出典
 
