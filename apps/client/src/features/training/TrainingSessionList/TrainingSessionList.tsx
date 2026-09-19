@@ -32,9 +32,9 @@ const intensityLabels: Record<TrainingSessionListItem["intensity"], string> = {
   HIGH: "高強度",
 };
 
-const Root = styled(Stack)({
-  gap: 16,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(2),
+}));
 
 // セッション一覧・詳細(種目内訳 + 消費カロリー/総ボリューム表示)。種目名は
 // exerciseIdをキーにexercises(種目マスタ参照データ)から解決する(FR-007)。

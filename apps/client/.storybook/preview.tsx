@@ -1,6 +1,19 @@
 import type { Preview } from "@storybook/react-vite";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { theme } from "../src/app/theme";
+import "../src/app/theme/fonts.css";
 
 const preview: Preview = {
+  // アプリと同じテーマ・書体でストーリーを描画し、a11y 検査も適用後の見た目で行う
+  // (specs/003-design-system-tokens T015)。
+  decorators: [
+    (Story) => (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Story />
+      </ThemeProvider>
+    ),
+  ],
   parameters: {
     controls: {
       matchers: {

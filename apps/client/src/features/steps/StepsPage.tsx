@@ -13,9 +13,9 @@ import { PeriodSelector, type AggregationPeriod } from "../../components/PeriodS
 const sdk = getSdk(graphqlClient);
 const dailyCalorieSummariesBaseKey = ["dailyCalorieSummaries"];
 
-const Root = styled(Stack)({
-  maxWidth: 480,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  maxWidth: theme.layout.contentNarrow,
+}));
 
 export const StepsPage = () => {
   const queryClient = useQueryClient();

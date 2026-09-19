@@ -89,7 +89,7 @@ const FormRoot = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
-  maxWidth: 480,
+  maxWidth: theme.layout.contentNarrow,
 }));
 
 const ExerciseRow = styled(Stack)(({ theme }) => ({

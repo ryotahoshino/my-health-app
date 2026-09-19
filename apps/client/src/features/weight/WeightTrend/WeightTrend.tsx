@@ -23,9 +23,9 @@ export type WeightTrendProps = {
   onDelete?: (record: WeightTrendRecord) => void;
 };
 
-const Root = styled(Stack)({
-  gap: 16,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(2),
+}));
 
 // グラフの内容は同じデータを表形式でも取得でき、推移の要約もテキストで
 // 読める(FR-004、原則I: グラフの非視覚的代替)。

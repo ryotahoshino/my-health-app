@@ -15,9 +15,9 @@ const sdk = getSdk(graphqlClient);
 const weightRecordsQueryKey = ["weightRecords"];
 const weightTrendAggregateBaseKey = ["weightTrendAggregate"];
 
-const Root = styled(Stack)({
-  maxWidth: 480,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  maxWidth: theme.layout.contentNarrow,
+}));
 
 export const WeightPage = () => {
   const queryClient = useQueryClient();
