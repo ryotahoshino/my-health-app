@@ -44,10 +44,38 @@ export default defineConfig({
         theme_color: "#1976d2",
         background_color: "#ffffff",
       },
+      // 日本語書体(Noto Sans JP)は unicode-range で分割された多数のファイルから成り、
+      // 合計サイズも大きい。事前キャッシュに含めると容量上限に触れるうえ、使わない断片まで
+      // 取得してしまうため除外し、実際に表示で使われた断片だけを実行時にキャッシュする
+      // (specs/003-design-system-tokens/research.md #3)。
+      workbox: {
+        globIgnores: ["**/*.woff", "**/*.woff2"],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === "font",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "fonts",
+              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
+      },
     }),
   ],
   test: {
     projects: [
+      // テーマ・コントラスト計算・APIの注入の仕組みなど、描画を伴わない単体テスト用。
+      // storybook プロジェクトはストーリーしか実行しないため、*.test.ts を置いても
+      // このプロジェクトが無いと一切実行されない(specs/003-design-system-tokens/tasks.md T005)。
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "node",
+          include: ["src/**/*.test.{ts,tsx}"],
+        },
+      },
       {
         extends: true,
         plugins: [
