@@ -9,7 +9,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import { LineChart } from "@mui/x-charts/LineChart";
 
 export type WeightTrendRecord = {
@@ -30,6 +30,7 @@ const Root = styled(Stack)(({ theme }) => ({
 // グラフの内容は同じデータを表形式でも取得でき、推移の要約もテキストで
 // 読める(FR-004、原則I: グラフの非視覚的代替)。
 export const WeightTrend = ({ records, onDelete }: WeightTrendProps) => {
+  const theme = useTheme();
   const [view, setView] = useState<"chart" | "table">("chart");
 
   const first = records.at(0);
@@ -81,7 +82,7 @@ export const WeightTrend = ({ records, onDelete }: WeightTrendProps) => {
   if (view === "chart") {
     content = (
       <LineChart
-        height={300}
+        height={theme.layout.chartHeight}
         xAxis={[{ data: records.map((record) => record.date), scaleType: "band" }]}
         series={[{ data: records.map((record) => record.weightKg), label: "体重(kg)" }]}
       />

@@ -74,6 +74,13 @@ export default tseslint.config(
           message:
             "寸法を数値で直接書かず、テーマの spacing・layout を参照してください(憲法 原則X / FR-003)。",
         },
+        {
+          // グラフ等のコンポーネントに props で渡す寸法(例: <LineChart height={300} />)。
+          selector:
+            "JSXAttribute[name.name=/^(width|height|minWidth|maxWidth|minHeight|maxHeight|gap|margin|padding)$/] > JSXExpressionContainer > Literal[raw=/^-?\\d/][raw!='0']",
+          message:
+            "寸法を数値で直接書かず、テーマの spacing・layout を参照してください(憲法 原則X / FR-003)。",
+        },
       ],
     },
   },

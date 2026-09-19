@@ -2,7 +2,7 @@ import dads from "@digital-go-jp/design-tokens";
 
 // デザイントークンの一次ソースは公式パッケージ @digital-go-jp/design-tokens(憲法 原則X / INV-4)。
 // ここでは公式の値を「参照して写し取る」だけで、値そのものは書き換えない。
-// 例外は公式トークンに存在しない余白とレイアウト幅のみで、これらは本プロジェクトで定義する
+// 例外は公式トークンに存在しない余白とレイアウト寸法のみで、これらは本プロジェクトで定義する
 // (specs/003-design-system-tokens research.md #2)。
 //
 // 公式パッケージの $value は型定義上 any のため(research.md #1)、この層で期待する型に
@@ -111,15 +111,17 @@ export const elevationTokens: string[] = [
 export const spacingUnit = 8;
 export const spacingScale = [4, 8, 16, 24, 32, 48] as const;
 
-// レイアウト幅(自前定義、px)。適用前の画面・フォームの最大幅をそのまま引き継いでいる。
+// レイアウト寸法(自前定義、px)。適用前の画面・フォームの最大幅とグラフの高さをそのまま引き継いでいる。
 export type LayoutTokens = {
   contentWide: number;
   contentNarrow: number;
   form: number;
+  chartHeight: number;
 };
 
 export const layoutTokens: LayoutTokens = {
   contentWide: 640,
   contentNarrow: 480,
   form: 320,
+  chartHeight: 300,
 };
