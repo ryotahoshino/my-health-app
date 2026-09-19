@@ -14,6 +14,7 @@
 | 余白 | テーマの spacing 関数 | 基準8px。段階は 4 / 8 / 16 / 24 / 32 / 48 px |
 | 角丸 | テーマの shape | 公式 `border-radius-*` の写像 |
 | 影 | テーマの shadows | 公式 `elevation-1..8` の写像 |
+| レイアウト幅 | テーマの layout | 自前定義。画面の最大幅 `contentWide` 640 / `contentNarrow` 480、フォームの最大幅 `form` 320(px) |
 
 ## 契約規則
 
