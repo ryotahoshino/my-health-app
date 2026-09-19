@@ -59,7 +59,7 @@ plan.md の Project Structure に基づく。
 
 - [X] T006 [P] コントラスト比の算出関数のテストを `apps/client/src/app/theme/contrast.test.ts` に作成する。WCAG の相対輝度に基づく既知の値(例: 黒と白が 21:1)を検証する。実装前に失敗することを確認する(research.md #10)
 - [X] T007 [P] テーマの単体テストを `apps/client/src/app/theme/theme.test.ts` に作成する。(a) 本文のテキストスタイルが16px以上・行高1.5以上(INV-2 / FR-012)、(b) 余白スケールが 4 / 8 / 16 / 24 / 32 / 48 px の6段階(INV-3 / FR-007)、(c) palette の各役割色が公式トークンの値と一致(INV-4)、ただし FR-018 により従来値を維持した組み合わせは research.md #10 に記録したものだけを例外とする、(d) `createAppTheme` に差し替えたトークンを渡すと、それを参照するテーマ全体の値に反映される(SC-004)。実装前に失敗することを確認する
-- [X] T008 [P] `eslint.config.js` に、トークンを迂回した生値を検出するルールを **error** で追加する。対象は `apps/client/src/**/*.{ts,tsx}` の (a) 色コード文字列(`#rgb` / `#rrggbb` / `#rrggbbaa`)、(b) `px` / `rem` 付き寸法文字列、(c) スタイル定義の寸法系プロパティ(`gap` / `margin*` / `padding*` / `width` / `maxWidth` / `minWidth` / `height` など)への数値リテラル。`apps/client/src/app/theme/**`・`**/*.stories.tsx`・`**/*.test.{ts,tsx}` は対象外。あわせて既存の warn ルール `react-refresh/only-export-components` を error に引き上げる。`corepack yarn lint` が既存の9箇所(`maxWidth: 640/480/320`、`gap: 16`)をエラーとして検出することを確認する(research.md #4 / FR-003 / FR-023)
+- [X] T008 [P] `eslint.config.js` に、トークンを迂回した生値を検出するルールを **error** で追加する。対象は `apps/client/src/**/*.{ts,tsx}` の (a) 色コード文字列(`#rgb` / `#rrggbb` / `#rrggbbaa`)、(b) `px` / `rem` 付き寸法文字列、(c) スタイル定義(`styled`・`sx`・`style`)と JSX 属性への数値リテラル(許可リスト方式。2026-09-20 に名前の列挙方式から改訂、research.md #4)。`apps/client/src/app/theme/**`・`**/*.stories.tsx`・`**/*.test.{ts,tsx}` は対象外。あわせて既存の warn ルール `react-refresh/only-export-components` を error に引き上げる。`corepack yarn lint` が既存の9箇所(`maxWidth: 640/480/320`、`gap: 16`)をエラーとして検出することを確認する(research.md #4 / FR-003 / FR-023)
 
 ### Implementation for Foundational
 

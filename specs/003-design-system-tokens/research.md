@@ -113,6 +113,14 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
   同じフェーズ内でリファクタする(warn で導入して後から引き上げる2段階方式は採らない)。
   既存の warn レベルのルール(`react-refresh/only-export-components`)も error に引き上げる。
   憲法 v1.2.0 の技術スタック「静的解析」に従う。
+- **数値の検出方式(2026-09-20 改訂)**: 当初は「寸法系のプロパティ名を列挙して禁止する」方式だったが、
+  列挙に無い名前(JSX 属性の `height={300}`、`top`・`fontSize` など)を見逃すことが実装中に判明した。
+  そのため「数値の直接記述を原則禁止し、寸法でないことが明らかなものだけを許可リストに載せる」方式に
+  改めた。対象は (1) JSX 属性の値、(2) `styled(...)(...)` の引数内と JSX 属性内(`sx`・`style`・
+  `margin={{ left: 40 }}` など)のオブジェクトのプロパティの値で、負の数も含む。`0` は単位に関係なく
+  同じ意味のため許可する。許可リストは `eslint.config.js` の `numericJsxPropsAllowed`
+  (`spacing`・`elevation` などテーマの倍率・添字と、`rows`・`tabIndex`・`aria-*` など寸法でないもの)と
+  `numericStyleKeysAllowed`(`flex`・`opacity` など単位を持たないもの)で、追加時は理由をコメントで残す。
 - **Rationale**: SC-005 を `[自動]` として検証できる手段が必要。既存CIに lint が組み込まれているため、
   新しい仕組みを追加せずに済む。
 - **Alternatives considered**:
