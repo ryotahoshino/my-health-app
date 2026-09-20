@@ -1,37 +1,17 @@
 import { createServer } from "node:http";
-import { createYoga } from "graphql-yoga";
-import { builder } from "./schema/builder.js";
-import "./schema/health.js";
-import "./schema/weight.js";
-import "./schema/exerciseCatalog.js";
-import "./schema/training.js";
-import "./schema/steps.js";
-import "./schema/foodItems.js";
-import type { GraphQLContext } from "./schema/context.js";
+import { createApp } from "./app.js";
 import { getTodayDateString } from "./schema/today.js";
 import { getDb } from "./db/connection.js";
 import { seedExerciseCatalog } from "./db/seed/exerciseCatalog.js";
 import { seedFoodItems } from "./db/seed/foodItems.js";
-import { createWeightRepository } from "./repositories/weightRepository.js";
-import { createTrainingSessionRepository } from "./repositories/trainingSessionRepository.js";
-import { createStepRecordRepository } from "./repositories/stepRecordRepository.js";
 
+// 実行時の入口。実DBの接続・シード・アプリの組み立て・待ち受けだけを行い、
+// スキーマやリポジトリの組み立ては app.ts に任せる(contracts/api-injection.md)。
 const db = getDb();
 seedExerciseCatalog(db);
 seedFoodItems(db);
 
-const weightRepository = createWeightRepository(db);
-const trainingRepository = createTrainingSessionRepository(db);
-const stepRepository = createStepRecordRepository(db);
-
-const schema = builder.toSchema();
-const yoga = createYoga({
-  schema,
-  context: (): GraphQLContext => ({
-    repositories: { weight: weightRepository, training: trainingRepository, steps: stepRepository },
-    today: getTodayDateString(),
-  }),
-});
+const yoga = createApp({ db, today: getTodayDateString });
 const server = createServer(yoga);
 
 const port = Number(process.env.PORT ?? 4000);

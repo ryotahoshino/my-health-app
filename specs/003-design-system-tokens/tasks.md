@@ -86,30 +86,31 @@ plan.md の Project Structure に基づく。
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T019 [P] [US5] フェイクの ApiClient のテストを `apps/client/src/test-support/createFakeApiClient.test.ts` に作成する。上書きしたメソッドは指定の値を返し、上書きしていないメソッドは呼ばれた時点でメソッド名を含むエラーで失敗すること。実装前に失敗することを確認する(contracts/api-injection.md「フェイク」)
-- [ ] T020 [P] [US5] 注入の仕組みのテストを `apps/client/src/app/api/apiClient.test.ts` に作成する。(a) Provider の外で ApiClient を要求した場合に明示的なエラーになる(注入忘れの検出)、(b) `createApiClient(endpoint)` が生成SDKのメソッドを備えた ApiClient を返す。実装前に失敗することを確認する(contracts/api-injection.md 規則3)
-- [ ] T021 [P] [US5] `eslint.config.js` に `no-restricted-imports`(error)を追加し、`apps/client/src/features/**` と `apps/client/src/components/**` から `graphql-request` および API クライアントの生成・実体(`app/api` の `createApiClient`、`app/queryClient` の実体)の import を禁止する。現状の4画面がエラーとして検出されることを確認する(SC-014 / contracts/api-injection.md 規則1)
-- [ ] T022 [P] [US5] 体重画面の画面テストを `apps/client/src/features/weight/WeightPage/WeightPage.stories.tsx` に作成する。フェイクの ApiClient を注入し、(a) 読み込み中の表示、(b) 0件で空状態、(c) 記録ありで一覧表示、(d) 記録の追加後に一覧が再取得される、(e) 削除後に再取得される、(f) 週次・月次への切替で集計が取得される、(g) API 失敗時は現状どおり空状態になる(現状の振る舞いの固定、spec Edge Cases)を検証する。実装前に失敗することを確認する(SC-015)
-- [ ] T023 [P] [US5] トレーニング画面の画面テストを `apps/client/src/features/training/TrainingPage/TrainingPage.stories.tsx` に作成する。読み込み中 / 0件 / 記録あり(種目マスタの取得を含む)/ 追加後の再取得 / 削除後の再取得 / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
-- [ ] T024 [P] [US5] 歩数画面の画面テストを `apps/client/src/features/steps/StepsPage/StepsPage.stories.tsx` に作成する。読み込み中 / 0件 / 記録あり / 追加後の再取得 / 期間切替で集計が取得される / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
-- [ ] T025 [P] [US5] 食材画面の画面テストを `apps/client/src/features/foods/FoodsPage/FoodsPage.stories.tsx` に作成する。読み込み中 / 0件 / 一覧表示 / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
-- [ ] T026 [P] [US5] サーバーの統合テストを `apps/server/src/app.test.ts` に作成する。`createApp` に一時DB(`createConnection(":memory:")`)と固定の日付を注入し、GraphQL Yoga の `fetch` で体重記録の作成(mutation)→ 取得(query)を行って作成した記録が返ること、期間集計が注入した日付を基準に計算されることを検証する。実装前に失敗することを確認する(SC-016 / research.md #9)
+- [X] T019 [P] [US5] フェイクの ApiClient のテストを `apps/client/src/test-support/createFakeApiClient.test.ts` に作成する。上書きしたメソッドは指定の値を返し、上書きしていないメソッドは呼ばれた時点でメソッド名を含むエラーで失敗すること。実装前に失敗することを確認する(contracts/api-injection.md「フェイク」)
+- [X] T020 [P] [US5] 注入の仕組みのテストを `apps/client/src/app/api/apiClient.test.ts` に作成する。(a) Provider の外で ApiClient を要求した場合に明示的なエラーになる(注入忘れの検出)、(b) `createApiClient(endpoint)` が生成SDKのメソッドを備えた ApiClient を返す。実装前に失敗することを確認する(contracts/api-injection.md 規則3)
+- [X] T021 [P] [US5] `eslint.config.js` に `no-restricted-imports`(error)を追加し、`apps/client/src/features/**` と `apps/client/src/components/**` から `graphql-request` および API クライアントの生成・実体(`app/api` の `createApiClient`、`app/queryClient` の実体)の import を禁止する。現状の4画面がエラーとして検出されることを確認する(SC-014 / contracts/api-injection.md 規則1)
+- [X] T022 [P] [US5] 体重画面の画面テストを `apps/client/src/features/weight/WeightPage/WeightPage.stories.tsx` に作成する。フェイクの ApiClient を注入し、(a) 読み込み中の表示、(b) 0件で空状態、(c) 記録ありで一覧表示、(d) 記録の追加後に一覧が再取得される、(e) 削除後に再取得される、(f) 週次・月次への切替で集計が取得される、(g) API 失敗時は現状どおり空状態になる(現状の振る舞いの固定、spec Edge Cases)を検証する。実装前に失敗することを確認する(SC-015)
+- [X] T023 [P] [US5] トレーニング画面の画面テストを `apps/client/src/features/training/TrainingPage/TrainingPage.stories.tsx` に作成する。読み込み中 / 0件 / 記録あり(種目マスタの取得を含む)/ 追加後の再取得 / 削除後の再取得 / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
+- [X] T024 [P] [US5] 歩数画面の画面テストを `apps/client/src/features/steps/StepsPage/StepsPage.stories.tsx` に作成する。読み込み中 / 0件 / 記録あり / 追加後の再取得 / 期間切替で集計が取得される / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
+- [X] T025 [P] [US5] 食材画面の画面テストを `apps/client/src/features/foods/FoodsPage/FoodsPage.stories.tsx` に作成する。読み込み中 / 0件 / 一覧表示 / API 失敗時の現状の振る舞いを検証する。実装前に失敗することを確認する(SC-015)
+- [X] T026 [P] [US5] サーバーの統合テストを `apps/server/src/app.test.ts` に作成する。`createApp` に一時DB(`createConnection(":memory:")`)と固定の日付を注入し、GraphQL Yoga の `fetch` で体重記録の作成(mutation)→ 取得(query)を行って作成した記録が返ること、期間集計が注入した日付を基準に計算されることを検証する。実装前に失敗することを確認する(SC-016 / research.md #9)
 
 ### Implementation for User Story 5
 
-- [ ] T027 [US5] `apps/client/src/app/api/apiClient.ts`(`ApiClient` 型 = 生成SDKの `getSdk` の戻り値の型、`createApiClient(endpoint)`、Provider 外を検出する関数)と `apps/client/src/app/api/ApiProvider.tsx`(Provider と `useApi()`)と `apps/client/src/app/api/index.ts` を実装し、T020 を成功させる。ApiClient の型を手書きしない(原則IV)
-- [ ] T028 [P] [US5] `apps/client/src/test-support/createFakeApiClient.ts` と、ストーリーごとに新しい QueryClient(再試行なし)とフェイクの ApiClient を注入するデコレーター `apps/client/src/test-support/withApiProviders.tsx` を実装し、T019 を成功させる(依存: T027)
-- [ ] T029 [P] [US5] 体重のデータフック(記録一覧・期間集計の取得、追加・削除とキャッシュ無効化、クエリキー)を `apps/client/src/features/weight/hooks/` に実装する。既存の取得条件(日次のときだけ記録一覧、週次・月次のときだけ集計を有効化)と無効化の範囲を変えない(FR-013、依存: T027)
-- [ ] T030 [P] [US5] トレーニングのデータフック(セッション一覧・種目マスタの取得、追加・削除とキャッシュ無効化、クエリキー)を `apps/client/src/features/training/hooks/` に実装する(FR-013、依存: T027)
-- [ ] T031 [P] [US5] 歩数のデータフック(期間別の日次消費カロリーの取得、追加とキャッシュ無効化、クエリキー)を `apps/client/src/features/steps/hooks/` に実装する(FR-013、依存: T027)
-- [ ] T032 [P] [US5] 食材のデータフック(食材一覧の取得、クエリキー)を `apps/client/src/features/foods/hooks/` に実装する(依存: T027)
-- [ ] T033 [P] [US5] `apps/client/src/features/weight/WeightPage.tsx` を `apps/client/src/features/weight/WeightPage/WeightPage.tsx` と `index.ts` に移し(`git mv`)、データフックと表示部品を組み合わせるだけの構成にして T022 を成功させる(依存: T028, T029)
-- [ ] T034 [P] [US5] `apps/client/src/features/training/TrainingPage.tsx` を `apps/client/src/features/training/TrainingPage/` に移し、同様に再構成して T023 を成功させる(依存: T028, T030)
-- [ ] T035 [P] [US5] `apps/client/src/features/steps/StepsPage.tsx` を `apps/client/src/features/steps/StepsPage/` に移し、同様に再構成して T024 を成功させる(依存: T028, T031)
-- [ ] T036 [P] [US5] `apps/client/src/features/foods/FoodsPage.tsx` を `apps/client/src/features/foods/FoodsPage/` に移し、同様に再構成して T025 を成功させる(依存: T028, T032)
-- [ ] T037 [US5] `apps/client/src/app/queryClient.ts` からモジュールレベルの `graphqlClient` を削除して QueryClient の生成関数のみにし、`apps/client/src/app/App.tsx` を composition root として、ApiClient と QueryClient を `useState` の遅延初期化で1度だけ生成して Provider で注入する構成にする。ルートの import を各画面フォルダへ切り替える(contracts/api-injection.md 規則2、依存: T033〜T036)
-- [ ] T038 [P] [US5] サーバーの起動処理を `apps/server/src/app.ts` の `createApp({ db, today })` に切り出し、`apps/server/src/index.ts` を実DBの接続・シード・`createApp` の呼び出し・待ち受けのみにする。当日の日付は関数として注入する。スキーマ・リゾルバ・リポジトリには手を入れない。T026 と既存のサーバーテストがすべて成功することを確認する(FR-022 / FR-013、依存: T026)
-- [ ] T039 [US5] `corepack yarn lint` でエラー0件(T021 を含む)、クライアント・サーバーの全テスト成功を確認する。実サーバー+クライアントを起動して4画面の取得・追加・削除・期間切替がリファクタ前と同じように動くことをブラウザ自動操作で確認する(振る舞いの非破壊、FR-013、依存: T037, T038)
+- [X] T027 [US5] `apps/client/src/app/api/apiClient.ts`(`ApiClient` 型 = 生成SDKの `getSdk` の戻り値の型、`createApiClient(endpoint)`、Provider 外を検出する関数)と `apps/client/src/app/api/ApiProvider.tsx`(Provider と `useApi()`)と `apps/client/src/app/api/index.ts` を実装し、T020 を成功させる。ApiClient の型を手書きしない(原則IV)
+- [X] T028 [P] [US5] `apps/client/src/test-support/createFakeApiClient.ts` と、ストーリーごとに新しい QueryClient(再試行なし)とフェイクの ApiClient を注入するデコレーター `apps/client/src/test-support/withApiProviders.tsx` を実装し、T019 を成功させる(依存: T027)
+- [X] T029 [P] [US5] 体重のデータフック(記録一覧・期間集計の取得、追加・削除とキャッシュ無効化、クエリキー)を `apps/client/src/features/weight/hooks/` に実装する。既存の取得条件(日次のときだけ記録一覧、週次・月次のときだけ集計を有効化)と無効化の範囲を変えない(FR-013、依存: T027)
+- [X] T030 [P] [US5] トレーニングのデータフック(セッション一覧・種目マスタの取得、追加・削除とキャッシュ無効化、クエリキー)を `apps/client/src/features/training/hooks/` に実装する(FR-013、依存: T027)
+- [X] T031 [P] [US5] 歩数のデータフック(期間別の日次消費カロリーの取得、追加とキャッシュ無効化、クエリキー)を `apps/client/src/features/steps/hooks/` に実装する(FR-013、依存: T027)
+- [X] T032 [P] [US5] 食材のデータフック(食材一覧の取得、クエリキー)を `apps/client/src/features/foods/hooks/` に実装する(依存: T027)
+- [X] T033 [P] [US5] `apps/client/src/features/weight/WeightPage.tsx` を `apps/client/src/features/weight/WeightPage/WeightPage.tsx` と `index.ts` に移し(`git mv`)、データフックと表示部品を組み合わせるだけの構成にして T022 を成功させる(依存: T028, T029)
+- [X] T034 [P] [US5] `apps/client/src/features/training/TrainingPage.tsx` を `apps/client/src/features/training/TrainingPage/` に移し、同様に再構成して T023 を成功させる(依存: T028, T030)
+- [X] T035 [P] [US5] `apps/client/src/features/steps/StepsPage.tsx` を `apps/client/src/features/steps/StepsPage/` に移し、同様に再構成して T024 を成功させる(依存: T028, T031)
+- [X] T036 [P] [US5] `apps/client/src/features/foods/FoodsPage.tsx` を `apps/client/src/features/foods/FoodsPage/` に移し、同様に再構成して T025 を成功させる(依存: T028, T032)
+- [X] T037 [US5] `apps/client/src/app/queryClient.ts` からモジュールレベルの `graphqlClient` を削除して QueryClient の生成関数のみにし、`apps/client/src/app/App.tsx` を composition root として、ApiClient と QueryClient を `useState` の遅延初期化で1度だけ生成して Provider で注入する構成にする。ルートの import を各画面フォルダへ切り替える(contracts/api-injection.md 規則2、依存: T033〜T036)
+- [X] T038 [P] [US5] サーバーの起動処理を `apps/server/src/app.ts` の `createApp({ db, today })` に切り出し、`apps/server/src/index.ts` を実DBの接続・シード・`createApp` の呼び出し・待ち受けのみにする。当日の日付は関数として注入する。スキーマ・リゾルバ・リポジトリには手を入れない。T026 と既存のサーバーテストがすべて成功することを確認する(FR-022 / FR-013、依存: T026)
+- [~] T039 [US5] `corepack yarn lint` でエラー0件(T021 を含む)、クライアント・サーバーの全テスト成功を確認する。実サーバー+クライアントを起動して4画面の取得・追加・削除・期間切替がリファクタ前と同じように動くことをブラウザ自動操作で確認する(振る舞いの非破壊、FR-013、依存: T037, T038)
+  - 自動検証は完了(2026-09-20): Lint エラー0件、クライアント 88件・サーバー 107件のテスト成功、両ワークスペースの typecheck とクライアントの build。実サーバー(別ポート・一時DB)を起動して HTTP 経由で記録の作成→取得と食材一覧の取得を確認し、クライアントの開発サーバーが実サーバーを指す設定で起動することも確認した。残るブラウザ自動操作での4画面の目視相当の確認は、実行環境にブラウザ操作の手段が無いため未実施(開発者本人が実施する)。
 
 **Checkpoint**: 4画面に画面単位のテストが揃い、見た目の変更に対する安全網ができた。API 依存は注入され、直接参照は Lint で禁止されている
 
