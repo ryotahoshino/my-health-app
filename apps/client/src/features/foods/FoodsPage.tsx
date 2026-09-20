@@ -10,9 +10,9 @@ import { QueryState } from "../../components/QueryState";
 const sdk = getSdk(graphqlClient);
 const foodItemsQueryKey = ["foodItems"];
 
-const Root = styled(Stack)({
-  maxWidth: 640,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  maxWidth: theme.layout.contentWide,
+}));
 
 // 参照専用の一覧のため、記録・編集用のフォームやミューテーションは持たない(FR-015)。
 export const FoodsPage = () => {

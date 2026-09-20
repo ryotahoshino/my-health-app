@@ -46,7 +46,7 @@ const FormRoot = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
-  maxWidth: 320,
+  maxWidth: theme.layout.form,
 }));
 
 export const WeightForm = ({ onSubmit }: WeightFormProps) => {

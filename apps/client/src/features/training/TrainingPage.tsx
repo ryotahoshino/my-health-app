@@ -12,9 +12,9 @@ const sdk = getSdk(graphqlClient);
 const trainingSessionsQueryKey = ["trainingSessions"];
 const exerciseCatalogQueryKey = ["exerciseCatalog"];
 
-const Root = styled(Stack)({
-  maxWidth: 640,
-});
+const Root = styled(Stack)(({ theme }) => ({
+  maxWidth: theme.layout.contentWide,
+}));
 
 export const TrainingPage = () => {
   const queryClient = useQueryClient();

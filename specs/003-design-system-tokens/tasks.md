@@ -57,22 +57,22 @@ plan.md の Project Structure に基づく。
 
 > テストを先に書き、実装前に失敗することを確認する(憲法原則III)
 
-- [ ] T006 [P] コントラスト比の算出関数のテストを `apps/client/src/app/theme/contrast.test.ts` に作成する。WCAG の相対輝度に基づく既知の値(例: 黒と白が 21:1)を検証する。実装前に失敗することを確認する(research.md #10)
-- [ ] T007 [P] テーマの単体テストを `apps/client/src/app/theme/theme.test.ts` に作成する。(a) 本文のテキストスタイルが16px以上・行高1.5以上(INV-2 / FR-012)、(b) 余白スケールが 4 / 8 / 16 / 24 / 32 / 48 px の6段階(INV-3 / FR-007)、(c) palette の各役割色が公式トークンの値と一致(INV-4)、ただし FR-018 により従来値を維持した組み合わせは research.md #10 に記録したものだけを例外とする、(d) `createAppTheme` に差し替えたトークンを渡すと、それを参照するテーマ全体の値に反映される(SC-004)。実装前に失敗することを確認する
-- [ ] T008 [P] `eslint.config.js` に、トークンを迂回した生値を検出するルールを **error** で追加する。対象は `apps/client/src/**/*.{ts,tsx}` の (a) 色コード文字列(`#rgb` / `#rrggbb` / `#rrggbbaa`)、(b) `px` / `rem` 付き寸法文字列、(c) スタイル定義の寸法系プロパティ(`gap` / `margin*` / `padding*` / `width` / `maxWidth` / `minWidth` / `height` など)への数値リテラル。`apps/client/src/app/theme/**`・`**/*.stories.tsx`・`**/*.test.{ts,tsx}` は対象外。あわせて既存の warn ルール `react-refresh/only-export-components` を error に引き上げる。`corepack yarn lint` が既存の9箇所(`maxWidth: 640/480/320`、`gap: 16`)をエラーとして検出することを確認する(research.md #4 / FR-003 / FR-023)
+- [X] T006 [P] コントラスト比の算出関数のテストを `apps/client/src/app/theme/contrast.test.ts` に作成する。WCAG の相対輝度に基づく既知の値(例: 黒と白が 21:1)を検証する。実装前に失敗することを確認する(research.md #10)
+- [X] T007 [P] テーマの単体テストを `apps/client/src/app/theme/theme.test.ts` に作成する。(a) 本文のテキストスタイルが16px以上・行高1.5以上(INV-2 / FR-012)、(b) 余白スケールが 4 / 8 / 16 / 24 / 32 / 48 px の6段階(INV-3 / FR-007)、(c) palette の各役割色が公式トークンの値と一致(INV-4)、ただし FR-018 により従来値を維持した組み合わせは research.md #10 に記録したものだけを例外とする、(d) `createAppTheme` に差し替えたトークンを渡すと、それを参照するテーマ全体の値に反映される(SC-004)。実装前に失敗することを確認する
+- [X] T008 [P] `eslint.config.js` に、トークンを迂回した生値を検出するルールを **error** で追加する。対象は `apps/client/src/**/*.{ts,tsx}` の (a) 色コード文字列(`#rgb` / `#rrggbb` / `#rrggbbaa`)、(b) `px` / `rem` 付き寸法文字列、(c) スタイル定義(`styled`・`sx`・`style`)と JSX 属性への数値リテラル(許可リスト方式。2026-09-20 に名前の列挙方式から改訂、research.md #4)。`apps/client/src/app/theme/**`・`**/*.stories.tsx`・`**/*.test.{ts,tsx}` は対象外。あわせて既存の warn ルール `react-refresh/only-export-components` を error に引き上げる。`corepack yarn lint` が既存の9箇所(`maxWidth: 640/480/320`、`gap: 16`)をエラーとして検出することを確認する(research.md #4 / FR-003 / FR-023)
 
 ### Implementation for Foundational
 
-- [ ] T009 コントラスト比の算出関数(WCAG の相対輝度)を `apps/client/src/app/theme/contrast.ts` に実装し、T006 を成功させる(依存: T006)
-- [ ] T010 **テーマを差し替える前に**、現行テーマ(MUI 既定)で主要な6組(本文/背景、補足/背景、主ボタンの文字/主色、リンク/背景、エラー文字/背景、表の見出し/背景)のコントラスト比を算出し、基準値として `apps/client/src/app/theme/contrast.test.ts` に定数で記録するとともに `specs/003-design-system-tokens/research.md` の #10 に表で記録する。新テーマの同じ6組が「基準値以上」かつ「WCAG AA 以上」であることを検証するテストを追加する(新テーマ未実装のため失敗する)(FR-018 / SC-013、依存: T009)
-- [ ] T011 公式トークンの写像と自前定義を `apps/client/src/app/theme/tokens.ts` に実装する。公式値は `@digital-go-jp/design-tokens` の default export から参照し、書き換えない(INV-4 / contracts/theme-tokens.md 規則3)。自前定義は余白スケール(基準8px・6段階、research.md #2)と、画面・フォームのコンテンツ幅(現状の 640 / 480 / 320 に相当するレイアウト幅)に限る(依存: T001)
-- [ ] T012 見出し・本文・補足のテキストスタイル(画面見出し / 節見出し / 本文 / 補足 / UIラベル)を `apps/client/src/app/theme/textStyles.ts` に実装する。各スタイルが対応するデジタル庁デザインシステムの区分(Standard / Oneline)と `Std-16N-175` 形式の名称をコメントで記録する(data-model.md #3、依存: T011)
-- [ ] T013 `createAppTheme`(トークンを受け取ってMUIテーマを組み立てる関数)と既定テーマを `apps/client/src/app/theme/theme.ts` と `apps/client/src/app/theme/index.ts` に実装し、T007・T010 を成功させる。typography の割り当ては h1=画面見出し、h2=節見出し、body1=本文、body2=補足、button=UIラベル。**アクセシビリティ優先(憲法 原則X / FR-018)**: いずれかの組み合わせが基準値または AA を下回る場合は、基準を満たす別の公式トークンを選ぶ。それでも満たせない場合は従来(MUI 既定)の値を維持し、組み合わせ・理由を research.md #10 に記録する(依存: T010, T011, T012, T007)
-- [ ] T014 旧 `apps/client/src/app/theme.ts` を削除し、`apps/client/src/app/App.tsx` の import を `./theme` ディレクトリのバレルへ切り替え、`apps/client/src/main.tsx` で `fonts.css` を読み込む(依存: T003, T013)
-- [ ] T015 [P] `apps/client/.storybook/preview.tsx` に ThemeProvider + CssBaseline + `fonts.css` の読み込みを行うデコレーターを追加し、全ストーリーとアクセシビリティ検査が実テーマで描画されるようにする。現状はテーマ未適用(MUI既定)で描画されており、新しい配色のコントラスト検査が効かないため必須(依存: T013)
-- [ ] T016 [P] コンテンツ幅の数値リテラル(`maxWidth: 640 / 480 / 320`)をレイアウト幅トークンの参照に置き換える: `apps/client/src/features/weight/WeightPage.tsx`・`apps/client/src/features/training/TrainingPage.tsx`・`apps/client/src/features/steps/StepsPage.tsx`・`apps/client/src/features/foods/FoodsPage.tsx`・`apps/client/src/features/weight/WeightForm/WeightForm.tsx`・`apps/client/src/features/steps/StepsForm/StepsForm.tsx`・`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`(依存: T008, T011)
-- [ ] T017 [P] 余白の数値リテラル(`gap: 16`)をテーマの spacing 参照に置き換える: `apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`・`apps/client/src/features/weight/WeightTrend/WeightTrend.tsx`(依存: T008, T013)
-- [ ] T018 `corepack yarn lint` がエラー0件になるまでリファクタを続ける(T016・T017 以外に検出された違反も同様にトークン参照へ置き換える)。続けてクライアントの全テストを実行し、実テーマの適用で顕在化したアクセシビリティ違反を T013 と同じアクセシビリティ優先の手順で解消する。Lint エラー0件・a11y 違反0件・T007/T010 成功をもってこのフェーズを完了とする(FR-003 / FR-009 / FR-018 / FR-023、依存: T014〜T017)
+- [X] T009 コントラスト比の算出関数(WCAG の相対輝度)を `apps/client/src/app/theme/contrast.ts` に実装し、T006 を成功させる(依存: T006)
+- [X] T010 **テーマを差し替える前に**、現行テーマ(MUI 既定)で主要な6組(本文/背景、補足/背景、主ボタンの文字/主色、リンク/背景、エラー文字/背景、表の見出し/背景)のコントラスト比を算出し、基準値として `apps/client/src/app/theme/contrast.test.ts` に定数で記録するとともに `specs/003-design-system-tokens/research.md` の #10 に表で記録する。新テーマの同じ6組が「基準値以上」かつ「WCAG AA 以上」であることを検証するテストを追加する(新テーマ未実装のため失敗する)(FR-018 / SC-013、依存: T009)
+- [X] T011 公式トークンの写像と自前定義を `apps/client/src/app/theme/tokens.ts` に実装する。公式値は `@digital-go-jp/design-tokens` の default export から参照し、書き換えない(INV-4 / contracts/theme-tokens.md 規則3)。自前定義は余白スケール(基準8px・6段階、research.md #2)と、画面・フォームのコンテンツ幅(現状の 640 / 480 / 320 に相当するレイアウト幅)に限る(依存: T001)
+- [X] T012 見出し・本文・補足のテキストスタイル(画面見出し / 節見出し / 本文 / 補足 / UIラベル)を `apps/client/src/app/theme/textStyles.ts` に実装する。各スタイルが対応するデジタル庁デザインシステムの区分(Standard / Oneline)と `Std-16N-175` 形式の名称をコメントで記録する(data-model.md #3、依存: T011)
+- [X] T013 `createAppTheme`(トークンを受け取ってMUIテーマを組み立てる関数)と既定テーマを `apps/client/src/app/theme/theme.ts` と `apps/client/src/app/theme/index.ts` に実装し、T007・T010 を成功させる。typography の割り当ては h1=画面見出し、h2=節見出し、body1=本文、body2=補足、button=UIラベル。**アクセシビリティ優先(憲法 原則X / FR-018)**: いずれかの組み合わせが基準値または AA を下回る場合は、基準を満たす別の公式トークンを選ぶ。それでも満たせない場合は従来(MUI 既定)の値を維持し、組み合わせ・理由を research.md #10 に記録する(依存: T010, T011, T012, T007)
+- [X] T014 旧 `apps/client/src/app/theme.ts` を削除し、`apps/client/src/app/App.tsx` の import を `./theme` ディレクトリのバレルへ切り替え、`apps/client/src/main.tsx` で `fonts.css` を読み込む(依存: T003, T013)
+- [X] T015 [P] `apps/client/.storybook/preview.tsx` に ThemeProvider + CssBaseline + `fonts.css` の読み込みを行うデコレーターを追加し、全ストーリーとアクセシビリティ検査が実テーマで描画されるようにする。現状はテーマ未適用(MUI既定)で描画されており、新しい配色のコントラスト検査が効かないため必須(依存: T013)
+- [X] T016 [P] コンテンツ幅の数値リテラル(`maxWidth: 640 / 480 / 320`)をレイアウト幅トークンの参照に置き換える: `apps/client/src/features/weight/WeightPage.tsx`・`apps/client/src/features/training/TrainingPage.tsx`・`apps/client/src/features/steps/StepsPage.tsx`・`apps/client/src/features/foods/FoodsPage.tsx`・`apps/client/src/features/weight/WeightForm/WeightForm.tsx`・`apps/client/src/features/steps/StepsForm/StepsForm.tsx`・`apps/client/src/features/training/TrainingSessionForm/TrainingSessionForm.tsx`(依存: T008, T011)
+- [X] T017 [P] 余白の数値リテラル(`gap: 16`)をテーマの spacing 参照に置き換える: `apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx`・`apps/client/src/features/weight/WeightTrend/WeightTrend.tsx`(依存: T008, T013)
+- [X] T018 `corepack yarn lint` がエラー0件になるまでリファクタを続ける(T016・T017 以外に検出された違反も同様にトークン参照へ置き換える)。続けてクライアントの全テストを実行し、実テーマの適用で顕在化したアクセシビリティ違反を T013 と同じアクセシビリティ優先の手順で解消する。Lint エラー0件・a11y 違反0件・T007/T010 成功をもってこのフェーズを完了とする(FR-003 / FR-009 / FR-018 / FR-023、依存: T014〜T017)
 
 **Checkpoint**: テーマ・トークン・コントラスト基準・Lint(error)の土台が完成し、生値は0件。ここからユーザーストーリーに着手できる
 
@@ -209,6 +209,7 @@ plan.md の Project Structure に基づく。
 - [ ] T069 アクセシビリティ優先で従来値を維持した組み合わせ(research.md #10 に記録したもの)を一覧化し、適用後の主要6組のコントラスト比が基準値以上であることを最終確認する(SC-013 / FR-018)
 - [ ] T070 CI 相当の検証を通す: `corepack yarn lint`(警告・エラー0件)・`corepack yarn format:check`・両ワークスペースの typecheck と test・クライアントの build。あわせて `git diff --stat main -- apps/server` の変更が `app.ts`・`app.test.ts`・`index.ts` の3ファイルに限られることを確認する(SC-009 / SC-017 / FR-013)
 - [ ] T071 quickstart.md の手動シナリオ8として、適用前後を比較し「のっぺりしている」状態が解消されたかを開発者本人が判断する(SC-010)
+- [ ] T072 描画を伴う全コンポーネント(`apps/client/src/**/*.tsx` のうち `main.tsx`・`App.tsx` を除く)に `*.stories.tsx` が存在することを確認し、無いものはストーリーを追加する。Lint では検出できない生値(`styled`・`sx`・`style` の外で組み立てたスタイル用オブジェクト)を、実テーマで描画したアクセシビリティ検査で担保するための最終確認(research.md #4、依存: T022〜T025, T040)
 
 ---
 
