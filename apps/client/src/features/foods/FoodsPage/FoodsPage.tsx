@@ -1,14 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { graphqlClient } from "../../app/queryClient";
-import { getSdk } from "../../graphql/generated/sdk";
-import { FoodList } from "./FoodList";
-import { EmptyState } from "../../components/EmptyState";
-import { QueryState } from "../../components/QueryState";
-
-const sdk = getSdk(graphqlClient);
-const foodItemsQueryKey = ["foodItems"];
+import { useFoodItems } from "../hooks";
+import { FoodList } from "../FoodList";
+import { EmptyState } from "../../../components/EmptyState";
+import { QueryState } from "../../../components/QueryState";
 
 const Root = styled(Stack)(({ theme }) => ({
   maxWidth: theme.layout.contentWide,
@@ -16,10 +11,7 @@ const Root = styled(Stack)(({ theme }) => ({
 
 // 参照専用の一覧のため、記録・編集用のフォームやミューテーションは持たない(FR-015)。
 export const FoodsPage = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: foodItemsQueryKey,
-    queryFn: () => sdk.FoodItems(),
-  });
+  const { data, isLoading } = useFoodItems();
 
   const foods = data?.foodItems ?? [];
 

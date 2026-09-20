@@ -51,7 +51,8 @@ export const TrainingSessionList = ({
       {sessions.map((session) => (
         <Card key={session.id} variant="outlined">
           <CardContent>
-            <Typography variant="subtitle1">
+            {/* 各セッションのまとまりの見出し。画面見出し(h1)の次のレベルにする。 */}
+            <Typography variant="subtitle1" component="h2">
               <span>{session.date}</span> ・ <span>{session.durationMinutes}分</span> ・{" "}
               <span>{intensityLabels[session.intensity]}</span>
             </Typography>
