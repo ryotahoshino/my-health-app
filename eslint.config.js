@@ -126,5 +126,40 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // API クライアントの実体への直接依存を禁止する(憲法 原則V / contracts/api-injection.md 規則1)。
+    // 画面・表示部品は `useApi()` で注入された ApiClient だけを使い、実体の生成は
+    // composition root(app/App.tsx)に限る。ストーリー・テストはフェイクを注入するため対象外。
+    files: ["apps/client/src/features/**/*.{ts,tsx}", "apps/client/src/components/**/*.{ts,tsx}"],
+    ignores: ["apps/client/src/**/*.stories.tsx", "apps/client/src/**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "graphql-request",
+              message:
+                "GraphQL クライアントを直接使わず、useApi() で注入された ApiClient を使ってください(契約 api-injection.md 規則1)。",
+            },
+          ],
+          patterns: [
+            {
+              group: ["**/app/api", "**/app/api/*", "**/app/queryClient"],
+              importNames: ["createApiClient", "createQueryClient", "graphqlClient", "queryClient"],
+              message:
+                "API クライアント・QueryClient の実体を生成・参照せず、useApi() と TanStack Query のフックを使ってください(契約 api-injection.md 規則1・2)。",
+            },
+            {
+              group: ["**/graphql/generated/*"],
+              importNames: ["getSdk"],
+              message:
+                "生成SDKから直接クライアントを組み立てず、useApi() で注入された ApiClient を使ってください(契約 api-injection.md 規則1)。",
+            },
+          ],
+        },
+      ],
+    },
+  },
   storybook.configs["flat/recommended"],
 );
