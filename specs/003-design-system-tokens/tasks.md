@@ -209,6 +209,7 @@ plan.md の Project Structure に基づく。
 - [ ] T069 アクセシビリティ優先で従来値を維持した組み合わせ(research.md #10 に記録したもの)を一覧化し、適用後の主要6組のコントラスト比が基準値以上であることを最終確認する(SC-013 / FR-018)
 - [ ] T070 CI 相当の検証を通す: `corepack yarn lint`(警告・エラー0件)・`corepack yarn format:check`・両ワークスペースの typecheck と test・クライアントの build。あわせて `git diff --stat main -- apps/server` の変更が `app.ts`・`app.test.ts`・`index.ts` の3ファイルに限られることを確認する(SC-009 / SC-017 / FR-013)
 - [ ] T071 quickstart.md の手動シナリオ8として、適用前後を比較し「のっぺりしている」状態が解消されたかを開発者本人が判断する(SC-010)
+- [ ] T072 描画を伴う全コンポーネント(`apps/client/src/**/*.tsx` のうち `main.tsx`・`App.tsx` を除く)に `*.stories.tsx` が存在することを確認し、無いものはストーリーを追加する。Lint では検出できない生値(`styled`・`sx`・`style` の外で組み立てたスタイル用オブジェクト)を、実テーマで描画したアクセシビリティ検査で担保するための最終確認(research.md #4、依存: T022〜T025, T040)
 
 ---
 

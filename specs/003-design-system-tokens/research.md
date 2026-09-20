@@ -121,6 +121,11 @@ Technical Context の NEEDS CLARIFICATION を解消するための調査結果�
   同じ意味のため許可する。許可リストは `eslint.config.js` の `numericJsxPropsAllowed`
   (`spacing`・`elevation` などテーマの倍率・添字と、`rows`・`tabIndex`・`aria-*` など寸法でないもの)と
   `numericStyleKeysAllowed`(`flex`・`opacity` など単位を持たないもの)で、追加時は理由をコメントで残す。
+- **Lint で検出できない範囲の担保(2026-09-20 決定)**: `styled`・`sx`・`style` の外で組み立てた
+  オブジェクト(例: `const styles = { width: 300 }` を後から `sx` に渡す)は、スタイル用かデータ用かを
+  Lint では判別できないため検出しない。ここは Storybook の拡充で担保する。描画を伴う全コンポーネントに
+  ストーリーを用意し(4画面は T022〜T025、アプリシェルは T040 で追加)、実テーマで描画した状態の
+  アクセシビリティ検査(コントラスト比を含む)を CI で通す。個人開発のため、これで残る漏れは許容する。
 - **Rationale**: SC-005 を `[自動]` として検証できる手段が必要。既存CIに lint が組み込まれているため、
   新しい仕組みを追加せずに済む。
 - **Alternatives considered**:
