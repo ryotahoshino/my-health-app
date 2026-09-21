@@ -34,6 +34,7 @@ export default defineConfig({
       "@digital-go-jp/design-tokens",
       "@tanstack/react-query",
       "graphql-request",
+      "react-router",
     ],
   },
   plugins: [

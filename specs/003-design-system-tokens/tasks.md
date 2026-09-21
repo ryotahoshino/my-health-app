@@ -109,8 +109,9 @@ plan.md の Project Structure に基づく。
 - [X] T036 [P] [US5] `apps/client/src/features/foods/FoodsPage.tsx` を `apps/client/src/features/foods/FoodsPage/` に移し、同様に再構成して T025 を成功させる(依存: T028, T032)
 - [X] T037 [US5] `apps/client/src/app/queryClient.ts` からモジュールレベルの `graphqlClient` を削除して QueryClient の生成関数のみにし、`apps/client/src/app/App.tsx` を composition root として、ApiClient と QueryClient を `useState` の遅延初期化で1度だけ生成して Provider で注入する構成にする。ルートの import を各画面フォルダへ切り替える(contracts/api-injection.md 規則2、依存: T033〜T036)
 - [X] T038 [P] [US5] サーバーの起動処理を `apps/server/src/app.ts` の `createApp({ db, today })` に切り出し、`apps/server/src/index.ts` を実DBの接続・シード・`createApp` の呼び出し・待ち受けのみにする。当日の日付は関数として注入する。スキーマ・リゾルバ・リポジトリには手を入れない。T026 と既存のサーバーテストがすべて成功することを確認する(FR-022 / FR-013、依存: T026)
-- [~] T039 [US5] `corepack yarn lint` でエラー0件(T021 を含む)、クライアント・サーバーの全テスト成功を確認する。実サーバー+クライアントを起動して4画面の取得・追加・削除・期間切替がリファクタ前と同じように動くことをブラウザ自動操作で確認する(振る舞いの非破壊、FR-013、依存: T037, T038)
-  - 自動検証は完了(2026-09-20): Lint エラー0件、クライアント 88件・サーバー 107件のテスト成功、両ワークスペースの typecheck とクライアントの build。実サーバー(別ポート・一時DB)を起動して HTTP 経由で記録の作成→取得と食材一覧の取得を確認し、クライアントの開発サーバーが実サーバーを指す設定で起動することも確認した。残るブラウザ自動操作での4画面の目視相当の確認は、実行環境にブラウザ操作の手段が無いため未実施(開発者本人が実施する)。
+- [X] T039 [US5] `corepack yarn lint` でエラー0件(T021 を含む)、クライアント・サーバーの全テスト成功を確認する。実サーバー+クライアントを起動して4画面の取得・追加・削除・期間切替がリファクタ前と同じように動くことをブラウザ自動操作で確認する(振る舞いの非破壊、FR-013、依存: T037, T038)
+  - 自動検証は完了(2026-09-20): Lint エラー0件、クライアント・サーバーのテスト成功、両ワークスペースの typecheck とクライアントの build。実サーバー(別ポート・一時DB)を起動して HTTP 経由で記録の作成→取得と食材一覧の取得を確認した。
+  - ブラウザ自動操作の代わりに、Interaction Test で検証する方針に変更(2026-09-22、research.md #5)。`app/AppRoutes.stories.tsx`(4画面への遷移とデータ表示)と `app/theme/ThemeAppearance.stories.tsx`(書体・配色・余白・角丸・影が実際の描画でトークンどおりか)を追加し、T073 として記録した。
 
 **Checkpoint**: 4画面に画面単位のテストが揃い、見た目の変更に対する安全網ができた。API 依存は注入され、直接参照は Lint で禁止されている
 
@@ -211,6 +212,7 @@ plan.md の Project Structure に基づく。
 - [ ] T070 CI 相当の検証を通す: `corepack yarn lint`(警告・エラー0件)・`corepack yarn format:check`・両ワークスペースの typecheck と test・クライアントの build。あわせて `git diff --stat main -- apps/server` の変更が `app.ts`・`app.test.ts`・`index.ts` の3ファイルに限られることを確認する(SC-009 / SC-017 / FR-013)
 - [ ] T071 quickstart.md の手動シナリオ8として、適用前後を比較し「のっぺりしている」状態が解消されたかを開発者本人が判断する(SC-010)
 - [ ] T072 描画を伴う全コンポーネント(`apps/client/src/**/*.tsx` のうち `main.tsx`・`App.tsx` を除く)に `*.stories.tsx` が存在することを確認し、無いものはストーリーを追加する。Lint では検出できない生値(`styled`・`sx`・`style` の外で組み立てたスタイル用オブジェクト)を、実テーマで描画したアクセシビリティ検査で担保するための最終確認(research.md #4、依存: T022〜T025, T040)
+- [X] T073 ブラウザでの目視確認を Interaction Test に置き換える: ルーティングを `apps/client/src/app/AppRoutes.tsx` に切り出し、`AppRoutes.stories.tsx` で4画面への遷移とデータ表示を検証する。`apps/client/src/app/theme/ThemeAppearance.stories.tsx` で、書体・文字サイズ・行高・文字色・主ボタンの配色・余白・角丸・影・面の色が実際の描画でトークンどおりであること、および描画された色から算出したコントラスト比が AA 以上であることを検証する(research.md #5 / SC-013)
 
 ---
 
