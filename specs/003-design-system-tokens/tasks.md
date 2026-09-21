@@ -213,6 +213,7 @@ plan.md の Project Structure に基づく。
 - [ ] T071 quickstart.md の手動シナリオ8として、適用前後を比較し「のっぺりしている」状態が解消されたかを開発者本人が判断する(SC-010)
 - [ ] T072 描画を伴う全コンポーネント(`apps/client/src/**/*.tsx` のうち `main.tsx`・`App.tsx` を除く)に `*.stories.tsx` が存在することを確認し、無いものはストーリーを追加する。Lint では検出できない生値(`styled`・`sx`・`style` の外で組み立てたスタイル用オブジェクト)を、実テーマで描画したアクセシビリティ検査で担保するための最終確認(research.md #4、依存: T022〜T025, T040)
 - [X] T073 ブラウザでの目視確認を Interaction Test に置き換える: ルーティングを `apps/client/src/app/AppRoutes.tsx` に切り出し、`AppRoutes.stories.tsx` で4画面への遷移とデータ表示を検証する。`apps/client/src/app/theme/ThemeAppearance.stories.tsx` で、書体・文字サイズ・行高・文字色・主ボタンの配色・余白・角丸・影・面の色が実際の描画でトークンどおりであること、および描画された色から算出したコントラスト比が AA 以上であることを検証する(research.md #5 / SC-013)
+  - CI(.github/workflows/ci.yml)では、クライアントのテストを `--project unit` と `--project storybook` の2ステップに分けて実行する。後者が Interaction Test・見た目の検証・アクセシビリティ検査を兼ねるため、失敗時にどちらの層の問題かがログで分かる。
 
 ---
 
