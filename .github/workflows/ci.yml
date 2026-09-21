@@ -55,12 +55,28 @@ jobs:
       - name: Test server
         run: yarn workspace @my-health-app/server test
 
-      # apps/client/.storybook/preview.tsx で a11y.test: "error" を設定しているため、
-      # 全ストーリーの実行(このtestスクリプト)にStorybook a11yアドオン(axe)による
-      # アクセシビリティチェックが含まれ、違反があればこのステップ自体が失敗する
-      # (憲法 原則I: 「後で対応する」を認めない、FR-016のアクセシビリティ最終確認)。
-      - name: Test client (includes Storybook a11y checks)
-        run: yarn workspace @my-health-app/client test
+      # クライアントのテストは2つのプロジェクトに分かれている(apps/client/vite.config.ts)。
+      # どちらが失敗したかがログ上で分かるよう、ステップも分けて実行する。
+      # テーマ・コントラスト算出・APIの注入など、描画を伴わない単体テスト。
+      - name: Test client (unit)
+        run: yarn workspace @my-health-app/client vitest run --project unit
+
+      # ストーリーをChromiumで実際に描画して操作するテスト。次の3つを兼ねている。
+      # (1) Interaction Test: 4画面の取得・追加・削除・期間切替と画面遷移の検証。
+      #     ブラウザでの目視確認の置き換え(specs/003-design-system-tokens research.md #5)。
+      # (2) 見た目の検証: 書体・配色・余白などが実際の描画でトークンどおりかを
+      #     計算済みスタイルで検証する(VRTを導入しない代わりの手段、同 #5)。
+      # (3) アクセシビリティ検査: apps/client/.storybook/preview.tsx で a11y.test: "error"
+      #     を設定しているため、axe の違反はこのステップの失敗になる
+      #     (憲法 原則I: 「後で対応する」を認めない)。
+      - name: Test client (Storybook interaction, appearance and a11y)
+        run: yarn workspace @my-health-app/client vitest run --project storybook
 
       - name: Build client
         run: yarn workspace @my-health-app/client build
+
+      # ストーリーの実行だけでは気づけない Storybook 自体の壊れ(アドオンの設定、
+      # 静的ビルド固有の解決エラーなど)を検出する。Storybook が動かなくなると
+      # 見た目とアクセシビリティの安全網そのものが失われるため、CI で確認する。
+      - name: Build Storybook
+        run: yarn workspace @my-health-app/client build-storybook
