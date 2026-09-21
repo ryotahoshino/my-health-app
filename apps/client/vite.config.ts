@@ -32,6 +32,8 @@ export default defineConfig({
       "@mui/material/styles",
       "zod",
       "@digital-go-jp/design-tokens",
+      "@tanstack/react-query",
+      "graphql-request",
     ],
   },
   plugins: [

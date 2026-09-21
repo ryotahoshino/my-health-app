@@ -44,12 +44,19 @@ export const DailyCalorieSummary = ({
 }: DailyCalorieSummaryProps) => {
   return (
     <Root>
-      <Typography variant="subtitle1">{date}</Typography>
+      {/* 画面見出し(h1)の直下に並ぶまとまりの見出し。見出しレベルを飛ばさないよう
+          明示する(憲法 原則I / axe heading-order)。 */}
+      <Typography variant="subtitle1" component="h2">
+        {date}
+      </Typography>
       <Typography variant="body2">トレーニング分: {formatCalories(trainingCalories)}</Typography>
       <Typography variant="body2">
         歩数分: {formatCalories(stepCalorieEstimate.calories)}
       </Typography>
-      <Typography variant="subtitle2">合計(概算): {formatCalories(totalCalories)}</Typography>
+      {/* 日付の見出し(h2)の内側にある小見出しのため h3 にする。 */}
+      <Typography variant="subtitle2" component="h3">
+        合計(概算): {formatCalories(totalCalories)}
+      </Typography>
       <Typography variant="caption" color="text.secondary">
         計算式: {stepCalorieEstimate.formula}
       </Typography>

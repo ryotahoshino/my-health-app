@@ -1,37 +1,22 @@
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { graphqlClient } from "../../app/queryClient";
-import { getSdk } from "../../graphql/generated/sdk";
-import { StepsForm } from "./StepsForm";
-import { DailyCalorieSummary } from "./DailyCalorieSummary";
-import { EmptyState } from "../../components/EmptyState";
-import { QueryState } from "../../components/QueryState";
-import { PeriodSelector, type AggregationPeriod } from "../../components/PeriodSelector";
-
-const sdk = getSdk(graphqlClient);
-const dailyCalorieSummariesBaseKey = ["dailyCalorieSummaries"];
+import { useDailyCalorieSummaries, useStepsMutations } from "../hooks";
+import { StepsForm } from "../StepsForm";
+import { DailyCalorieSummary } from "../DailyCalorieSummary";
+import { EmptyState } from "../../../components/EmptyState";
+import { QueryState } from "../../../components/QueryState";
+import { PeriodSelector, type AggregationPeriod } from "../../../components/PeriodSelector";
 
 const Root = styled(Stack)(({ theme }) => ({
   maxWidth: theme.layout.contentNarrow,
 }));
 
 export const StepsPage = () => {
-  const queryClient = useQueryClient();
   const [period, setPeriod] = useState<AggregationPeriod>("DAILY");
 
-  const { data, isLoading } = useQuery({
-    queryKey: [...dailyCalorieSummariesBaseKey, period],
-    queryFn: () => sdk.DailyCalorieSummaries({ period }),
-  });
-
-  const upsertMutation = useMutation({
-    // キーの先頭が一致する全periodのキャッシュをまとめて無効化する
-    // (表示中のperiod以外もいずれ見る可能性があるため)。
-    mutationFn: (input: { date: string; steps: number }) => sdk.UpsertStepRecord({ input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: dailyCalorieSummariesBaseKey }),
-  });
+  const { data, isLoading } = useDailyCalorieSummaries(period);
+  const { upsert } = useStepsMutations();
 
   const summaries = data?.dailyCalorieSummaries ?? [];
 
@@ -40,7 +25,7 @@ export const StepsPage = () => {
       <Typography variant="h5" component="h1">
         歩数記録
       </Typography>
-      <StepsForm onSubmit={(values) => upsertMutation.mutate(values)} />
+      <StepsForm onSubmit={(values) => upsert.mutate(values)} />
       <PeriodSelector value={period} onChange={setPeriod} />
       <QueryState
         isLoading={isLoading}
