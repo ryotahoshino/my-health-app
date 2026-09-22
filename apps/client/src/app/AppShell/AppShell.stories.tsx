@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, screen, userEvent, waitFor, within } from "storybook/test";
 import { MemoryRouter } from "react-router";
 import { Typography } from "@mui/material";
 import { theme } from "../theme";
@@ -24,9 +24,21 @@ const withRoute = (path: string) => (Story: () => React.ReactElement) => (
   </MemoryRouter>
 );
 
+// 横並びとハンバーガーの切り替えはコンテナクエリで行うため、幅を固定した器に入れると
+// 実際の画面幅と同じように切り替わる(AppShell.tsx のコメント参照)。
+const FRAME_TEST_ID = "shell-frame";
+
+const withWidth = (width: number) => (Story: () => React.ReactElement) => (
+  <div style={{ width }} data-testid={FRAME_TEST_ID}>
+    <Story />
+  </div>
+);
+
+const WIDE_WIDTH_PX = 900;
+
 export const Landmarks: Story = {
   name: "ヘッダー・名前付きナビゲーション・主要コンテンツの領域がある",
-  decorators: [withRoute("/weight")],
+  decorators: [withWidth(WIDE_WIDTH_PX), withRoute("/weight")],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -41,7 +53,7 @@ export const Landmarks: Story = {
 
 export const NavigationItems: Story = {
   name: "4画面へのリンクがある",
-  decorators: [withRoute("/weight")],
+  decorators: [withWidth(WIDE_WIDTH_PX), withRoute("/weight")],
   play: async ({ canvasElement }) => {
     const navigation = within(within(canvasElement).getByRole("navigation"));
 
@@ -58,7 +70,7 @@ export const NavigationItems: Story = {
 
 export const CurrentPage: Story = {
   name: "表示中の画面の項目だけが現在のページとして伝わる",
-  decorators: [withRoute("/steps")],
+  decorators: [withWidth(WIDE_WIDTH_PX), withRoute("/steps")],
   play: async ({ canvasElement }) => {
     const navigation = within(within(canvasElement).getByRole("navigation"));
 
@@ -76,7 +88,7 @@ export const CurrentPage: Story = {
 
 export const CurrentPageIsNotColorOnly: Story = {
   name: "現在地は色以外の手がかり(太字と下線)でも判別できる",
-  decorators: [withRoute("/steps")],
+  decorators: [withWidth(WIDE_WIDTH_PX), withRoute("/steps")],
   play: async ({ canvasElement }) => {
     const navigation = within(within(canvasElement).getByRole("navigation"));
 
@@ -90,23 +102,14 @@ export const CurrentPageIsNotColorOnly: Story = {
   },
 };
 
-// 幅375pxでの収まりは quickstart の手動シナリオだったが、幅を固定した器に入れて
-// 測れるため自動で確認する(FR-011 / SC-008 / research.md #5)。
-const MOBILE_WIDTH_PX = 375;
-
-export const MobileWidth: Story = {
-  name: "画面幅375pxで4項目が横スクロールなしに収まる",
-  decorators: [
-    (Story) => (
-      <div style={{ width: MOBILE_WIDTH_PX }} data-testid="mobile-frame">
-        <Story />
-      </div>
-    ),
-    withRoute("/weight"),
-  ],
+// 横並びを保つ最も狭い幅(切り替えの境界)で、4項目が収まることを確認する
+// (FR-011 / SC-008。quickstart の手動シナリオを自動化、research.md #5)。
+export const NarrowestHorizontalWidth: Story = {
+  name: "横並びを保つ最小幅で4項目が横スクロールなしに収まる",
+  decorators: [withWidth(theme.layout.navigationCollapse), withRoute("/weight")],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const frame = canvas.getByTestId("mobile-frame");
+    const frame = canvas.getByTestId(FRAME_TEST_ID);
     const header = canvas.getByRole("banner");
     const navigation = canvas.getByRole("navigation", { name: "主要メニュー" });
 
@@ -123,9 +126,95 @@ export const MobileWidth: Story = {
   },
 };
 
+// 画面が狭いときはハンバーガーメニューに切り替える
+// (デジタル庁デザインシステム「水平メニュー」の記載に沿う)。
+const MOBILE_WIDTH_PX = 375;
+
+export const MobileHamburger: Story = {
+  name: "画面幅375pxではハンバーガーメニューに切り替わる",
+  decorators: [withWidth(MOBILE_WIDTH_PX), withRoute("/steps")],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 横並びの項目は見えず、開くためのボタンが見えている。
+    await expect(canvas.getByRole("button", { name: "メニューを開く" })).toBeVisible();
+    await expect(canvas.queryByRole("link", { name: "トレーニング" })).not.toBeInTheDocument();
+    // ヘッダーの高さは横並びのときと同じ。
+    await expect(canvas.getByRole("banner").getBoundingClientRect().height).toBe(
+      theme.layout.headerHeight,
+    );
+  },
+};
+
+export const MobileHamburgerOpens: Story = {
+  name: "ハンバーガーメニューを開くと4項目と現在地が分かる",
+  decorators: [withWidth(MOBILE_WIDTH_PX), withRoute("/steps")],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const openButton = canvas.getByRole("button", { name: "メニューを開く" });
+
+    // 開閉の状態が支援技術に伝わること。
+    await expect(openButton).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(openButton);
+    await expect(openButton).toHaveAttribute("aria-expanded", "true");
+
+    // メニューは画面(body)側に描画されるため、canvas ではなく document 全体から探す。
+    const menu = within(await screen.findByRole("navigation", { name: "主要メニュー" }));
+    for (const [label, path] of [
+      ["体重", "/weight"],
+      ["トレーニング", "/training"],
+      ["歩数", "/steps"],
+      ["食材", "/foods"],
+    ]) {
+      await expect(menu.getByRole("link", { name: label })).toHaveAttribute("href", path);
+    }
+    await expect(menu.getByRole("link", { name: "歩数" })).toHaveAttribute("aria-current", "page");
+  },
+};
+
+export const MobileHamburgerClosesOnSelect: Story = {
+  name: "ハンバーガーメニューの項目を選ぶと閉じる",
+  decorators: [withWidth(MOBILE_WIDTH_PX), withRoute("/steps")],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "メニューを開く" }));
+
+    const menu = await screen.findByRole("navigation", { name: "主要メニュー" });
+    await userEvent.click(within(menu).getByRole("link", { name: "食材" }));
+
+    await waitFor(async () => {
+      await expect(canvas.getByRole("button", { name: "メニューを開く" })).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
+    });
+  },
+};
+
+export const MobileHamburgerKeyboard: Story = {
+  name: "キーボードだけでハンバーガーメニューを開いて項目に到達できる",
+  decorators: [withWidth(MOBILE_WIDTH_PX), withRoute("/weight")],
+  play: async ({ canvasElement }) => {
+    const openButton = within(canvasElement).getByRole("button", { name: "メニューを開く" });
+
+    await userEvent.tab();
+    await expect(openButton).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+
+    const menu = within(await screen.findByRole("navigation", { name: "主要メニュー" }));
+    await userEvent.tab();
+    await expect(menu.getByRole("link", { name: "体重" })).toHaveFocus();
+    // Escape で閉じられること。
+    await userEvent.keyboard("{Escape}");
+    await waitFor(async () => {
+      await expect(openButton).toHaveAttribute("aria-expanded", "false");
+    });
+  },
+};
+
 export const KeyboardNavigation: Story = {
   name: "Tabキーのみで4項目すべてに到達できる",
-  decorators: [withRoute("/weight")],
+  decorators: [withWidth(WIDE_WIDTH_PX), withRoute("/weight")],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const labels = ["体重", "トレーニング", "歩数", "食材"];

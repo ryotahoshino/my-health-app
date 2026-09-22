@@ -122,6 +122,10 @@ export type LayoutTokens = {
   chartHeight: number;
   // ヘッダーの高さ。アプリ名とナビゲーションを1行に収め、余白の基準(8px)の6段階分とする。
   headerHeight: number;
+  // ヘッダーの幅がこの値を下回ると、横並びのナビゲーションをハンバーガーメニューに切り替える。
+  navigationCollapse: number;
+  // アイコンの一辺。
+  iconSize: number;
   // 境界線の太さ。公式トークンに無いため自前定義する。
   // hairline は面や表の区切り、emphasis は現在地を示す下線に使う。
   borderWidth: {
@@ -136,6 +140,8 @@ export const layoutTokens: LayoutTokens = {
   form: 320,
   chartHeight: 300,
   headerHeight: 48,
+  navigationCollapse: 600,
+  iconSize: 24,
   borderWidth: {
     hairline: 1,
     emphasis: 4,
