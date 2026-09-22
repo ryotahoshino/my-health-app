@@ -169,6 +169,10 @@ export const MobileHamburgerOpens: Story = {
       await expect(menu.getByRole("link", { name: label })).toHaveAttribute("href", path);
     }
     await expect(menu.getByRole("link", { name: "歩数" })).toHaveAttribute("aria-current", "page");
+    // パネルの幅はメニュー用のトークンどおり(フォーム用の幅を流用しない)。
+    await expect(
+      screen.getByRole("navigation", { name: "主要メニュー" }).getBoundingClientRect().width,
+    ).toBe(theme.layout.navigationPanel);
   },
 };
 

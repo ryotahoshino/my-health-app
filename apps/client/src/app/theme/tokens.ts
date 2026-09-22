@@ -124,6 +124,8 @@ export type LayoutTokens = {
   headerHeight: number;
   // ヘッダーの幅がこの値を下回ると、横並びのナビゲーションをハンバーガーメニューに切り替える。
   navigationCollapse: number;
+  // ハンバーガーメニューを開いたときのパネルの最小幅。
+  navigationPanel: number;
   // アイコンの一辺。
   iconSize: number;
   // 境界線の太さ。公式トークンに無いため自前定義する。
@@ -141,6 +143,7 @@ export const layoutTokens: LayoutTokens = {
   chartHeight: 300,
   headerHeight: 48,
   navigationCollapse: 600,
+  navigationPanel: 320,
   iconSize: 24,
   borderWidth: {
     hairline: 1,

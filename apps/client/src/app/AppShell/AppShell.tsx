@@ -134,7 +134,7 @@ const MenuIcon = styled("span")(({ theme }) => ({
 
 const MenuPanel = styled("nav")(({ theme }) => ({
   paddingBlock: theme.spacing(1),
-  minWidth: theme.layout.form,
+  minWidth: theme.layout.navigationPanel,
 }));
 
 const MenuList = styled("ul")({
