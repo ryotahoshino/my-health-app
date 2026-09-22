@@ -84,6 +84,10 @@ export const createAppTheme = (tokens: DesignTokens): Theme =>
       button: { ...toTypographyVariant(tokens.typography.button), textTransform: "none" },
     },
     shape: { borderRadius: tokens.radius },
+    // ヘッダー(Toolbar)の高さ。MUI 既定は画面幅ごとのメディアクエリで 56px / 64px を
+    // 指定しており、コンポーネント側の指定より優先される。トークンの値を使うため
+    // ここで置き換える(contracts/app-shell.md)。
+    mixins: { toolbar: { minHeight: tokens.layout.headerHeight } },
     shadows: toShadows(tokens.elevation),
     spacing: tokens.spacingUnit,
     layout: tokens.layout,

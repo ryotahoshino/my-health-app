@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
 import { MemoryRouter } from "react-router";
 import { Typography } from "@mui/material";
+import { theme } from "../theme";
 // T042 で実装する(このテストは実装が無い間は失敗する)。
 // 契約: contracts/app-shell.md
 import { AppShell } from "./AppShell";
@@ -106,15 +107,19 @@ export const MobileWidth: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const frame = canvas.getByTestId("mobile-frame");
+    const header = canvas.getByRole("banner");
     const navigation = canvas.getByRole("navigation", { name: "主要メニュー" });
 
+    // アプリ名と4項目が1行に収まり、横スクロールが出ないこと。
+    await expect(header.scrollWidth).toBeLessThanOrEqual(frame.clientWidth);
     await expect(navigation.scrollWidth).toBeLessThanOrEqual(frame.clientWidth);
-    // 項目のラベルが折り返していないこと(1行の高さに収まる)。
+    // ヘッダーが本文の領域を圧迫しないこと(高さはトークンどおりの1行分)。
+    await expect(header.getBoundingClientRect().height).toBe(theme.layout.headerHeight);
+    // 最も長いラベルが折り返していないこと。文字の描画範囲が1つ(=1行)かどうかで判定する。
     const link = canvas.getByRole("link", { name: "トレーニング" });
-    const linkStyle = getComputedStyle(link);
-    await expect(link.getBoundingClientRect().height).toBeLessThan(
-      Number.parseFloat(linkStyle.fontSize) * 2 + Number.parseFloat(linkStyle.paddingTop) * 2,
-    );
+    const labelRange = document.createRange();
+    labelRange.selectNodeContents(link);
+    await expect(labelRange.getClientRects().length).toBe(1);
   },
 };
 

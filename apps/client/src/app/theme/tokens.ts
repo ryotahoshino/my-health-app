@@ -120,6 +120,8 @@ export type LayoutTokens = {
   contentNarrow: number;
   form: number;
   chartHeight: number;
+  // ヘッダーの高さ。アプリ名とナビゲーションを1行に収め、余白の基準(8px)の6段階分とする。
+  headerHeight: number;
   // 境界線の太さ。公式トークンに無いため自前定義する。
   // hairline は面や表の区切り、emphasis は現在地を示す下線に使う。
   borderWidth: {
@@ -133,6 +135,7 @@ export const layoutTokens: LayoutTokens = {
   contentNarrow: 480,
   form: 320,
   chartHeight: 300,
+  headerHeight: 48,
   borderWidth: {
     hairline: 1,
     emphasis: 4,

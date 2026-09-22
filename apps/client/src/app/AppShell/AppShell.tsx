@@ -7,6 +7,7 @@ import { Link as RouterLink, useLocation } from "react-router";
 // デジタル庁デザインシステムの「水平メニュー」に倣い、面は白、現在地は
 // 主色の文字と主色の下線で示す(https://design.digital.go.jp/dads/components/horizontal-menu/)。
 // 素朴なテキストリンクの並びを置き換える(FR-016 / contracts/app-shell.md)。
+// アプリ名とナビゲーションは1行に収め、本文の領域を圧迫しない高さにする。
 
 export type AppShellProps = {
   children: ReactNode;
@@ -31,23 +32,44 @@ const HeaderBar = styled(AppBar)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
+// 高さはテーマの mixins.toolbar(トークンの headerHeight)で決まる。
+// MUI 既定より低く抑え、アプリ名とナビゲーションを同じ行に収める。
+const HeaderRow = styled(Toolbar)(({ theme }) => ({
+  // 画面幅375pxでもアプリ名と4項目が収まるよう、左右の余白は1段階(8px)にする(FR-011)。
+  paddingInline: theme.spacing(1),
+  gap: theme.spacing(1),
+  justifyContent: "space-between",
+}));
+
 // アプリ名。画面見出し(h1)と競合させないため見出し要素にはしない。
 const ServiceName = styled("p")(({ theme }) => ({
-  ...theme.typography.h2,
+  ...theme.typography.button,
   margin: 0,
+  whiteSpace: "nowrap",
 }));
+
+// Toolbar は子を上下中央に置くため、ナビゲーションだけは高さいっぱいに伸ばす。
+// これで各項目の下線がヘッダーの下端に揃い、タップ領域も1行分の高さになる。
+const Navigation = styled("nav")({
+  display: "flex",
+  alignSelf: "stretch",
+});
 
 const NavigationList = styled("ul")(({ theme }) => ({
   display: "flex",
-  // 画面幅375pxでも4項目が収まるよう、項目の余白は1段階(8px)に抑える(FR-011)。
-  gap: theme.spacing(1),
+  alignItems: "stretch",
+  gap: theme.spacing(0.5),
   listStyle: "none",
   margin: 0,
   padding: 0,
-  paddingInline: theme.spacing(2),
 }));
 
+const NavigationItemCell = styled("li")({
+  display: "flex",
+});
+
 // 項目のラベルはUIラベル(1行)。折り返さない(contracts/app-shell.md 表示要件)。
+// 下線をヘッダーの下端に合わせるため、項目はヘッダーの高さいっぱいに広げる。
 const NavigationLink = styled(RouterLink, {
   shouldForwardProp: (prop) => prop !== "isCurrent",
 })<{ isCurrent: boolean }>(({ theme, isCurrent }) => {
@@ -64,13 +86,12 @@ const NavigationLink = styled(RouterLink, {
     ...theme.typography.button,
     color,
     fontWeight,
-    display: "block",
+    display: "flex",
+    alignItems: "center",
     whiteSpace: "nowrap",
-    // 縦は2段階(16px)でタップ領域の高さを確保し、横は1段階(8px)に抑えて
-    // 画面幅375pxでも4項目が収まるようにする(FR-011 / SC-008)。
-    padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
+    paddingInline: theme.spacing(0.5),
     textDecoration: "none",
-    // 現在地でない項目にも同じ太さの透明な線を引き、切り替えで高さが動かないようにする。
+    // 現在地でない項目にも同じ太さの透明な線を引き、切り替えで文字の位置が動かないようにする。
     borderBottomStyle: "solid",
     borderBottomWidth: theme.layout.borderWidth.emphasis,
     borderBottomColor,
@@ -91,28 +112,28 @@ export const AppShell = ({ children }: AppShellProps) => {
   return (
     <>
       <HeaderBar position="static" elevation={1}>
-        <Toolbar>
+        <HeaderRow>
           <ServiceName>健康記録</ServiceName>
-        </Toolbar>
-        <nav aria-label="主要メニュー">
-          <NavigationList>
-            {navigationItems.map((item) => {
-              const isCurrent = pathname === item.to;
-              let ariaCurrent: "page" | undefined;
-              if (isCurrent) {
-                ariaCurrent = "page";
-              }
+          <Navigation aria-label="主要メニュー">
+            <NavigationList>
+              {navigationItems.map((item) => {
+                const isCurrent = pathname === item.to;
+                let ariaCurrent: "page" | undefined;
+                if (isCurrent) {
+                  ariaCurrent = "page";
+                }
 
-              return (
-                <li key={item.to}>
-                  <NavigationLink to={item.to} isCurrent={isCurrent} aria-current={ariaCurrent}>
-                    {item.label}
-                  </NavigationLink>
-                </li>
-              );
-            })}
-          </NavigationList>
-        </nav>
+                return (
+                  <NavigationItemCell key={item.to}>
+                    <NavigationLink to={item.to} isCurrent={isCurrent} aria-current={ariaCurrent}>
+                      {item.label}
+                    </NavigationLink>
+                  </NavigationItemCell>
+                );
+              })}
+            </NavigationList>
+          </Navigation>
+        </HeaderRow>
       </HeaderBar>
       <Main>{children}</Main>
     </>
