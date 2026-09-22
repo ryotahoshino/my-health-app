@@ -125,13 +125,14 @@ plan.md の Project Structure に基づく。
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T040 [P] [US1] アプリシェルの Storybook Interaction Test を `apps/client/src/app/AppShell/AppShell.stories.tsx` に作成する。(a) ヘッダー・名前付きナビゲーション・主要コンテンツの各ランドマークが存在する、(b) 4画面(体重 / トレーニング / 歩数 / 食材)へのリンクがある、(c) 表示中の画面の項目にのみ `aria-current="page"` が付く、(d) Tab キーのみで4項目すべてに到達できる(contracts/app-shell.md / SC-011)。実装前に失敗することを確認する
+- [X] T040 [P] [US1] アプリシェルの Storybook Interaction Test を `apps/client/src/app/AppShell/AppShell.stories.tsx` に作成する。(a) ヘッダー・名前付きナビゲーション・主要コンテンツの各ランドマークが存在する、(b) 4画面(体重 / トレーニング / 歩数 / 食材)へのリンクがある、(c) 表示中の画面の項目にのみ `aria-current="page"` が付く、(d) Tab キーのみで4項目すべてに到達できる(contracts/app-shell.md / SC-011)。実装前に失敗することを確認する
 - [ ] T041 [P] [US1] 結果表示系コンポーネントの既存ストーリーに、まとまりの見出しが見出し要素(role=heading)として取得できることのアサーションを追加する。対象: `apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`(日付)、`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`(各セッションの日付)、`apps/client/src/features/weight/WeightTrendAggregate/WeightTrendAggregate.stories.tsx`(集計の見出し)。実装前に失敗することを確認する
 
 ### Implementation for User Story 1
 
-- [ ] T042 [US1] ヘッダー+ナビゲーションの `AppShell` を `apps/client/src/app/AppShell/AppShell.tsx` と `apps/client/src/app/AppShell/index.ts` に実装する。現在地は `aria-current="page"` と、色以外の視覚的手がかり(下線または太字)の両方で示す。画面幅375pxで項目が横スクロールを発生させずに収まるようにする(FR-016 / FR-011、依存: T040)
-- [ ] T043 [US1] `apps/client/src/app/App.tsx` の素朴なテキストリンクの `<nav>` を `AppShell` に置き換え、各ルートを主要コンテンツ領域の中に配置する(依存: T042)
+- [X] T042 [US1] ヘッダー+ナビゲーションの `AppShell` を `apps/client/src/app/AppShell/AppShell.tsx` と `apps/client/src/app/AppShell/index.ts` に実装する。現在地は `aria-current="page"` と、色以外の視覚的手がかり(下線または太字)の両方で示す。画面幅375pxで項目が横スクロールを発生させずに収まるようにする(FR-016 / FR-011、依存: T040)
+- [X] T043 [US1] `apps/client/src/app/App.tsx` の素朴なテキストリンクの `<nav>` を `AppShell` に置き換え、各ルートを主要コンテンツ領域の中に配置する(依存: T042)
+  - 実装は `apps/client/src/app/AppRoutes.tsx`(App.tsx から切り出したルーティング)で AppShell が Routes を包む形にした。幅375pxでの収まり(FR-011 / SC-008)は手動シナリオではなく AppShell.stories.tsx の MobileWidth で自動検証する。
 - [ ] T044 [P] [US1] `apps/client/src/components/EmptyState/EmptyState.tsx` を、メッセージ=本文・説明=補足のテキストスタイルと面の構成で描画するよう再構成する(US1 受け入れシナリオ3)
 - [ ] T045 [P] [US1] `apps/client/src/components/QueryState/QueryState.tsx` の読み込み中表示を、本文のテキストスタイルとトークンの余白で描画し、平坦な1行表示にならないようにする(US1 受け入れシナリオ3)
 - [ ] T046 [P] [US1] `apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx` で、算出値を本文、算出根拠(計算式・定数・出典)を補足のテキストスタイルで区別する(原則VII の算出根拠表示は維持)

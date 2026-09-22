@@ -86,6 +86,11 @@ export const NavigateAllScreens: Story = {
 
     // トレーニング
     await userEvent.click(canvas.getByRole("link", { name: "トレーニング" }));
+    // 遷移に合わせてナビゲーションの現在地も切り替わる(contracts/app-shell.md 3)。
+    await expect(canvas.getByRole("link", { name: "トレーニング" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     await expect(
       await canvas.findByRole("heading", { name: "トレーニング記録" }),
     ).toBeInTheDocument();

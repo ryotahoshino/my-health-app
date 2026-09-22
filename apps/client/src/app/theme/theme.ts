@@ -72,6 +72,8 @@ export const createAppTheme = (tokens: DesignTokens): Theme =>
       text: { primary: tokens.color.textPrimary, secondary: tokens.color.textSecondary },
       background: { default: tokens.color.background, paper: tokens.color.surface },
       divider: tokens.color.divider,
+      // ポインタ操作時の背景も公式トークンから与える(既定の半透明の黒を使わない)。
+      action: { hover: tokens.color.surfaceHover },
     },
     typography: {
       fontFamily: tokens.typography.fontFamily,
@@ -82,6 +84,10 @@ export const createAppTheme = (tokens: DesignTokens): Theme =>
       button: { ...toTypographyVariant(tokens.typography.button), textTransform: "none" },
     },
     shape: { borderRadius: tokens.radius },
+    // ヘッダー(Toolbar)の高さ。MUI 既定は画面幅ごとのメディアクエリで 56px / 64px を
+    // 指定しており、コンポーネント側の指定より優先される。トークンの値を使うため
+    // ここで置き換える(contracts/app-shell.md)。
+    mixins: { toolbar: { minHeight: tokens.layout.headerHeight } },
     shadows: toShadows(tokens.elevation),
     spacing: tokens.spacingUnit,
     layout: tokens.layout,
