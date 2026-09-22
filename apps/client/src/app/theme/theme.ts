@@ -72,6 +72,8 @@ export const createAppTheme = (tokens: DesignTokens): Theme =>
       text: { primary: tokens.color.textPrimary, secondary: tokens.color.textSecondary },
       background: { default: tokens.color.background, paper: tokens.color.surface },
       divider: tokens.color.divider,
+      // ポインタ操作時の背景も公式トークンから与える(既定の半透明の黒を使わない)。
+      action: { hover: tokens.color.surfaceHover },
     },
     typography: {
       fontFamily: tokens.typography.fontFamily,

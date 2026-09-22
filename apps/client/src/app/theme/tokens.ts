@@ -50,6 +50,7 @@ export type ColorTokens = {
   textSecondary: string;
   background: string;
   surface: string;
+  surfaceHover: string;
   divider: string;
   primary: string;
   onPrimary: string;
@@ -62,6 +63,8 @@ export const colorTokens: ColorTokens = {
   textSecondary: readString(dads.Color.Neutral.SolidGray["700"], "Color.Neutral.SolidGray.700"),
   background: readString(dads.Color.Neutral.White, "Color.Neutral.White"),
   surface: readString(dads.Color.Neutral.White, "Color.Neutral.White"),
+  // 面に対するポインタ操作時の背景。最も淡い灰色で、文字色とのコントラストをほぼ変えない。
+  surfaceHover: readString(dads.Color.Neutral.SolidGray["50"], "Color.Neutral.SolidGray.50"),
   divider: readString(dads.Color.Neutral.SolidGray["200"], "Color.Neutral.SolidGray.200"),
   primary: readString(dads.Color.Key["900"], "Color.Key.900"),
   onPrimary: readString(dads.Color.Neutral.White, "Color.Neutral.White"),
@@ -117,6 +120,12 @@ export type LayoutTokens = {
   contentNarrow: number;
   form: number;
   chartHeight: number;
+  // 境界線の太さ。公式トークンに無いため自前定義する。
+  // hairline は面や表の区切り、emphasis は現在地を示す下線に使う。
+  borderWidth: {
+    hairline: number;
+    emphasis: number;
+  };
 };
 
 export const layoutTokens: LayoutTokens = {
@@ -124,4 +133,8 @@ export const layoutTokens: LayoutTokens = {
   contentNarrow: 480,
   form: 320,
   chartHeight: 300,
+  borderWidth: {
+    hairline: 1,
+    emphasis: 4,
+  },
 };

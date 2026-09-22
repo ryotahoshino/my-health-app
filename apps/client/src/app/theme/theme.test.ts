@@ -81,6 +81,10 @@ describe("公式トークンとの一致(INV-4)", () => {
     expect(theme.palette.background.paper).toBe(dads.Color.Neutral.White.$value);
   });
 
+  it("ポインタ操作時の背景は公式の SolidGray 50", () => {
+    expect(theme.palette.action.hover).toBe(dads.Color.Neutral.SolidGray["50"].$value);
+  });
+
   it("書体は公式の FontFamily Sans", () => {
     expect(theme.typography.fontFamily).toBe(dads.FontFamily.Sans.$value);
   });
