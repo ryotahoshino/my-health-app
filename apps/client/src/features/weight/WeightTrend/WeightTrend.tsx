@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import { LineChart } from "@mui/x-charts/LineChart";
+import { Section } from "../../../components/Section";
 
 export type WeightTrendRecord = {
   id?: string;
@@ -26,6 +27,17 @@ export type WeightTrendProps = {
 const Root = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
+
+// 推移の要約は本文として読めるようにし、太さで結論だと分かるようにする
+// (グラフの非視覚的代替、原則I / FR-004)。
+const Summary = styled(Typography)(({ theme }) => ({
+  fontWeight: theme.typography.button.fontWeight,
+}));
+
+// 表示の切り替えは操作として独立させ、内容と混ざらないようにする。
+const ToggleAction = styled("div")({
+  alignSelf: "flex-start",
+});
 
 // グラフの内容は同じデータを表形式でも取得でき、推移の要約もテキストで
 // 読める(FR-004、原則I: グラフの非視覚的代替)。
@@ -117,14 +129,20 @@ export const WeightTrend = ({ records, onDelete }: WeightTrendProps) => {
   }
 
   return (
-    <Root>
-      <Typography variant="body2">{summaryText}</Typography>
-      {records.length > 0 && (
-        <Button variant="outlined" onClick={handleToggleView}>
-          {toggleLabel}
-        </Button>
-      )}
-      {content}
-    </Root>
+    // 要約・切替操作・グラフ(または表)を1つの面にまとめ、見出しを付ける
+    // (FR-004 / FR-010。表形式とテキスト要約による非視覚的代替は維持する)。
+    <Section title="体重の推移">
+      <Root>
+        <Summary variant="body1">{summaryText}</Summary>
+        {records.length > 0 && (
+          <ToggleAction>
+            <Button variant="outlined" onClick={handleToggleView}>
+              {toggleLabel}
+            </Button>
+          </ToggleAction>
+        )}
+        {content}
+      </Root>
+    </Section>
   );
 };

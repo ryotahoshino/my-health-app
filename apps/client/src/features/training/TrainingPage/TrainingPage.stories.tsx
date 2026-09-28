@@ -83,7 +83,7 @@ export const WithSessions: Story = {
     const canvas = within(canvasElement);
     // 一覧は種目IDではなく、種目マスタから引いた名称を表示する。
     await expect(await canvas.findByText(/スクワット/)).toBeInTheDocument();
-    await expect(canvas.getByText("2026-01-14")).toBeInTheDocument();
+    await expect(canvas.getByRole("heading", { name: /2026-01-14/ })).toBeInTheDocument();
   },
 };
 
@@ -115,14 +115,14 @@ export const RefetchAfterUpsert: Story = {
   ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText("2026-01-14");
+    await canvas.findByRole("heading", { name: /2026-01-14/ });
 
     await userEvent.type(canvas.getByLabelText("日付"), "2026-01-15");
     await userEvent.type(canvas.getByLabelText("実施時間(分)"), "45");
     await userEvent.click(canvas.getByRole("button", { name: "保存" }));
 
     await waitFor(async () => {
-      await expect(canvas.getByText("2026-01-15")).toBeInTheDocument();
+      await expect(canvas.getByRole("heading", { name: /2026-01-15/ })).toBeInTheDocument();
     });
   },
 };
@@ -146,11 +146,9 @@ export const RefetchAfterDelete: Story = {
   ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const listItem = (await canvas.findByText("2026-01-14")).closest(".MuiCard-root");
-    await expect(listItem).not.toBeNull();
-
-    // フォームの種目行にも「削除」があるため、一覧のカード内に限定して押す。
-    await userEvent.click(within(listItem as HTMLElement).getByRole("button", { name: "削除" }));
+    // フォームの種目行にも「削除」があるため、一覧のまとまり(見出しで名前が付く領域)に限定して押す。
+    const session = await canvas.findByRole("region", { name: /2026-01-14/ });
+    await userEvent.click(within(session).getByRole("button", { name: "削除" }));
 
     await waitFor(async () => {
       await expect(canvas.getByText("トレーニング記録はまだありません")).toBeInTheDocument();

@@ -22,9 +22,7 @@ export const StepsPage = () => {
 
   return (
     <Root spacing={4}>
-      <Typography variant="h5" component="h1">
-        歩数記録
-      </Typography>
+      <Typography variant="h1">歩数記録</Typography>
       <StepsForm onSubmit={(values) => upsert.mutate(values)} />
       <PeriodSelector value={period} onChange={setPeriod} />
       <QueryState

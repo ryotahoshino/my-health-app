@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Section } from "../../../components/Section";
 
 export type WeightTrendAggregatePoint = {
   periodLabel: string;
@@ -12,38 +13,41 @@ export type WeightTrendAggregateProps = {
 
 // 週次・月次などの期間集計結果を表で表示する。記録が無い期間は0ではなく
 // 「欠測」として区別し、誤解を招く表現を避ける(Edge Cases、FR-016)。
+// 表は面に収め、何の集計かを見出しで示す(FR-004 / FR-006)。
 export const WeightTrendAggregate = ({ points }: WeightTrendAggregateProps) => {
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell component="th" scope="col">
-            期間
-          </TableCell>
-          <TableCell component="th" scope="col">
-            体重(kg)平均
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {points.map((point) => {
-          let valueCell;
-          if (point.hasData && point.value !== null) {
-            valueCell = `${point.value.toFixed(1)}kg`;
-          } else {
-            valueCell = "欠測";
-          }
+    <Section title="期間ごとの平均">
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell component="th" scope="col">
+              期間
+            </TableCell>
+            <TableCell component="th" scope="col">
+              体重(kg)平均
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {points.map((point) => {
+            let valueCell;
+            if (point.hasData && point.value !== null) {
+              valueCell = `${point.value.toFixed(1)}kg`;
+            } else {
+              valueCell = "欠測";
+            }
 
-          return (
-            <TableRow key={point.periodLabel}>
-              <TableCell component="th" scope="row">
-                {point.periodLabel}
-              </TableCell>
-              <TableCell>{valueCell}</TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+            return (
+              <TableRow key={point.periodLabel}>
+                <TableCell component="th" scope="row">
+                  {point.periodLabel}
+                </TableCell>
+                <TableCell>{valueCell}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Section>
   );
 };

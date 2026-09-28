@@ -49,9 +49,10 @@ export const ShowsSessionSummary: Story = {
   name: "セッションの日付・実施時間・強度が表示される",
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("2026-03-01")).toBeInTheDocument();
-    await expect(canvas.getByText(/60\s*分/)).toBeInTheDocument();
-    await expect(canvas.getByText("中強度")).toBeInTheDocument();
+    // 日付・実施時間・強度は、セッションのまとまりの見出しとして1つにまとめて示す。
+    const heading = canvas.getByRole("heading", { name: /2026-03-01/ });
+    await expect(heading).toHaveTextContent(/60\s*分/);
+    await expect(heading).toHaveTextContent("中強度");
   },
 };
 

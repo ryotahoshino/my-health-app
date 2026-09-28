@@ -1,6 +1,7 @@
-import { Button, Card, CardContent, List, ListItem, Stack, Typography } from "@mui/material";
+import { Button, List, ListItem, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { SessionCalorieCard, type CalorieEstimate } from "../SessionCalorieCard";
+import { Section } from "../../../components/Section";
 
 export type TrainingSessionListExerciseSet = {
   id: string;
@@ -36,9 +37,22 @@ const Root = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
+// 余白は面(Section)側で与えるため、一覧自体は余白を持たない。
+const ExerciseSets = styled(List)({
+  padding: 0,
+});
+
+// 操作は内容から少し離して置き、誤操作しにくくする。
+const DeleteAction = styled("div")(({ theme }) => ({
+  paddingTop: theme.spacing(1),
+  alignSelf: "flex-start",
+}));
+
 // セッション一覧・詳細(種目内訳 + 消費カロリー/総ボリューム表示)。種目名は
 // exerciseIdをキーにexercises(種目マスタ参照データ)から解決する(FR-007)。
 // 体重未記録の場合はSessionCalorieCard側が「算出できません」の表示になる(FR-011)。
+// 1セッションを1つの面にまとめ、日付・実施時間・強度をそのまとまりの見出しにする。
+// 内側の消費カロリーは面にせず、面の入れ子を2段までに保つ(data-model.md #5)。
 export const TrainingSessionList = ({
   sessions,
   exercises,
@@ -48,34 +62,35 @@ export const TrainingSessionList = ({
 
   return (
     <Root>
-      {sessions.map((session) => (
-        <Card key={session.id} variant="outlined">
-          <CardContent>
-            {/* 各セッションのまとまりの見出し。画面見出し(h1)の次のレベルにする。 */}
-            <Typography variant="subtitle1" component="h2">
-              <span>{session.date}</span> ・ <span>{session.durationMinutes}分</span> ・{" "}
-              <span>{intensityLabels[session.intensity]}</span>
-            </Typography>
-            <List dense>
+      {sessions.map((session) => {
+        const title = `${session.date} ・ ${session.durationMinutes}分 ・ ${intensityLabels[session.intensity]}`;
+
+        return (
+          <Section key={session.id} title={title}>
+            <ExerciseSets dense disablePadding>
               {session.exerciseSets.map((exerciseSet) => (
-                <ListItem key={exerciseSet.id} disableGutters>
-                  {exerciseNameById.get(exerciseSet.exerciseId) ?? exerciseSet.exerciseId}{" "}
-                  {exerciseSet.sets}セット × {exerciseSet.reps}回 × {exerciseSet.weightKg}kg
+                <ListItem key={exerciseSet.id} disableGutters disablePadding>
+                  <Typography variant="body1">
+                    {exerciseNameById.get(exerciseSet.exerciseId) ?? exerciseSet.exerciseId}{" "}
+                    {exerciseSet.sets}セット × {exerciseSet.reps}回 × {exerciseSet.weightKg}kg
+                  </Typography>
                 </ListItem>
               ))}
-            </List>
+            </ExerciseSets>
             <SessionCalorieCard
               calorieEstimate={session.calorieEstimate}
               totalVolume={session.totalVolume}
             />
             {onDelete && (
-              <Button size="small" onClick={() => onDelete(session)}>
-                削除
-              </Button>
+              <DeleteAction>
+                <Button variant="outlined" onClick={() => onDelete(session)}>
+                  削除
+                </Button>
+              </DeleteAction>
             )}
-          </CardContent>
-        </Card>
-      ))}
+          </Section>
+        );
+      })}
     </Root>
   );
 };
