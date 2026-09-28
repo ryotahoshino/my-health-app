@@ -43,3 +43,15 @@ export const TextSummary: Story = {
     await expect(canvas.getByText(/67\.5\s*kg/)).toBeInTheDocument();
   },
 };
+
+// T049 で要約・切替・グラフ(表)を1つの面にまとめ、見出しを付ける(FR-004 / FR-010)。
+export const HasSectionHeading: Story = {
+  name: "推移のまとまりに見出しがある",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole("heading", { name: "体重の推移" })).toBeInTheDocument();
+    const section = canvas.getByRole("region", { name: "体重の推移" });
+    await expect(within(section).getByText(/67\.5\s*kg/)).toBeInTheDocument();
+  },
+};

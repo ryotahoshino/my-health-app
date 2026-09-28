@@ -75,3 +75,18 @@ export const ShowsCalorieEstimate: Story = {
     await expect(canvas.getByText(/3420\.0\s*kg/)).toBeInTheDocument();
   },
 };
+
+// T048 で各セッションを1つの面にまとめ、日付を含む条件をまとまりの見出しにする(FR-004)。
+export const SessionIsSectionWithHeading: Story = {
+  name: "各セッションがまとまりの見出しを持つ面になる",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const headings = canvas.getAllByRole("heading");
+
+    await expect(headings).toHaveLength(sessions.length);
+    await expect(headings[0]).toHaveTextContent("2026-03-01");
+    // 見出しの名前でまとまりを識別でき、その中に種目内訳が含まれる。
+    const section = canvas.getAllByRole("region")[0]!;
+    await expect(within(section).getByText(/ベンチプレス/)).toBeInTheDocument();
+  },
+};
