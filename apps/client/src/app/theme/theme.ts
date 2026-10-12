@@ -91,4 +91,15 @@ export const createAppTheme = (tokens: DesignTokens): Theme =>
     shadows: toShadows(tokens.elevation),
     spacing: tokens.spacingUnit,
     layout: tokens.layout,
+    components: {
+      MuiTableCell: {
+        styleOverrides: {
+          // 表の列見出し・行見出しは UIラベルのテキストスタイルで描き、
+          // 本文のセルと役割を区別する(FR-004 / FR-015)。
+          head: {
+            fontWeight: tokens.typography.button.fontWeight,
+          },
+        },
+      },
+    },
   });

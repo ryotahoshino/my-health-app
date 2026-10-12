@@ -30,3 +30,18 @@ export const ShowsAggregatedValuesAndMissingPeriods: Story = {
     await expect(canvas.getByText("欠測")).toBeInTheDocument();
   },
 };
+
+// T049 で集計の表を面に収め、見出しを付ける(FR-004 / FR-010)。
+export const HasSectionHeading: Story = {
+  name: "集計のまとまりに見出しがある",
+  args: {
+    points: [{ periodLabel: "2026-08-03週", hasData: true, value: 70.5 }],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole("heading", { name: "期間ごとの平均" })).toBeInTheDocument();
+    const section = canvas.getByRole("region", { name: "期間ごとの平均" });
+    await expect(within(section).getByRole("table")).toBeInTheDocument();
+  },
+};

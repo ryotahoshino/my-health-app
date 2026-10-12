@@ -49,9 +49,10 @@ export const ShowsSessionSummary: Story = {
   name: "セッションの日付・実施時間・強度が表示される",
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("2026-03-01")).toBeInTheDocument();
-    await expect(canvas.getByText(/60\s*分/)).toBeInTheDocument();
-    await expect(canvas.getByText("中強度")).toBeInTheDocument();
+    // 日付・実施時間・強度は、セッションのまとまりの見出しとして1つにまとめて示す。
+    const heading = canvas.getByRole("heading", { name: /2026-03-01/ });
+    await expect(heading).toHaveTextContent(/60\s*分/);
+    await expect(heading).toHaveTextContent("中強度");
   },
 };
 
@@ -73,5 +74,20 @@ export const ShowsCalorieEstimate: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/350\s*kcal/)).toBeInTheDocument();
     await expect(canvas.getByText(/3420\.0\s*kg/)).toBeInTheDocument();
+  },
+};
+
+// T048 で各セッションを1つの面にまとめ、日付を含む条件をまとまりの見出しにする(FR-004)。
+export const SessionIsSectionWithHeading: Story = {
+  name: "各セッションがまとまりの見出しを持つ面になる",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const headings = canvas.getAllByRole("heading");
+
+    await expect(headings).toHaveLength(sessions.length);
+    await expect(headings[0]).toHaveTextContent("2026-03-01");
+    // 見出しの名前でまとまりを識別でき、その中に種目内訳が含まれる。
+    const section = canvas.getAllByRole("region")[0]!;
+    await expect(within(section).getByText(/ベンチプレス/)).toBeInTheDocument();
   },
 };

@@ -17,9 +17,7 @@ export const FoodsPage = () => {
 
   return (
     <Root spacing={4}>
-      <Typography variant="h5" component="h1">
-        食材一覧
-      </Typography>
+      <Typography variant="h1">食材一覧</Typography>
       <QueryState
         isLoading={isLoading}
         isEmpty={foods.length === 0}

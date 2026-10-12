@@ -126,22 +126,25 @@ plan.md の Project Structure に基づく。
 ### Tests for User Story 1 ⚠️
 
 - [X] T040 [P] [US1] アプリシェルの Storybook Interaction Test を `apps/client/src/app/AppShell/AppShell.stories.tsx` に作成する。(a) ヘッダー・名前付きナビゲーション・主要コンテンツの各ランドマークが存在する、(b) 4画面(体重 / トレーニング / 歩数 / 食材)へのリンクがある、(c) 表示中の画面の項目にのみ `aria-current="page"` が付く、(d) Tab キーのみで4項目すべてに到達できる(contracts/app-shell.md / SC-011)。実装前に失敗することを確認する
-- [ ] T041 [P] [US1] 結果表示系コンポーネントの既存ストーリーに、まとまりの見出しが見出し要素(role=heading)として取得できることのアサーションを追加する。対象: `apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`(日付)、`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`(各セッションの日付)、`apps/client/src/features/weight/WeightTrendAggregate/WeightTrendAggregate.stories.tsx`(集計の見出し)。実装前に失敗することを確認する
+- [X] T041 [P] [US1] 結果表示系コンポーネントの既存ストーリーに、まとまりの見出しが見出し要素(role=heading)として取得できることのアサーションを追加する。対象: `apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.stories.tsx`(日付)、`apps/client/src/features/training/TrainingSessionList/TrainingSessionList.stories.tsx`(各セッションの日付)、`apps/client/src/features/weight/WeightTrendAggregate/WeightTrendAggregate.stories.tsx`(集計の見出し)。実装前に失敗することを確認する
 
 ### Implementation for User Story 1
 
 - [X] T042 [US1] ヘッダー+ナビゲーションの `AppShell` を `apps/client/src/app/AppShell/AppShell.tsx` と `apps/client/src/app/AppShell/index.ts` に実装する。現在地は `aria-current="page"` と、色以外の視覚的手がかり(下線または太字)の両方で示す。画面幅375pxで項目が横スクロールを発生させずに収まるようにする(FR-016 / FR-011、依存: T040)
 - [X] T043 [US1] `apps/client/src/app/App.tsx` の素朴なテキストリンクの `<nav>` を `AppShell` に置き換え、各ルートを主要コンテンツ領域の中に配置する(依存: T042)
   - 実装は `apps/client/src/app/AppRoutes.tsx`(App.tsx から切り出したルーティング)で AppShell が Routes を包む形にした。幅375pxでの収まり(FR-011 / SC-008)は手動シナリオではなく AppShell.stories.tsx の MobileWidth で自動検証する。
-- [ ] T044 [P] [US1] `apps/client/src/components/EmptyState/EmptyState.tsx` を、メッセージ=本文・説明=補足のテキストスタイルと面の構成で描画するよう再構成する(US1 受け入れシナリオ3)
-- [ ] T045 [P] [US1] `apps/client/src/components/QueryState/QueryState.tsx` の読み込み中表示を、本文のテキストスタイルとトークンの余白で描画し、平坦な1行表示にならないようにする(US1 受け入れシナリオ3)
-- [ ] T046 [P] [US1] `apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx` で、算出値を本文、算出根拠(計算式・定数・出典)を補足のテキストスタイルで区別する(原則VII の算出根拠表示は維持)
-- [ ] T047 [P] [US1] `apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx` で、日付を節見出し、トレーニング分・歩数分・合計を本文、算出根拠を補足で描画し、概算の合計を視覚的に強調する(依存: T041)
-- [ ] T048 [P] [US1] `apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx` で、各セッションを1つの面にまとめ、日付を節見出しとして描画する。入れ子の面は2段までとする(data-model.md #5、依存: T041)
-- [ ] T049 [P] [US1] `apps/client/src/features/weight/WeightTrend/WeightTrend.tsx` と `apps/client/src/features/weight/WeightTrendAggregate/WeightTrendAggregate.tsx` で、要約テキスト・表・グラフを面にまとめ、見出しを付ける。表形式・テキスト要約の非視覚的代替は維持する(FR-010、依存: T041)
-- [ ] T050 [P] [US1] `apps/client/src/features/foods/FoodList/FoodList.tsx` の表を面に収め、列見出しに UIラベルのテキストスタイルを適用する。行見出し・列見出しの対応(スクリーンリーダー向け)は維持する
-- [ ] T051 [US1] 4画面 `apps/client/src/features/weight/WeightPage/WeightPage.tsx`・`apps/client/src/features/training/TrainingPage/TrainingPage.tsx`・`apps/client/src/features/steps/StepsPage/StepsPage.tsx`・`apps/client/src/features/foods/FoodsPage/FoodsPage.tsx` の画面見出しを画面見出しのテキストスタイル(h1)に揃え、結果表示領域に節見出し(h2)を付けて面で区切る(依存: T044〜T050)
-- [ ] T052 [US1] T040・T041 と US5 の画面テスト(T022〜T025)の成功、Lint エラー0件、a11y 違反0件、コントラストが基準値以上(T010)であることを確認し、quickstart.md の手動シナリオ1(階層)・2(まとまり)・5(空状態・読み込み中)を実施する
+- [X] T044 [P] [US1] `apps/client/src/components/EmptyState/EmptyState.tsx` を、メッセージ=本文・説明=補足のテキストスタイルと面の構成で描画するよう再構成する(US1 受け入れシナリオ3)
+- [X] T045 [P] [US1] `apps/client/src/components/QueryState/QueryState.tsx` の読み込み中表示を、本文のテキストスタイルとトークンの余白で描画し、平坦な1行表示にならないようにする(US1 受け入れシナリオ3)
+- [X] T046 [P] [US1] `apps/client/src/features/training/SessionCalorieCard/SessionCalorieCard.tsx` で、算出値を本文、算出根拠(計算式・定数・出典)を補足のテキストスタイルで区別する(原則VII の算出根拠表示は維持)
+- [X] T047 [P] [US1] `apps/client/src/features/steps/DailyCalorieSummary/DailyCalorieSummary.tsx` で、日付を節見出し、トレーニング分・歩数分・合計を本文、算出根拠を補足で描画し、概算の合計を視覚的に強調する(依存: T041)
+- [X] T048 [P] [US1] `apps/client/src/features/training/TrainingSessionList/TrainingSessionList.tsx` で、各セッションを1つの面にまとめ、日付を節見出しとして描画する。入れ子の面は2段までとする(data-model.md #5、依存: T041)
+- [X] T049 [P] [US1] `apps/client/src/features/weight/WeightTrend/WeightTrend.tsx` と `apps/client/src/features/weight/WeightTrendAggregate/WeightTrendAggregate.tsx` で、要約テキスト・表・グラフを面にまとめ、見出しを付ける。表形式・テキスト要約の非視覚的代替は維持する(FR-010、依存: T041)
+- [X] T050 [P] [US1] `apps/client/src/features/foods/FoodList/FoodList.tsx` の表を面に収め、列見出しに UIラベルのテキストスタイルを適用する。行見出し・列見出しの対応(スクリーンリーダー向け)は維持する
+- [X] T051 [US1] 4画面 `apps/client/src/features/weight/WeightPage/WeightPage.tsx`・`apps/client/src/features/training/TrainingPage/TrainingPage.tsx`・`apps/client/src/features/steps/StepsPage/StepsPage.tsx`・`apps/client/src/features/foods/FoodsPage/FoodsPage.tsx` の画面見出しを画面見出しのテキストスタイル(h1)に揃え、結果表示領域に節見出し(h2)を付けて面で区切る(依存: T044〜T050)
+- [~] T052 [US1] T040・T041 と US5 の画面テスト(T022〜T025)の成功、Lint エラー0件、a11y 違反0件、コントラストが基準値以上(T010)であることを確認し、quickstart.md の手動シナリオ1(階層)・2(まとまり)・5(空状態・読み込み中)を実施する
+  - 共通部品として `apps/client/src/components/Surface`(面)と `apps/client/src/components/Section`(面+節見出し、`aria-labelledby` で領域に名前を付ける)を追加し、T047〜T050 はこれに乗せた。表の見出しのテキストスタイルはテーマの `components.MuiTableCell` で全表に適用する。
+  - 自動検証は完了(2026-09-28): クライアント 111件のテスト成功(a11y 違反0件・コントラスト基準以上を含む)、Lint エラー0件、typecheck、build。歩数の日ごとのまとまりはトレーニングのセッションと同格として h2 に揃えた(h1→h3 の飛びを避けるため)。
+  - 残りは quickstart.md 手動シナリオ1(階層)・2(まとまり)・5(空状態・読み込み中)の目視判断のみ(開発者本人が実施)。
 
 **Checkpoint**: User Story 1 が完結(MVP)。「のっぺり」の主要因(平坦なタイポグラフィ・面の欠如・素朴なナビゲーション)が解消されている
 

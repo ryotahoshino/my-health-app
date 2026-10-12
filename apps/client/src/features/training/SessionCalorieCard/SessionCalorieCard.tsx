@@ -20,6 +20,17 @@ export type SessionCalorieCardProps = {
 };
 
 const Root = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(1),
+}));
+
+// 算出値は本文、算出根拠は補足のテキストスタイルにして役割を区別する(FR-004)。
+// 主要な値は太さで際立たせる。
+const Value = styled(Typography)(({ theme }) => ({
+  fontWeight: theme.typography.button.fontWeight,
+}));
+
+// 算出根拠は3行が1つのまとまりとして読めるよう、行間を詰めて並べる。
+const Rationale = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(0.5),
 }));
 
@@ -37,23 +48,22 @@ export const SessionCalorieCard = ({ calorieEstimate, totalVolume }: SessionCalo
 
   return (
     <Root>
-      {/* セッションのまとまり(h2)の内側に置かれるため h3 にする。 */}
-      <Typography variant="subtitle1" component="h3">
-        {calorieText}
-      </Typography>
-      <Typography variant="body2">総ボリューム: {totalVolume.toFixed(1)}kg</Typography>
-      <Typography variant="caption" color="text.secondary">
-        計算式: {calorieEstimate.formula}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        定数:{" "}
-        {calorieEstimate.assumedConstants
-          .map((constant) => `${constant.label} ${constant.value}${constant.unit}`)
-          .join(", ")}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        出典: {calorieEstimate.source}
-      </Typography>
+      <Value variant="body1">{calorieText}</Value>
+      <Typography variant="body1">総ボリューム: {totalVolume.toFixed(1)}kg</Typography>
+      <Rationale>
+        <Typography variant="body2" color="text.secondary">
+          計算式: {calorieEstimate.formula}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          定数:{" "}
+          {calorieEstimate.assumedConstants
+            .map((constant) => `${constant.label} ${constant.value}${constant.unit}`)
+            .join(", ")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          出典: {calorieEstimate.source}
+        </Typography>
+      </Rationale>
     </Root>
   );
 };

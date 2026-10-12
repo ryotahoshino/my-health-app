@@ -20,9 +20,7 @@ export const TrainingPage = () => {
 
   return (
     <Root spacing={4}>
-      <Typography variant="h5" component="h1">
-        トレーニング記録
-      </Typography>
+      <Typography variant="h1">トレーニング記録</Typography>
       <TrainingSessionForm exercises={exercises} onSubmit={(values) => upsert.mutate(values)} />
       <QueryState
         isLoading={isLoading}

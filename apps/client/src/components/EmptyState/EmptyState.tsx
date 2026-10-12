@@ -11,7 +11,14 @@ export type EmptyStateProps = {
 const Root = styled(Stack)(({ theme }) => ({
   alignItems: "center",
   textAlign: "center",
-  padding: theme.spacing(4),
+  paddingBlock: theme.spacing(4),
+}));
+
+// 0件であることは本文として示し、作成への導線は補足として添える。
+// 太さで役割の差を付け、情報が無い状態でも階層が崩れないようにする
+// (US1 受け入れシナリオ3 / FR-004)。
+const Message = styled(Typography)(({ theme }) => ({
+  fontWeight: theme.typography.button.fontWeight,
 }));
 
 // 記録が0件の画面は、記録がないことを分かりやすく示し、記録の作成へ
@@ -31,7 +38,7 @@ export const EmptyState = ({ message, description }: EmptyStateProps) => {
 
   return (
     <Root spacing={1}>
-      <Typography variant="body1">{message}</Typography>
+      <Message variant="body1">{message}</Message>
       {descriptionText}
     </Root>
   );

@@ -1,5 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Section } from "../../../components/Section";
 
 export type AssumedConstant = {
   label: string;
@@ -21,7 +22,16 @@ export type DailyCalorieSummaryProps = {
   totalCalories: number | null;
 };
 
-const Root = styled(Stack)(({ theme }) => ({
+const Breakdown = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(0.5),
+}));
+
+// 合計は概算でも「その日の結論」にあたるため、太さで際立たせる(FR-004)。
+const Total = styled(Typography)(({ theme }) => ({
+  fontWeight: theme.typography.button.fontWeight,
+}));
+
+const Rationale = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(0.5),
 }));
 
@@ -35,7 +45,7 @@ const formatCalories = (calories: number | null): string => {
 // トレーニング分・歩数分・合計をあわせて表示し、合計は常に概算である旨を
 // 明示する(FR-014: トレーニング中の歩数と歩数記録は重複しうるため)。
 // 歩数分の算出根拠(計算式・定数・出典)も画面上で確認できるようにする
-// (憲法 原則VII)。
+// (憲法 原則VII)。日付はこの日のまとまりの見出しとして扱う(FR-004)。
 export const DailyCalorieSummary = ({
   date,
   trainingCalories,
@@ -43,32 +53,28 @@ export const DailyCalorieSummary = ({
   totalCalories,
 }: DailyCalorieSummaryProps) => {
   return (
-    <Root>
-      {/* 画面見出し(h1)の直下に並ぶまとまりの見出し。見出しレベルを飛ばさないよう
-          明示する(憲法 原則I / axe heading-order)。 */}
-      <Typography variant="subtitle1" component="h2">
-        {date}
-      </Typography>
-      <Typography variant="body2">トレーニング分: {formatCalories(trainingCalories)}</Typography>
-      <Typography variant="body2">
-        歩数分: {formatCalories(stepCalorieEstimate.calories)}
-      </Typography>
-      {/* 日付の見出し(h2)の内側にある小見出しのため h3 にする。 */}
-      <Typography variant="subtitle2" component="h3">
-        合計(概算): {formatCalories(totalCalories)}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        計算式: {stepCalorieEstimate.formula}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        定数:{" "}
-        {stepCalorieEstimate.assumedConstants
-          .map((constant) => `${constant.label} ${constant.value}${constant.unit}`)
-          .join(", ")}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        出典: {stepCalorieEstimate.source}
-      </Typography>
-    </Root>
+    <Section title={date}>
+      <Breakdown>
+        <Typography variant="body1">トレーニング分: {formatCalories(trainingCalories)}</Typography>
+        <Typography variant="body1">
+          歩数分: {formatCalories(stepCalorieEstimate.calories)}
+        </Typography>
+        <Total variant="body1">合計(概算): {formatCalories(totalCalories)}</Total>
+      </Breakdown>
+      <Rationale>
+        <Typography variant="body2" color="text.secondary">
+          計算式: {stepCalorieEstimate.formula}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          定数:{" "}
+          {stepCalorieEstimate.assumedConstants
+            .map((constant) => `${constant.label} ${constant.value}${constant.unit}`)
+            .join(", ")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          出典: {stepCalorieEstimate.source}
+        </Typography>
+      </Rationale>
+    </Section>
   );
 };

@@ -63,3 +63,21 @@ export const StepsOnly: Story = {
     await expect(canvas.getByText(/国立健康・栄養研究所/)).toBeInTheDocument();
   },
 };
+
+// T047 で日付をまとまりの見出しとして描画する(FR-004 / US1 受け入れシナリオ2)。
+export const DateIsSectionHeading: Story = {
+  name: "日付がまとまりの見出しとして取得できる",
+  args: {
+    date: "2026-01-02",
+    trainingCalories: 350,
+    stepCalorieEstimate,
+    totalCalories: 560,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("heading", { name: "2026-01-02" })).toBeInTheDocument();
+    // 見出しと内容が1つのまとまりとして対応づけられている。
+    const section = canvas.getByRole("region", { name: "2026-01-02" });
+    await expect(within(section).getByText(/560\s*kcal/)).toBeInTheDocument();
+  },
+};
