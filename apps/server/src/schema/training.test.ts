@@ -16,8 +16,8 @@ type TestContext = {
   repositories: { training: TrainingSessionRepository };
 };
 
-const createTestContext = (): TestContext => {
-  const db = createSeededTestDb();
+const createTestContext = async (): Promise<TestContext> => {
+  const db = await createSeededTestDb();
   return { repositories: { training: createTrainingSessionRepository(db) } };
 };
 
@@ -49,7 +49,7 @@ const baseInput = {
 describe("training GraphQLスキーマ", () => {
   it("upsertTrainingSessionで作成したセッションがtrainingSessionsに反映される", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -77,7 +77,7 @@ describe("training GraphQLスキーマ", () => {
 
   it("trainingSession(id)で単体のセッションを取得できる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -98,7 +98,7 @@ describe("training GraphQLスキーマ", () => {
 
   it("deleteTrainingSessionでセッションを削除できる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -126,7 +126,7 @@ describe("training GraphQLスキーマ", () => {
 
   it("同一日付への再登録は上書きになる(FR-017)", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     await graphql({
       schema,
@@ -151,7 +151,7 @@ describe("training GraphQLスキーマ", () => {
 
   it("範囲外の実施時間はバリデーションエラーになる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const result = await graphql({
       schema,

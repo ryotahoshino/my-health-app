@@ -4,7 +4,7 @@ import { builder } from "./builder.js";
 // T023で実装する(このテストは実装が無い間は失敗する)。副作用importで
 // builderにQuery.weightRecords/Mutation.upsertWeightRecord/deleteWeightRecordを登録する想定。
 import "./weight.js";
-import { createConnection } from "../db/connection.js";
+import { createSeededTestDb } from "../test-support/seededTestDb.js";
 import { createWeightRepository, type WeightRepository } from "../repositories/weightRepository.js";
 
 // GraphQL Yogaのcontextに渡す形と合わせる想定の契約(T023で index.ts 側も更新する)。
@@ -17,15 +17,15 @@ type TestContext = {
 // 2026-08-17は月曜日、2026-08-19は同じ週の水曜日。
 const TODAY = "2026-08-19";
 
-const createTestContext = (): TestContext => {
-  const db = createConnection(":memory:");
+const createTestContext = async (): Promise<TestContext> => {
+  const db = await createSeededTestDb();
   return { repositories: { weight: createWeightRepository(db) }, today: TODAY };
 };
 
 describe("weight GraphQLスキーマ", () => {
   it("upsertWeightRecordで作成した記録がweightRecordsに反映される", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -53,7 +53,7 @@ describe("weight GraphQLスキーマ", () => {
 
   it("deleteWeightRecordで記録を削除できる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -80,7 +80,7 @@ describe("weight GraphQLスキーマ", () => {
 
   it("同一日付への再登録は上書きになる(FR-017)", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     await graphql({
       schema,
@@ -103,7 +103,7 @@ describe("weight GraphQLスキーマ", () => {
 
   it("範囲外の体重値はバリデーションエラーになる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const result = await graphql({
       schema,
@@ -116,9 +116,9 @@ describe("weight GraphQLスキーマ", () => {
   describe("weightTrendAggregate(期間集計、FR-016)", () => {
     it("DAILY指定で日ごとの体重推移を返し、欠測日はhasData:falseで区別する", async () => {
       const schema = builder.toSchema();
-      const contextValue = createTestContext();
-      contextValue.repositories.weight.upsert({ date: "2026-08-17", weightKg: 70 });
-      contextValue.repositories.weight.upsert({ date: "2026-08-19", weightKg: 69 });
+      const contextValue = await createTestContext();
+      await contextValue.repositories.weight.upsert({ date: "2026-08-17", weightKg: 70 });
+      await contextValue.repositories.weight.upsert({ date: "2026-08-19", weightKg: 69 });
 
       const result = await graphql({
         schema,
@@ -154,9 +154,9 @@ describe("weight GraphQLスキーマ", () => {
 
     it("WEEKLY指定で同一週内の体重を平均して返し、今週はcontext.todayまでの経過分のみになる", async () => {
       const schema = builder.toSchema();
-      const contextValue = createTestContext();
-      contextValue.repositories.weight.upsert({ date: "2026-08-17", weightKg: 70 });
-      contextValue.repositories.weight.upsert({ date: "2026-08-18", weightKg: 72 });
+      const contextValue = await createTestContext();
+      await contextValue.repositories.weight.upsert({ date: "2026-08-17", weightKg: 70 });
+      await contextValue.repositories.weight.upsert({ date: "2026-08-18", weightKg: 72 });
 
       const result = await graphql({
         schema,
@@ -172,7 +172,7 @@ describe("weight GraphQLスキーマ", () => {
 
     it("記録が0件の場合は空配列を返す", async () => {
       const schema = builder.toSchema();
-      const contextValue = createTestContext();
+      const contextValue = await createTestContext();
 
       const result = await graphql({
         schema,

@@ -1,5 +1,5 @@
-import type Database from "better-sqlite3";
 import { randomUUID } from "node:crypto";
+import type { SqlExecutor } from "../db/client.js";
 
 export type StepRecord = {
   id: string;
@@ -8,44 +8,43 @@ export type StepRecord = {
 };
 
 export type StepRecordRepository = {
-  list(): StepRecord[];
-  findByDate(date: string): StepRecord | undefined;
-  upsert(input: { date: string; steps: number }): StepRecord;
-  delete(id: string): boolean;
+  list(): Promise<StepRecord[]>;
+  findByDate(date: string): Promise<StepRecord | undefined>;
+  upsert(input: { date: string; steps: number }): Promise<StepRecord>;
+  delete(id: string): Promise<boolean>;
 };
 
 // 外部I/O(DBアクセス)をこのファイルの端に閉じ込め、呼び出し側は
 // StepRecordRepositoryインターフェースにのみ依存する(原則V・VI)。
-export const createStepRecordRepository = (db: Database.Database): StepRecordRepository => {
-  const listStatement = db.prepare("SELECT id, date, steps FROM step_records ORDER BY date ASC");
-  const findByDateStatement = db.prepare("SELECT id, date, steps FROM step_records WHERE date = ?");
-  const insertStatement = db.prepare(
-    "INSERT INTO step_records (id, date, steps) VALUES (@id, @date, @steps)",
-  );
-  const updateStatement = db.prepare("UPDATE step_records SET steps = @steps WHERE id = @id");
-  const deleteStatement = db.prepare("DELETE FROM step_records WHERE id = ?");
-
+export const createStepRecordRepository = (db: SqlExecutor): StepRecordRepository => {
   return {
-    list() {
-      return listStatement.all() as StepRecord[];
+    async list() {
+      const result = await db.query<StepRecord>(
+        "SELECT id, date, steps FROM step_records ORDER BY date ASC",
+      );
+      return result.rows;
     },
-    findByDate(date) {
-      return findByDateStatement.get(date) as StepRecord | undefined;
+    async findByDate(date) {
+      const result = await db.query<StepRecord>(
+        "SELECT id, date, steps FROM step_records WHERE date = $1",
+        [date],
+      );
+      return result.rows[0];
     },
-    upsert(input) {
+    async upsert(input) {
       // 同一日付への保存は既存レコードの上書きとする(FR-017)。
-      const existing = findByDateStatement.get(input.date) as StepRecord | undefined;
-      if (existing) {
-        updateStatement.run({ id: existing.id, steps: input.steps });
-        return { id: existing.id, date: input.date, steps: input.steps };
-      }
-      const id = randomUUID();
-      insertStatement.run({ id, date: input.date, steps: input.steps });
-      return { id, date: input.date, steps: input.steps };
+      const result = await db.query<StepRecord>(
+        `INSERT INTO step_records (id, date, steps)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (date) DO UPDATE SET steps = excluded.steps
+         RETURNING id, date, steps`,
+        [randomUUID(), input.date, input.steps],
+      );
+      return result.rows[0]!;
     },
-    delete(id) {
-      const result = deleteStatement.run(id);
-      return result.changes > 0;
+    async delete(id) {
+      const result = await db.query("DELETE FROM step_records WHERE id = $1", [id]);
+      return result.rowCount > 0;
     },
   };
 };

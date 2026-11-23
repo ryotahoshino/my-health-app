@@ -1,5 +1,3 @@
-import type Database from "better-sqlite3";
-
 export type ExerciseCatalogEntry = {
   id: string;
   name: string;
@@ -25,15 +23,3 @@ export const exerciseCatalogSeed: ExerciseCatalogEntry[] = [
   { id: "push-up", name: "腕立て伏せ", mets: 3.8, source: METS_SOURCE },
   { id: "dumbbell-curl", name: "ダンベルカール", mets: 3.5, source: METS_SOURCE },
 ];
-
-export const seedExerciseCatalog = (db: Database.Database): void => {
-  const insert = db.prepare(
-    `INSERT INTO exercise_catalog (id, name, mets, source)
-     VALUES (@id, @name, @mets, @source)
-     ON CONFLICT(id) DO UPDATE SET name = excluded.name, mets = excluded.mets, source = excluded.source`,
-  );
-  const insertAll = db.transaction((rows: ExerciseCatalogEntry[]) => {
-    for (const row of rows) insert.run(row);
-  });
-  insertAll(exerciseCatalogSeed);
-};

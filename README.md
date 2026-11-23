@@ -9,7 +9,7 @@
 ## 技術スタック
 
 - **サーバー**: Node.js 22, TypeScript, GraphQL Yoga, Pothos(code-first schema builder),
-  Zod, better-sqlite3, vitest
+  Zod, Postgres(本番は Neon / テストとローカルは PGlite), vitest
 - **クライアント**: React 19, Vite, MUI, `@mui/x-charts`, react-hook-form + Zod,
   TanStack Query, GraphQL Code Generator, Storybook(Interaction Test + a11yアドオン),
   vite-plugin-pwa
@@ -42,8 +42,11 @@ corepack yarn workspace @my-health-app/server generate:schema
 # クライアントの型・フックをSDLから生成
 corepack yarn workspace @my-health-app/client codegen
 
-# サーバー起動(SQLiteファイルは初回起動時に apps/server/data 配下へ自動作成)
+# サーバー起動(接続先は apps/server/.env.local の DATABASE_URL)
 corepack yarn dev:server
+
+# ネットワークに接続せずに動かす場合(保存先は apps/server/data/local-pgdata)
+corepack yarn workspace @my-health-app/server dev:local
 
 # 別ターミナルでクライアント起動
 corepack yarn dev:client
@@ -55,6 +58,30 @@ corepack yarn storybook
 `generate:schema` → `codegen` は、サーバー側のGraphQL型を変更するたびに再実行する
 (クライアントのコード生成はサーバーの実行中である必要はなく、静的な`schema.graphql`
 ファイルのみを入力とする)。
+
+### データベース
+
+記録の保存先は Postgres。本番は Neon(無料プラン)、テストとローカル開発は
+プロセス内で動く PGlite を使う(ネットワーク接続なしでテストできる)。
+
+接続情報は環境変数 `DATABASE_URL` で渡す。`apps/server/.env.local` に置き、
+リポジトリには含めない(`.gitignore` 対象)。
+
+```bash
+# apps/server/.env.local
+# DATABASE_URL=postgresql://<user>:<password>@<host>/<db>?sslmode=require
+```
+
+スキーマの変更は `apps/server/migrations/` の番号付きSQLファイルで管理する。
+アプリの起動時にスキーマは作成されないため、接続先を用意したら次を実行する。
+
+```bash
+# 未適用のスキーマ変更を順に適用(何度実行しても安全)
+corepack yarn workspace @my-health-app/server migrate
+
+# 固定データ(種目マスタ・食材)の投入(何度実行しても重複しない)
+corepack yarn workspace @my-health-app/server seed
+```
 
 ## テスト・Lint・フォーマット
 

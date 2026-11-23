@@ -52,6 +52,9 @@ jobs:
       - name: Typecheck client
         run: yarn workspace @my-health-app/client typecheck
 
+      # サーバーのテストはプロセス内で動く Postgres(PGlite)を使うため、
+      # 接続情報(Secrets)もサービスコンテナも不要
+      # (specs/004-database-migration/research.md #7)。
       - name: Test server
         run: yarn workspace @my-health-app/server test
 

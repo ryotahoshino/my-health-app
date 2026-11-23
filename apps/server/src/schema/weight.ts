@@ -39,8 +39,9 @@ builder.queryField("weightTrendAggregate", (t) =>
     args: {
       period: t.arg({ type: AggregationPeriodEnum, required: true }),
     },
-    resolve: (_parent, args, context) => {
-      const points = context.repositories.weight.list().map((record) => ({
+    resolve: async (_parent, args, context) => {
+      const records = await context.repositories.weight.list();
+      const points = records.map((record) => ({
         date: record.date,
         value: record.weightKg,
       }));

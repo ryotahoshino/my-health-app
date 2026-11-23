@@ -26,8 +26,8 @@ type TestContext = {
   today: string;
 };
 
-const createTestContext = (): TestContext => {
-  const db = createSeededTestDb();
+const createTestContext = async (): Promise<TestContext> => {
+  const db = await createSeededTestDb();
   return {
     repositories: {
       training: createTrainingSessionRepository(db),
@@ -41,7 +41,7 @@ const createTestContext = (): TestContext => {
 describe("steps GraphQLスキーマ", () => {
   it("upsertStepRecordで作成した記録がstepRecordsに反映される", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -60,7 +60,7 @@ describe("steps GraphQLスキーマ", () => {
 
   it("deleteStepRecordで記録を削除できる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const upsertResult = await graphql({
       schema,
@@ -83,7 +83,7 @@ describe("steps GraphQLスキーマ", () => {
 
   it("同一日付への再登録は上書きになる(FR-017)", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     await graphql({
       schema,
@@ -106,7 +106,7 @@ describe("steps GraphQLスキーマ", () => {
 
   it("範囲外の歩数はバリデーションエラーになる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
+    const contextValue = await createTestContext();
 
     const result = await graphql({
       schema,
@@ -130,9 +130,9 @@ describe("steps GraphQLスキーマ", () => {
 
   it("歩数のみ記録された日は歩数分のみが反映される(トレーニング分は0)", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
-    contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
-    contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
+    const contextValue = await createTestContext();
+    await contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
+    await contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
 
     const result = await graphql({ schema, contextValue, source: dailySummariesQuery });
     expect(result.data?.dailyCalorieSummaries).toEqual([
@@ -148,15 +148,15 @@ describe("steps GraphQLスキーマ", () => {
 
   it("トレーニングと歩数の両方がある日は合算値が概算として表示される", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
-    contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
-    contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    await contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
+    await contextValue.repositories.training.upsert({
       date: "2026-01-02",
       durationMinutes: 60,
       intensity: "MEDIUM",
       exerciseSets: [],
     });
-    contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
+    await contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
 
     const result = await graphql({ schema, contextValue, source: dailySummariesQuery });
     // トレーニング: 5.0 METs * 70kg * 1h = 350kcal、歩数: 3.0 METs * 70kg * 1h = 210kcal
@@ -173,8 +173,8 @@ describe("steps GraphQLスキーマ", () => {
 
   it("体重未記録の場合はtrainingCalories/stepCalories/totalCaloriesがnullになる", async () => {
     const schema = builder.toSchema();
-    const contextValue = createTestContext();
-    contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
+    const contextValue = await createTestContext();
+    await contextValue.repositories.steps.upsert({ date: "2026-01-02", steps: 6000 });
 
     const result = await graphql({ schema, contextValue, source: dailySummariesQuery });
     expect(result.data?.dailyCalorieSummaries).toEqual([
@@ -192,16 +192,16 @@ describe("steps GraphQLスキーマ", () => {
     it("WEEKLY指定で同一週内の消費カロリーを合算して返す", async () => {
       const schema = builder.toSchema();
       // 2026-01-05(月)始まりの週。today=2026-01-06(火、同じ週)に設定。
-      const contextValue = createTestContext();
+      const contextValue = await createTestContext();
       contextValue.today = "2026-01-06";
-      contextValue.repositories.weight.upsert({ date: "2026-01-05", weightKg: 70 });
-      contextValue.repositories.training.upsert({
+      await contextValue.repositories.weight.upsert({ date: "2026-01-05", weightKg: 70 });
+      await contextValue.repositories.training.upsert({
         date: "2026-01-05",
         durationMinutes: 60,
         intensity: "MEDIUM",
         exerciseSets: [],
       });
-      contextValue.repositories.steps.upsert({ date: "2026-01-06", steps: 6000 });
+      await contextValue.repositories.steps.upsert({ date: "2026-01-06", steps: 6000 });
 
       const result = await graphql({
         schema,
@@ -241,7 +241,7 @@ describe("steps GraphQLスキーマ", () => {
 
     it("記録が0件の場合は空配列を返す", async () => {
       const schema = builder.toSchema();
-      const contextValue = createTestContext();
+      const contextValue = await createTestContext();
 
       const result = await graphql({
         schema,

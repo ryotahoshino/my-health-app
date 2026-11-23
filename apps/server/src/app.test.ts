@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 // T038 で実装する(このテストは実装が無い間は失敗する)。
 // 契約: contracts/api-injection.md「サーバー」
 import { createApp } from "./app.js";
-import { createConnection } from "./db/connection.js";
+import { createTestDatabase } from "./test-support/createTestDatabase.js";
 
 // GraphQL Yoga の fetch を直接呼び、HTTP のリクエスト/レスポンスとして検証する。
 // 既存のスキーマのテストはリゾルバを graphql() で直接実行しているため、
@@ -20,14 +20,17 @@ const postGraphql = async (
   return (await response.json()) as { data?: Record<string, unknown>; errors?: unknown[] };
 };
 
-// 一時DB(インメモリ)と固定の当日日付を注入する。時計にも実DBにも依存しないため
-// 決定的に検証できる(憲法 原則V)。
-const createTestApp = () =>
-  createApp({ db: createConnection(":memory:"), today: () => "2026-01-15" });
+// テスト用DB(プロセス内の Postgres)と固定の当日日付を注入する。
+// 時計にもネットワークにも依存しないため決定的に検証できる(憲法 原則V)。
+const createTestApp = async () => {
+  const db = await createTestDatabase();
+  await db.reset();
+  return createApp({ db, today: () => "2026-01-15" });
+};
 
 describe("createApp(SC-016)", () => {
   it("体重記録を作成すると、その記録を取得できる", async () => {
-    const app = createTestApp();
+    const app = await createTestApp();
 
     const created = await postGraphql(
       app,
@@ -44,7 +47,7 @@ describe("createApp(SC-016)", () => {
   });
 
   it("期間集計は注入した当日の日付を基準に計算される", async () => {
-    const app = createTestApp();
+    const app = await createTestApp();
 
     await postGraphql(
       app,

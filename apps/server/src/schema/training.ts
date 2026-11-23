@@ -73,8 +73,8 @@ const TrainingSessionType = builder.objectRef<TrainingSession>("TrainingSession"
     // (YAGNI)。将来マルチユーザー化や大量データを扱う場合は再検討する。
     calorieEstimate: t.field({
       type: CalorieEstimateType,
-      resolve: (session, _args, context) => {
-        const weightKg = context.repositories.weight.findAsOf(session.date);
+      resolve: async (session, _args, context) => {
+        const weightKg = await context.repositories.weight.findAsOf(session.date);
         return calculateSessionCalorie({
           intensity: session.intensity,
           durationMinutes: session.durationMinutes,

@@ -15,8 +15,8 @@ type TestContext = {
   repositories: { training: TrainingSessionRepository; weight: WeightRepository };
 };
 
-const createTestContext = (): TestContext => {
-  const db = createSeededTestDb();
+const createTestContext = async (): Promise<TestContext> => {
+  const db = await createSeededTestDb();
   return {
     repositories: {
       training: createTrainingSessionRepository(db),
@@ -72,9 +72,9 @@ const runCalorieQuery = async (
 
 describe("TrainingSession.calorieEstimate / totalVolume", () => {
   it("直近の体重が記録されていれば消費カロリーを算出する", async () => {
-    const contextValue = createTestContext();
-    contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
-    const session = contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    await contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
+    const session = await contextValue.repositories.training.upsert({
       date: "2026-01-02",
       durationMinutes: 60,
       intensity: "MEDIUM",
@@ -87,8 +87,8 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("体重記録が1件も無い場合はcaloriesがnullになる(算出不可、FR-011)", async () => {
-    const contextValue = createTestContext();
-    const session = contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    const session = await contextValue.repositories.training.upsert({
       date: "2026-01-02",
       durationMinutes: 60,
       intensity: "MEDIUM",
@@ -100,10 +100,10 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("セッション日付以前で最も新しい体重記録を使う(未来の体重は使わない)", async () => {
-    const contextValue = createTestContext();
-    contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 65 });
-    contextValue.repositories.weight.upsert({ date: "2026-01-10", weightKg: 80 }); // セッションより後
-    const session = contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    await contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 65 });
+    await contextValue.repositories.weight.upsert({ date: "2026-01-10", weightKg: 80 }); // セッションより後
+    const session = await contextValue.repositories.training.upsert({
       date: "2026-01-05",
       durationMinutes: 60,
       intensity: "MEDIUM",
@@ -116,9 +116,9 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("算出根拠(計算式・定数・出典)が画面表示用に含まれる(原則VII)", async () => {
-    const contextValue = createTestContext();
-    contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
-    const session = contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    await contextValue.repositories.weight.upsert({ date: "2026-01-01", weightKg: 70 });
+    const session = await contextValue.repositories.training.upsert({
       date: "2026-01-02",
       durationMinutes: 60,
       intensity: "MEDIUM",
@@ -132,8 +132,8 @@ describe("TrainingSession.calorieEstimate / totalVolume", () => {
   });
 
   it("種目記録から総ボリューム(重量×回数×セット)を算出する", async () => {
-    const contextValue = createTestContext();
-    const session = contextValue.repositories.training.upsert({
+    const contextValue = await createTestContext();
+    const session = await contextValue.repositories.training.upsert({
       date: "2026-01-02",
       durationMinutes: 60,
       intensity: "MEDIUM",

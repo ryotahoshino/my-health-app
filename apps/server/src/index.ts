@@ -1,15 +1,13 @@
 import { createServer } from "node:http";
 import { createApp } from "./app.js";
 import { getTodayDateString } from "./schema/today.js";
-import { getDb } from "./db/connection.js";
-import { seedExerciseCatalog } from "./db/seed/exerciseCatalog.js";
-import { seedFoodItems } from "./db/seed/foodItems.js";
+import { createPostgresDatabase } from "./db/postgresClient.js";
+import { readDatabaseUrl } from "./db/databaseUrl.js";
 
-// 実行時の入口。実DBの接続・シード・アプリの組み立て・待ち受けだけを行い、
-// スキーマやリポジトリの組み立ては app.ts に任せる(contracts/api-injection.md)。
-const db = getDb();
-seedExerciseCatalog(db);
-seedFoodItems(db);
+// 実行時の入口。接続の生成・アプリの組み立て・待ち受けだけを行う。
+// スキーマの適用(migrate)と固定データの投入(seed)は CLI で行うため、
+// ここでは書き込みを一切行わない(FR-010 / contracts/migrations.md)。
+const db = createPostgresDatabase(readDatabaseUrl(process.env));
 
 const yoga = createApp({ db, today: getTodayDateString });
 const server = createServer(yoga);
