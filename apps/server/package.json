@@ -11,7 +11,10 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev:local": "tsx watch scripts/dev-local.ts",
+    "export:sqlite": "tsx scripts/export-sqlite.ts",
+    "import:records": "tsx --env-file-if-exists=.env.local scripts/import-records.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.17",

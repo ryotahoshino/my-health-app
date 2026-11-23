@@ -1,65 +1,65 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type Database from "better-sqlite3";
-import { createConnection } from "../db/connection.js";
-// T059で実装する(このテストは実装が無い間は失敗する)
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { createTestDatabase, type TestDatabase } from "../test-support/createTestDatabase.js";
 import { createStepRecordRepository, type StepRecordRepository } from "./stepRecordRepository.js";
 
-describe("StepRecordRepository (SQLite)", () => {
-  let db: Database.Database;
+describe("StepRecordRepository (Postgres)", () => {
+  let db: TestDatabase;
   let repository: StepRecordRepository;
 
-  beforeEach(() => {
-    // 依存を注入して検証する(原則V)。テストごとに独立したインメモリDBを使う。
-    db = createConnection(":memory:");
+  // 依存を注入して検証する(原則V)。PGlite のインスタンスはファイル内で使い回し、
+  // テストごとに中身を空にする(research #3)。
+  beforeAll(async () => {
+    db = await createTestDatabase();
     repository = createStepRecordRepository(db);
   });
 
-  afterEach(() => {
-    db.close();
+  beforeEach(async () => {
+    await db.reset();
   });
 
-  it("初期状態では0件", () => {
-    expect(repository.list()).toEqual([]);
+  it("初期状態では0件", async () => {
+    expect(await repository.list()).toEqual([]);
   });
 
-  it("記録を作成し一覧に反映される", () => {
-    const created = repository.upsert({ date: "2026-01-01", steps: 8000 });
+  it("記録を作成し一覧に反映される", async () => {
+    const created = await repository.upsert({ date: "2026-01-01", steps: 8000 });
     expect(created.date).toBe("2026-01-01");
     expect(created.steps).toBe(8000);
-    expect(repository.list()).toHaveLength(1);
+    expect(await repository.list()).toHaveLength(1);
   });
 
-  it("同一日付への保存は上書きになる(FR-017)", () => {
-    repository.upsert({ date: "2026-01-01", steps: 8000 });
-    repository.upsert({ date: "2026-01-01", steps: 9500 });
+  it("同一日付への保存は上書きになる(FR-017)", async () => {
+    await repository.upsert({ date: "2026-01-01", steps: 8000 });
+    await repository.upsert({ date: "2026-01-01", steps: 9500 });
 
-    const records = repository.list();
+    const records = await repository.list();
     expect(records).toHaveLength(1);
     expect(records[0]?.steps).toBe(9500);
   });
 
-  it("異なる日付は別レコードとして保存される", () => {
-    repository.upsert({ date: "2026-01-01", steps: 8000 });
-    repository.upsert({ date: "2026-01-02", steps: 5000 });
-    expect(repository.list()).toHaveLength(2);
+  it("異なる日付は別レコードとして保存される", async () => {
+    await repository.upsert({ date: "2026-01-01", steps: 8000 });
+    await repository.upsert({ date: "2026-01-02", steps: 5000 });
+    expect(await repository.list()).toHaveLength(2);
   });
 
-  it("findByDateは指定日の記録を返す", () => {
-    repository.upsert({ date: "2026-01-01", steps: 8000 });
-    expect(repository.findByDate("2026-01-01")?.steps).toBe(8000);
+  it("findByDateは指定日の記録を返す", async () => {
+    await repository.upsert({ date: "2026-01-01", steps: 8000 });
+    const found = await repository.findByDate("2026-01-01");
+    expect(found?.steps).toBe(8000);
   });
 
-  it("findByDateは記録が無い日はundefinedを返す", () => {
-    expect(repository.findByDate("2026-01-01")).toBeUndefined();
+  it("findByDateは記録が無い日はundefinedを返す", async () => {
+    expect(await repository.findByDate("2026-01-01")).toBeUndefined();
   });
 
-  it("削除すると一覧から消える", () => {
-    const created = repository.upsert({ date: "2026-01-01", steps: 8000 });
-    expect(repository.delete(created.id)).toBe(true);
-    expect(repository.list()).toHaveLength(0);
+  it("削除すると一覧から消える", async () => {
+    const created = await repository.upsert({ date: "2026-01-01", steps: 8000 });
+    expect(await repository.delete(created.id)).toBe(true);
+    expect(await repository.list()).toHaveLength(0);
   });
 
-  it("存在しないIDの削除はfalseを返す", () => {
-    expect(repository.delete("does-not-exist")).toBe(false);
+  it("存在しないIDの削除はfalseを返す", async () => {
+    expect(await repository.delete("does-not-exist")).toBe(false);
   });
 });

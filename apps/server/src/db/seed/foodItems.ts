@@ -1,5 +1,3 @@
-import type Database from "better-sqlite3";
-
 export type FoodItem = {
   id: string;
   name: string;
@@ -44,20 +42,3 @@ export const foodItemsSeed: FoodItem[] = [
   { id: "salmon", name: "鮭", caloriesPer100g: 133, proteinG: 22.3, fatG: 4.1, carbG: 0.1 },
   { id: "milk", name: "牛乳", caloriesPer100g: 61, proteinG: 3.3, fatG: 3.8, carbG: 4.8 },
 ];
-
-export const seedFoodItems = (db: Database.Database): void => {
-  const insert = db.prepare(
-    `INSERT INTO food_items (id, name, calories_per_100g, protein_g, fat_g, carb_g)
-     VALUES (@id, @name, @caloriesPer100g, @proteinG, @fatG, @carbG)
-     ON CONFLICT(id) DO UPDATE SET
-       name = excluded.name,
-       calories_per_100g = excluded.calories_per_100g,
-       protein_g = excluded.protein_g,
-       fat_g = excluded.fat_g,
-       carb_g = excluded.carb_g`,
-  );
-  const insertAll = db.transaction((rows: FoodItem[]) => {
-    for (const row of rows) insert.run(row);
-  });
-  insertAll(foodItemsSeed);
-};

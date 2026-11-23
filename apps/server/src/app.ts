@@ -1,5 +1,5 @@
 import { createYoga } from "graphql-yoga";
-import type Database from "better-sqlite3";
+import type { Database } from "./db/client.js";
 import { builder } from "./schema/builder.js";
 import "./schema/health.js";
 import "./schema/weight.js";
@@ -13,7 +13,7 @@ import { createTrainingSessionRepository } from "./repositories/trainingSessionR
 import { createStepRecordRepository } from "./repositories/stepRecordRepository.js";
 
 export type CreateAppOptions = {
-  db: Database.Database;
+  db: Database;
   // 当日の日付(YYYY-MM-DD)を返す関数。リクエストごとに評価するため関数で受け取る。
   // 実行時はシステムクロックを読む実装、テストは固定値を返す実装を渡す(憲法 原則V)。
   today: () => string;

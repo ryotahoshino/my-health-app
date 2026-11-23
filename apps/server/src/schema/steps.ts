@@ -24,8 +24,8 @@ const StepRecordType = builder.objectRef<StepRecord>("StepRecord").implement({
     // calorieEstimateフィールドとして算出根拠つきで公開する(FR-013)。
     calorieEstimate: t.field({
       type: CalorieEstimateType,
-      resolve: (stepRecord, _args, context) => {
-        const weightKg = context.repositories.weight.findAsOf(stepRecord.date);
+      resolve: async (stepRecord, _args, context) => {
+        const weightKg = await context.repositories.weight.findAsOf(stepRecord.date);
         return calculateStepCalorie({ steps: stepRecord.steps, weightKg });
       },
     }),
@@ -92,9 +92,9 @@ builder.queryField("dailyCalorieSummaries", (t) =>
     args: {
       period: t.arg({ type: AggregationPeriodEnum, required: true }),
     },
-    resolve: (_parent, args, context) => {
-      const sessions = context.repositories.training.list();
-      const stepRecords = context.repositories.steps.list();
+    resolve: async (_parent, args, context) => {
+      const sessions = await context.repositories.training.list();
+      const stepRecords = await context.repositories.steps.list();
 
       const dates = new Set<string>();
       for (const session of sessions) {
@@ -113,7 +113,7 @@ builder.queryField("dailyCalorieSummaries", (t) =>
       const stepPoints: PeriodDataPoint[] = [];
 
       for (const date of sortedDates) {
-        const weightKg = context.repositories.weight.findAsOf(date);
+        const weightKg = await context.repositories.weight.findAsOf(date);
         const session = sessions.find((candidate) => candidate.date === date);
         const stepRecord = stepRecords.find((candidate) => candidate.date === date);
 
