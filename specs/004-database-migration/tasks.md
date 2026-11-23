@@ -36,11 +36,13 @@ plan.md の Project Structure に基づく。変更は `apps/server` と CI に�
 
 **Purpose**: 新しい依存を入れ、接続先を用意し、移行前の基準値を記録する
 
-- [ ] T001 `apps/server/package.json` に `pg`(と型定義 `@types/pg`)・`@electric-sql/pglite` を追加し、`better-sqlite3` を dependencies から devDependencies へ移す(既存データの書き出しスクリプトでのみ使うため、research #2・#3)
+- [X] T001 `apps/server/package.json` に `pg`(と型定義 `@types/pg`)・`@electric-sql/pglite` を追加し、`better-sqlite3` を dependencies から devDependencies へ移す(既存データの書き出しスクリプトでのみ使うため、research #2・#3)
 - [ ] T002 Neon のプロジェクト(無料プラン)を作成し、接続文字列を `apps/server/.env.local` に `DATABASE_URL` として設定する。`.gitignore` に `.env*` が含まれていること、リポジトリ内に接続文字列が存在しないことを確認する(FR-012 / SC-008)
-- [ ] T003 [P] `apps/server/package.json` の `dev` スクリプトに Node の `--env-file=.env.local` を付け、接続情報を dotenv なしで読み込めるようにする(research #7)
-- [ ] T004 [P] 移行前の基準値を測定して `specs/004-database-migration/research.md` の #10 に記録する: サーバーのテスト件数と所要時間(SC-006 の判定基準)
-- [ ] T005 [P] `specs/004-database-migration/research.md` の #1 の無料枠の条件を公式ページで再確認し、差異があれば更新する(研究時点から変動しうるため)
+  - **未実施(利用者の操作が必要)**: Neon のプロジェクト作成と接続文字列の取得はアカウント操作のため代行できない。`.gitignore` には `.env` と `.env.*` が既に含まれていることを確認済み(リポジトリ内に接続文字列は存在しない)。
+- [X] T003 [P] `apps/server/package.json` の `dev` スクリプトに Node の `--env-file=.env.local` を付け、接続情報を dotenv なしで読み込めるようにする(research #7)
+- [X] T004 [P] 移行前の基準値を測定して `specs/004-database-migration/research.md` の #10 に記録する: サーバーのテスト件数と所要時間(SC-006 の判定基準)
+  - 移行前の基準値(2026-11-23 計測): サーバーのテスト 17ファイル / 107件、vitest の Duration 1.05秒(コマンド全体の実時間 2.97秒)。SC-006 の判定基準はこの2倍。
+- [X] T005 [P] `specs/004-database-migration/research.md` の #1 の無料枠の条件を公式ページで再確認し、差異があれば更新する(研究時点から変動しうるため)
 
 ---
 
@@ -54,16 +56,17 @@ plan.md の Project Structure に基づく。変更は `apps/server` と CI に�
 
 > テストを先に書き、実装前に失敗することを確認する(憲法 原則III)
 
-- [ ] T006 [P] SQL 実行の契約テストを `apps/server/src/db/pgliteClient.test.ts` に作成する。(a) `query` がパラメータ(`$1`)付きで行を返す、(b) `rowCount` が更新・削除した行数を返す、(c) `transaction` が例外時に何も適用しない、(d) `transaction` 内の `SqlExecutor` で同じ接続のデータが見える。実装前に失敗することを確認する(contracts/database-access.md「インターフェース」)
-- [ ] T007 [P] 接続情報の検証のテストを `apps/server/src/db/databaseUrl.test.ts` に作成する。未設定・空文字・スキーマが不正な値に対して、必要な環境変数名を含むエラーになること。実装前に失敗することを確認する(FR-013 / SC-007)
+- [X] T006 [P] SQL 実行の契約テストを `apps/server/src/db/pgliteClient.test.ts` に作成する。(a) `query` がパラメータ(`$1`)付きで行を返す、(b) `rowCount` が更新・削除した行数を返す、(c) `transaction` が例外時に何も適用しない、(d) `transaction` 内の `SqlExecutor` で同じ接続のデータが見える。実装前に失敗することを確認する(contracts/database-access.md「インターフェース」)
+- [X] T007 [P] 接続情報の検証のテストを `apps/server/src/db/databaseUrl.test.ts` に作成する。未設定・空文字・スキーマが不正な値に対して、必要な環境変数名を含むエラーになること。実装前に失敗することを確認する(FR-013 / SC-007)
 
 ### Implementation for Foundational
 
-- [ ] T008 `apps/server/src/db/client.ts` に `SqlResult` / `SqlExecutor` / `Database` の型を定義する。ドライバ差(`rowCount` と `affectedRows`)を吸収する方針をコメントに残す(contracts/database-access.md)
-- [ ] T009 `apps/server/src/db/pgliteClient.ts` に `createPgliteDatabase(dataDir?)` を実装し、T006 を成功させる。引数なしでインメモリ、パス指定でファイル永続化(research #3、依存: T008)
-- [ ] T010 [P] `apps/server/src/db/postgresClient.ts` に `createPostgresDatabase(connectionString)` を実装する(`pg` の `Pool`、`transaction` は `BEGIN` / `COMMIT` / `ROLLBACK`)。SSL の指定は research #10 のとおり起動確認時に検証する(依存: T008)
-- [ ] T011 [P] `apps/server/src/db/databaseUrl.ts` に接続情報の読み取りと検証を純粋関数として実装し、T007 を成功させる。接続そのものは行わない(原則V)
-- [ ] T012 `apps/server/test-support/createTestDatabase.ts` を実装する。PGlite のインスタンスをテストファイル単位で用意し、マイグレーションの適用処理を実行して `Database` を返す。各テストの前に全テーブルを `TRUNCATE` する関数も提供する(research #3 / contracts/database-access.md「テストの契約」、依存: T009, T021)
+- [X] T008 `apps/server/src/db/client.ts` に `SqlResult` / `SqlExecutor` / `Database` の型を定義する。ドライバ差(`rowCount` と `affectedRows`)を吸収する方針をコメントに残す(contracts/database-access.md)
+  - 実装時の追加: PGlite の `query` は複数文を扱えないため(`cannot insert multiple commands into a prepared statement`)、マイグレーションのファイルを流すための `exec(sql)` を `SqlExecutor` に追加した。pg 側はパラメータなしの単純クエリで複数文を実行できる。
+- [X] T009 `apps/server/src/db/pgliteClient.ts` に `createPgliteDatabase(dataDir?)` を実装し、T006 を成功させる。引数なしでインメモリ、パス指定でファイル永続化(research #3、依存: T008)
+- [X] T010 [P] `apps/server/src/db/postgresClient.ts` に `createPostgresDatabase(connectionString)` を実装する(`pg` の `Pool`、`transaction` は `BEGIN` / `COMMIT` / `ROLLBACK`)。SSL の指定は research #10 のとおり起動確認時に検証する(依存: T008)
+- [X] T011 [P] `apps/server/src/db/databaseUrl.ts` に接続情報の読み取りと検証を純粋関数として実装し、T007 を成功させる。接続そのものは行わない(原則V)
+- [X] T012 `apps/server/test-support/createTestDatabase.ts` を実装する。PGlite のインスタンスをテストファイル単位で用意し、マイグレーションの適用処理を実行して `Database` を返す。各テストの前に全テーブルを `TRUNCATE` する関数も提供する(research #3 / contracts/database-access.md「テストの契約」、依存: T009, T021)
 
 **Checkpoint**: SQL 実行の抽象が2実装で揃い、テストから PGlite のDBを用意できる
 
@@ -77,18 +80,18 @@ plan.md の Project Structure に基づく。変更は `apps/server` と CI に�
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T013 [P] [US2] マイグレーション適用処理のテストを `apps/server/src/db/migrate.test.ts` に作成する。(a) 空のDBに適用すると全テーブルが作られる、(b) 2回目の適用は0件で正常終了する、(c) 失敗するSQLを含む変更単位は何も残さない(1ファイル=1トランザクション)、(d) 新しいファイルを1つ足すとそれだけが適用される。実装前に失敗することを確認する(contracts/migrations.md「検証」)
-- [ ] T014 [P] [US2] 固定データ投入のテストを `apps/server/src/db/seed.test.ts` に作成する。(a) 投入後に種目マスタ・食材が TypeScript 配列と一致する、(b) 2回実行しても件数が変わらない(INV-5)、(c) 配列の値を変えて再実行すると値が追従する。実装前に失敗することを確認する
+- [X] T013 [P] [US2] マイグレーション適用処理のテストを `apps/server/src/db/migrate.test.ts` に作成する。(a) 空のDBに適用すると全テーブルが作られる、(b) 2回目の適用は0件で正常終了する、(c) 失敗するSQLを含む変更単位は何も残さない(1ファイル=1トランザクション)、(d) 新しいファイルを1つ足すとそれだけが適用される。実装前に失敗することを確認する(contracts/migrations.md「検証」)
+- [X] T014 [P] [US2] 固定データ投入のテストを `apps/server/src/db/seed.test.ts` に作成する。(a) 投入後に種目マスタ・食材が TypeScript 配列と一致する、(b) 2回実行しても件数が変わらない(INV-5)、(c) 配列の値を変えて再実行すると値が追従する。実装前に失敗することを確認する
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] `apps/server/migrations/0001_init.sql` を作成する。data-model.md の型の対応表に従って既存6テーブル・`CHECK`・外部キー(CASCADE)・一意制約・インデックスを定義する。日付は `text` のまま維持する(FR-005)
-- [ ] T016 [US2] `apps/server/src/db/migrate.ts` に `runMigrations(db)` を実装し、T013 を成功させる。`schema_migrations`(ファイル名・適用時刻)で適用済みを管理し、1ファイルを1トランザクションで適用する(依存: T013, T008)
-- [ ] T017 [P] [US2] `apps/server/src/db/seed.ts` に `runSeeds(db)` を実装し、T014 を成功させる。一次ソースは既存の TypeScript 配列(`db/seed/exerciseCatalog.ts`・`foodItems.ts`)、`INSERT ... ON CONFLICT (id) DO UPDATE` で冪等にする(依存: T014, T008)
-- [ ] T018 [US2] `apps/server/scripts/migrate.ts` と `apps/server/scripts/seed.ts`(CLI)を作成し、`apps/server/package.json` に `migrate` / `seed` スクリプトを追加する。接続情報は `--env-file=.env.local` と `DATABASE_URL` から読む(依存: T016, T017, T011)
+- [X] T015 [US2] `apps/server/migrations/0001_init.sql` を作成する。data-model.md の型の対応表に従って既存6テーブル・`CHECK`・外部キー(CASCADE)・一意制約・インデックスを定義する。日付は `text` のまま維持する(FR-005)
+- [X] T016 [US2] `apps/server/src/db/migrate.ts` に `runMigrations(db)` を実装し、T013 を成功させる。`schema_migrations`(ファイル名・適用時刻)で適用済みを管理し、1ファイルを1トランザクションで適用する(依存: T013, T008)
+- [X] T017 [P] [US2] `apps/server/src/db/seed.ts` に `runSeeds(db)` を実装し、T014 を成功させる。一次ソースは既存の TypeScript 配列(`db/seed/exerciseCatalog.ts`・`foodItems.ts`)、`INSERT ... ON CONFLICT (id) DO UPDATE` で冪等にする(依存: T014, T008)
+- [X] T018 [US2] `apps/server/scripts/migrate.ts` と `apps/server/scripts/seed.ts`(CLI)を作成し、`apps/server/package.json` に `migrate` / `seed` スクリプトを追加する。接続情報は `--env-file=.env.local` と `DATABASE_URL` から読む(依存: T016, T017, T011)
 - [ ] T019 [US2] Neon の空のデータベースに対して `migrate` と `seed` を実行し、`specs/004-database-migration/quickstart.md` の手順2の期待結果(1回目は適用あり、2回目は0件、投入の重複なし)を確認する(SC-003 / SC-004、依存: T018)
 - [ ] T020 [US2] 旧 `apps/server/src/db/schema.sql` と、起動時にスキーマを作る経路を削除する。スキーマの一次ソースを `migrations/` に一本化する(FR-010 / 原則IV、依存: T016)
-- [ ] T021 [US2] `apps/server/test-support/createTestDatabase.ts` から `runMigrations` を呼ぶ形に仕上げ、テストが本番と同じ適用経路でスキーマを得るようにする(contracts/migrations.md 規則2、依存: T016, T012)
+- [X] T021 [US2] `apps/server/test-support/createTestDatabase.ts` から `runMigrations` を呼ぶ形に仕上げ、テストが本番と同じ適用経路でスキーマを得るようにする(contracts/migrations.md 規則2、依存: T016, T012)
 
 **Checkpoint**: 空のDBから1コマンドでスキーマが揃い、テストも同じ経路でスキーマを得られる
 
